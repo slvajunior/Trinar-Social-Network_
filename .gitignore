@@ -1,0 +1,23 @@
+# Configurações do sistema
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual Environment
+venv/
+env/
+
+# Configurações específicas
+*.sqlite3
+*.log
+
+# Informações Sensíveis
+.env
+media/
+
+# Configurações do editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
