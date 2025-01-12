@@ -1,31 +1,20 @@
-# Trinar Social Network - Open Source
+# Trinar - Rede Social Open Source
 
-## O que é o Trinar?
+![Trinar Logo](caminho/para/logo.png)
 
-O **Trinar Social Network** é uma rede social voltada para a interação de usuários com foco em **simplicidade**, **segurança** e **open-source**. Criada para aqueles que buscam uma plataforma que pode ser personalizada de acordo com as necessidades, sendo também uma excelente opção para desenvolvedores que querem colaborar e contribuir para uma rede social que leva a sério a privacidade e a transparência.
-
-## Objetivo do Projeto
-
-O Trinar Social Network visa fornecer uma solução open-source para aqueles que desejam:
-
-- Uma plataforma de rede social sem as limitações e problemas das grandes plataformas centralizadas.
-- Controle completo sobre seus dados.
-- Customização e escalabilidade conforme suas necessidades.
-- Colaboração da comunidade para a melhoria contínua do sistema.
+O **Trinar** é uma rede social open source criada para oferecer uma alternativa transparente e segura às grandes plataformas centralizadas. Nosso objetivo é empoderar os usuários, dando a eles controle total sobre seus dados e a liberdade de personalizar a plataforma de acordo com suas necessidades.
 
 ## Funcionalidades
 
-O projeto está sendo desenvolvido para ter uma série de funcionalidades essenciais para uma rede social, com a capacidade de expandir com o tempo. As principais funcionalidades até o momento são:
-
 ### 1. **Autenticação de Usuários**
-   - Registro de novos usuários.
-   - Login via username e senha.
-   - Autenticação utilizando token JWT para APIs.
+   - Registro de novos usuários com validação de e-mail.
+   - Login seguro utilizando tokens JWT.
+   - Recuperação de senha via e-mail.
 
 ### 2. **CRUD de Posts**
-   - Criação, leitura, atualização e deleção de posts.
-   - Repost de posts.
-   - Interações com posts (comentários, curtidas, reposts).
+   - Criação de posts com suporte a texto, hashtags e menções.
+   - Edição e exclusão de posts pelo autor.
+   - Repost de posts com a possibilidade de adicionar comentários.
 
 ### 3. **Interação Social**
    - Seguir e deixar de seguir outros usuários.
@@ -34,12 +23,6 @@ O projeto está sendo desenvolvido para ter uma série de funcionalidades essenc
 ### 4. **Interface Administrativa**
    - Tela de administração para gerenciar posts, usuários e comentários.
    - Sistema de permissões, permitindo ao administrador gerenciar o sistema com eficiência.
-
-### 5. **Endpoints de API**
-   - **POST** para criar, listar e editar posts.
-   - **GET** para visualizar posts e perfis de usuários.
-   - **PATCH** para atualização de informações do usuário.
-   - **DELETE** para exclusão de conteúdo (posts, comentários).
 
 ## Tecnologias Utilizadas
 
@@ -50,12 +33,41 @@ O projeto está sendo desenvolvido para ter uma série de funcionalidades essenc
 - **Controle de Versão**: Git e GitHub
 - **Docker**: Contêinerização para ambiente isolado de desenvolvimento
 
-## Como Rodar o Projeto Locamente
+## Como Rodar o Projeto Localmente
 
-Siga os passos abaixo para rodar o **Trinar Social Network** localmente:
+### Pré-requisitos
 
-1. **Clone o Repositório**
+- Python 3.8+
+- MySQL
+- Docker (opcional)
 
-```bash
-git clone git@github.com:slvajunior/Trinar-Social-Network_.git
-cd Trinar-Social-Network_
+### Passos para Execução
+
+## Como Contribuir
+
+Contribuições são bem-vindas! Siga os passos abaixo:
+
+1. Faça um fork do projeto.
+2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`).
+3. Faça commit das suas alterações (`git commit -m 'Adiciona nova feature'`).
+4. Envie para o repositório remoto (`git push origin feature/nova-feature`).
+5. Abra um Pull Request.
+
+**Dicas**:
+- Certifique-se de que seus commits seguem o padrão do projeto.
+- Adicione testes para novas funcionalidades.
+- Documente suas alterações no README.
+
+## Licença
+
+Este projeto está licenciado sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+## Contato
+
+- **GitHub**: [slvajunior](https://github.com/slvajunior)
+- **E-mail**: johnf.foto@gmail.com
+
+1. Clone o repositório:
+   ```bash
+   git clone git@github.com:slvajunior/Trinar-Social-Network_.git
+   cd Trinar-Social-Network_

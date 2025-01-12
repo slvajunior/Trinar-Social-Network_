@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import User
-from .models import Post, Comment, Repost, Like
+from .models import Post, Repost, Like
 from .serializers import UserSerializer
 from .serializers import PostSerializer, RepostSerializer
 from django.db.models import Q
@@ -12,6 +12,10 @@ from .serializers import CommentSerializer
 from django.db import models
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
+from rest_framework.permissions import IsAuthenticated
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class UserListCreateView(APIView):
@@ -29,6 +33,8 @@ class UserListCreateView(APIView):
 
 
 class PostListCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         if request.user.is_authenticated:
             posts = Post.objects.filter(
@@ -48,6 +54,8 @@ class PostListCreateView(APIView):
 
 
 class PostDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get_object(self, pk):
         try:
             return Post.objects.get(pk=pk)
@@ -73,82 +81,74 @@ class PostDetailView(APIView):
 
 
 class LikePostView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, post_id):
         try:
             # Obtém o post com base no ID
             post = get_object_or_404(Post, id=post_id)
 
             # Verifica se o post é público ou o usuário segue o autor
-            if post.visibility == 'public' or post.author in request.user.following.all():
+            if (
+                post.visibility == "public"
+                or post.author in request.user.following.all()
+            ):
                 # Cria um novo objeto Like
                 like, created = Like.objects.get_or_create(user=request.user, post=post)
 
                 if created:
-                    return Response({"detail": "Post liked successfully."}, status=status.HTTP_201_CREATED)
+                    return Response(
+                        {"detail": "Post liked successfully."},
+                        status=status.HTTP_201_CREATED,
+                    )
                 else:
-                    return Response({"detail": "You already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response(
+                        {"detail": "You already liked this post."},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
             else:
-                return Response({"detail": "You cannot like this post."}, status=status.HTTP_403_FORBIDDEN)
-
-        except Post.DoesNotExist:
-            return Response({"detail": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
-
-
-class CommentListCreateView(APIView):
-    def get(self, request, post_id):
-        try:
-            post = Post.objects.get(id=post_id)
-
-            # Se o post for privado e o usuário não for seguidor, não deve ver os comentários
-            if (
-                post.visibility == "private"
-                and request.user not in post.author.followers.all()
-            ):
                 return Response(
-                    {"detail": "You cannot view comments on this private post."},
+                    {"detail": "You cannot like this post."},
                     status=status.HTTP_403_FORBIDDEN,
                 )
 
-            # Filtra os comentários de nível superior (sem parent)
-            comments = post.comments.filter(parent=None)
-            serializer = CommentSerializer(comments, many=True)
-            return Response(serializer.data)
         except Post.DoesNotExist:
             return Response(
                 {"detail": "Post not found."}, status=status.HTTP_404_NOT_FOUND
             )
 
+
+class CommentListCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, post_id):
         try:
             post = Post.objects.get(id=post_id)
 
-            # Se o post for privado e o usuário não for seguidor, não deve poder comentar
+            # Verifica se o usuário pode comentar no post
             if (
-                post.visibility == "private"
+                post.visibility == "followers"
                 and request.user not in post.author.followers.all()
             ):
                 return Response(
-                    {"detail": "You cannot comment on this private post."},
+                    {"detail": "You cannot comment on this post."},
                     status=status.HTTP_403_FORBIDDEN,
                 )
 
-            parent_comment = None
-            parent_id = request.data.get("parent")
+            # Adiciona o post aos dados da requisição
+            request.data["post"] = post.id
 
-            if parent_id:
-                try:
-                    parent_comment = Comment.objects.get(id=parent_id)
-                except Comment.DoesNotExist:
-                    return Response(
-                        {"detail": "Parent comment not found."},
-                        status=status.HTTP_404_NOT_FOUND,
-                    )
-
-            serializer = CommentSerializer(data=request.data)
+            # Cria o comentário
+            serializer = CommentSerializer(
+                data=request.data, context={"request": request}
+            )
             if serializer.is_valid():
-                serializer.save(user=request.user, post=post, parent=parent_comment)
+                serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                # Log dos erros de validação
+                logger.error(f"Erros de validação: {serializer.errors}")
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Post.DoesNotExist:
             return Response(
                 {"detail": "Post not found."}, status=status.HTTP_404_NOT_FOUND
@@ -156,6 +156,8 @@ class CommentListCreateView(APIView):
 
 
 class RepostPostView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, post_id):
         try:
             post = Post.objects.get(id=post_id)  # Tenta pegar o post original
@@ -181,6 +183,8 @@ class RepostPostView(APIView):
 
 
 class FollowUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, user_id):
         user_to_follow = User.objects.get(id=user_id)
         user = request.user
@@ -204,6 +208,8 @@ class FollowUserView(APIView):
 
 
 class UserFollowersView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, user_id):
         user = User.objects.get(id=user_id)
         followers = user.followers.all()
@@ -214,6 +220,7 @@ class UserFollowersView(APIView):
 
 
 class UserFollowingView(APIView):
+
     def get(self, request, user_id):
         user = User.objects.get(id=user_id)
         following = user.following.all()

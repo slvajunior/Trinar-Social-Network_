@@ -1,23 +1,24 @@
 # backend/core/models.py
 
 from django.db import models
-from django.contrib.auth.hashers import make_password
 import re
+from django.contrib.auth.models import AbstractUser
 
 
-class User(models.Model):
-    username = models.CharField(max_length=150, unique=True)
+class User(AbstractUser):
     email = models.EmailField(unique=True)
-    password = models.CharField(max_length=150)
     followers = models.ManyToManyField(
         "self", symmetrical=False, related_name="following"
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def save(self, *args, **kwargs):
-        if self._state.adding or "password" in self.get_dirty_fields():
-            self.password = make_password(self.password)
-        super().save(*args, **kwargs)
+    # Adicionando 'related_name' para resolver o conflito de 'groups' e 'user_permissions'
+    groups = models.ManyToManyField(
+        "auth.Group", related_name="custom_user_set", blank=True
+    )
+    user_permissions = models.ManyToManyField(
+        "auth.Permission", related_name="custom_user_set", blank=True
+    )
 
     def __str__(self):
         return self.username
@@ -48,7 +49,12 @@ class Post(models.Model):
 
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
     reposted_from = models.ForeignKey(
-        "self", null=True, blank=True, on_delete=models.CASCADE, related_name="reposts", related_query_name="reposted"
+        "self",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="reposts",
+        related_query_name="reposted",
     )
     additional_text = models.TextField(blank=True)
     text = models.TextField(max_length=500)
@@ -109,9 +115,14 @@ class Comment(models.Model):
 
 class Repost(models.Model):
     original_post = models.ForeignKey(
-        Post, on_delete=models.CASCADE, related_name="repost_instances", related_query_name="reposted_post"
+        Post,
+        on_delete=models.CASCADE,
+        related_name="repost_instances",
+        related_query_name="reposted_post",
     )
-    reposted_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reposts")
+    reposted_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="reposts"
+    )
     text = models.TextField(blank=True)
 
     def __str__(self):
