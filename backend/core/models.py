@@ -7,6 +7,9 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
+    first_name = models.CharField(max_length=30, blank=True)  # Adicionando first_name
+    last_name = models.CharField(max_length=30, blank=True)   # Adicionando last_name
+    birth_date = models.DateField(null=True, blank=True)      # Adicionando birth_date
     followers = models.ManyToManyField(
         "self", symmetrical=False, related_name="following"
     )
@@ -29,7 +32,7 @@ class User(AbstractUser):
 
     @property
     def following_count(self):
-        return self.following_count.count()
+        return self.following.count()  # Corrigido: estava 'following_count.count()'
 
     class Meta:
         verbose_name = "User"
