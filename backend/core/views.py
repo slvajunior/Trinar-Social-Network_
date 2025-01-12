@@ -37,7 +37,9 @@ class PostListCreateView(APIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
-        operation_description="Retorna uma lista de posts. Se o usuário estiver autenticado, retorna posts públicos e posts de usuários que ele segue. Caso contrário, retorna apenas posts públicos.",
+        operation_description="""Retorna uma lista de posts.
+        Se o usuário estiver autenticado, retorna posts públicos e posts de usuários que ele segue.
+        Caso contrário, retorna apenas posts públicos.""",
         responses={
             200: PostSerializer(many=True),  # Exemplo de resposta
             401: "Usuário não autenticado",  # Resposta de erro
