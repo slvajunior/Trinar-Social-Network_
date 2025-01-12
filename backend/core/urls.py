@@ -1,3 +1,4 @@
+from .views import RegisterView
 from django.urls import path
 from .views import (
     UserListCreateView,
@@ -14,6 +15,7 @@ from .views import (
 )
 
 urlpatterns = [
+    path('register/', RegisterView.as_view(), name='register'),
     path("users/", UserListCreateView.as_view(), name="user-list-create"),
     path("posts/", PostListCreateView.as_view(), name="post-list-create"),
     path("posts/<int:pk>/", PostDetailView.as_view(), name="post-detail"),

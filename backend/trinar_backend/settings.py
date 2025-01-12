@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework_simplejwt",  # meus apps a partir daqui
     "drf_spectacular",
+    "corsheaders",
     "drf_yasg",
     "core",
 ]
@@ -64,6 +65,11 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # Endereço do frontend
 ]
 
 ROOT_URLCONF = "trinar_backend.urls"
