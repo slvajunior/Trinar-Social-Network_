@@ -13,6 +13,7 @@ from django.db import models
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from rest_framework.permissions import IsAuthenticated
+from drf_yasg.utils import swagger_auto_schema
 import logging
 
 logger = logging.getLogger(__name__)
@@ -35,6 +36,13 @@ class UserListCreateView(APIView):
 class PostListCreateView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="Retorna uma lista de posts. Se o usuário estiver autenticado, retorna posts públicos e posts de usuários que ele segue. Caso contrário, retorna apenas posts públicos.",
+        responses={
+            200: PostSerializer(many=True),  # Exemplo de resposta
+            401: "Usuário não autenticado",  # Resposta de erro
+        },
+    )
     def get(self, request):
         if request.user.is_authenticated:
             posts = Post.objects.filter(
@@ -45,6 +53,15 @@ class PostListCreateView(APIView):
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
 
+    @swagger_auto_schema(
+        operation_description="Cria um novo post. O autor do post será o usuário autenticado.",
+        request_body=PostSerializer,  # Exemplo de requisição
+        responses={
+            201: PostSerializer(),  # Exemplo de resposta em caso de sucesso
+            400: "Dados inválidos",  # Resposta de erro
+            401: "Usuário não autenticado",  # Resposta de erro
+        },
+    )
     def post(self, request):
         serializer = PostSerializer(data=request.data)
         if serializer.is_valid():
