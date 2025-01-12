@@ -4,6 +4,8 @@
 
 O **Trinar** é uma rede social open source criada para oferecer uma alternativa transparente e segura às grandes plataformas centralizadas. Nosso objetivo é empoderar os usuários, dando a eles controle total sobre seus dados e a liberdade de personalizar a plataforma de acordo com suas necessidades.
 
+A rede social **Trinar** é focada em transparência, combate à desinformação e promoção de diálogos saudáveis.
+
 ## Funcionalidades
 
 ### 1. **Autenticação de Usuários**
