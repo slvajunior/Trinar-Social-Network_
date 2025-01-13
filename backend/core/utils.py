@@ -58,7 +58,7 @@ def send_email_confirmation(user):
     send_mail(
         subject='Confirme seu email',
         message=strip_tags(email_body),  # Versão em texto simples
-        from_email='from@example.com',
+        from_email='Trinar <juniorazevedosilva43@gmail.com>',
         recipient_list=[user.email],
         html_message=email_body,  # Versão em HTML
     )
