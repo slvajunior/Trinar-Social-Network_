@@ -1,5 +1,9 @@
-from .views import RegisterView
+# backend/core/urls.py
+
+from django.contrib.auth import views as auth_views
+from .views import RegisterView, email_verification
 from django.urls import path
+
 from .views import (
     UserListCreateView,
     PostListCreateView,
@@ -14,7 +18,14 @@ from .views import (
     UserSearchView,
 )
 
+app_name = "core"
+
 urlpatterns = [
+    path('confirm-email/<str:token>/', email_verification, name='confirm-email'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('password-reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('register/', RegisterView.as_view(), name='register'),
     path("users/", UserListCreateView.as_view(), name="user-list-create"),
     path("posts/", PostListCreateView.as_view(), name="post-list-create"),

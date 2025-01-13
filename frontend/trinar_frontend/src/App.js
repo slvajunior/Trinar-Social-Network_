@@ -5,6 +5,7 @@ import Register from "./components/Register";
 import Login from "./components/Login";
 import Logout from "./components/Logout";
 import Home from "./components/Home";
+import EmailConfirmed from "./components/EmailConfirmed";
 
 function App() {
   return (
@@ -21,6 +22,9 @@ function App() {
 
         {/* Rota para o logout */}
         <Route path="/logout" element={<Logout />} />
+
+        {/* Rota para Email-confirmed */}
+        <Route path="/email-confirmed" element={<EmailConfirmed />} />
       </Routes>
     </Router>
   );

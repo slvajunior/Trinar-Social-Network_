@@ -1,0 +1,6 @@
+Olá, {{ user.username }}!
+
+Clique no link abaixo para confirmar seu e-mail:
+{{ link }}
+
+Se você não solicitou esta confirmação, ignore este e-mail.

@@ -13,8 +13,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Checkbox,
-  FormControlLabel,
 } from "@mui/material";
 
 const Register = () => {
@@ -27,7 +25,7 @@ const Register = () => {
     birthDay: "",
     birthMonth: "",
     birthYear: "",
-    agreeTerms: false,
+    agreeTerms: true,
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -67,7 +65,9 @@ const Register = () => {
         birth_date: `${formData.birthYear}-${formData.birthMonth}-${formData.birthDay}`,
       });
       console.log("Usuário registrado:", response.data);
-      setSuccess("Registro realizado com sucesso! Redirecionando para o login...");
+      setSuccess(
+        "Registro realizado com sucesso! Redirecionando para o login..."
+      );
       setTimeout(() => {
         navigate("/login");
       }, 2000);
@@ -101,20 +101,27 @@ const Register = () => {
           backgroundColor: "background.paper",
           borderRadius: 2,
           boxShadow: 3,
-          p: 4,
-          mt: 2,
+          p: 3,
+          mt: 0.5,
         }}
       >
         <Typography variant="h5" component="h2" align="center" gutterBottom>
-          Crie uma nova conta
+          Crie uma conta
         </Typography>
         <Typography variant="subtitle1" color="textSecondary" align="center">
           É rápido e fácil.
         </Typography>
-
         {/* Mensagens de erro e sucesso */}
-        {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
-        {success && <Alert severity="success" sx={{ mt: 2 }}>{success}</Alert>}
+        {error && (
+          <Alert severity="error" sx={{ mt: 2 }}>
+            {error}
+          </Alert>
+        )}
+        {success && (
+          <Alert severity="success" sx={{ mt: 2 }}>
+            {success}
+          </Alert>
+        )}
 
         {/* Campos do Formulário */}
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
@@ -139,40 +146,6 @@ const Register = () => {
               required
             />
           </Box>
-
-          {/* Email */}
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Email"
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-
-          {/* Senha e Confirmar Senha */}
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Senha"
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Confirmar Senha"
-            type="password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            required
-          />
 
           {/* Data de Nascimento */}
           <Typography variant="subtitle2" sx={{ mt: 2, mb: 1 }}>
@@ -226,35 +199,88 @@ const Register = () => {
             />
           </Box>
 
-          {/* Termos e Políticas */}
-          <FormControlLabel
-            control={
-              <Checkbox
-                name="agreeTerms"
-                checked={formData.agreeTerms}
-                onChange={handleChange}
-                required
-              />
-            }
-            label={
-              <Typography variant="body2">
-                Eu concordo com os{" "}
-                <Link to="/terms" style={{ textDecoration: "none", color: "primary.main" }}>
-                  Termos de Serviço
-                </Link>
-                ,{" "}
-                <Link to="/privacy" style={{ textDecoration: "none", color: "primary.main" }}>
-                  Política de Privacidade
-                </Link>
-                {" "}e{" "}
-                <Link to="/cookies" style={{ textDecoration: "none", color: "primary.main" }}>
-                  Política de Cookies
-                </Link>
-                .
-              </Typography>
-            }
-            sx={{ mt: 2 }}
+          {/* Email */}
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Email"
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
           />
+
+          {/* Senha e Confirmar Senha */}
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Senha"
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Confirmar Senha"
+            type="password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+          />
+
+          {/* Termos e Políticas */}
+
+          <Typography variant="body2" color="gray">
+          
+            Ao clicar em Cadastre-se, você concorda com nossos{" "}
+            <Link
+              to="/terms"
+              style={{
+                textDecoration: "none",
+                color: "#01537D",
+                cursor: "pointer",
+                marginRight: 0,
+              }}
+              onMouseEnter={(e) => e.target.style.textDecoration = "underline"}
+              onMouseLeave={(e) => e.target.style.textDecoration = "none"}
+            >
+              Termos de Serviço
+            </Link>
+            {" "}
+            <Link
+              to="/privacy"
+              style={{
+                textDecoration: "none",
+                color: "#01537D",
+                marginRight: 1,
+                cursor: "pointer",
+              }}
+              onMouseEnter={(e) => e.target.style.textDecoration = "underline"}
+              onMouseLeave={(e) => e.target.style.textDecoration = "none"}
+            > 
+              Política de Privacidade
+            </Link>
+    
+            <Link
+              to="/cookies"
+              style={{
+                textDecoration: "none",
+                color: "#01537D",
+                marginRight: 0,
+                cursor: "pointer",
+                fontStyle: "inherit",
+              }} 
+              onMouseEnter={(e) => e.target.style.textDecoration = "underline"}
+              onMouseLeave={(e) => e.target.style.textDecoration = "none"}
+            > e
+              Política de Cookies
+            </Link>{" "}
+          </Typography>
 
           {/* Botão de Cadastro */}
           <Button
@@ -270,7 +296,10 @@ const Register = () => {
           {/* Link para o Login */}
           <Typography variant="body2" align="center" sx={{ mt: 2 }}>
             Já tem uma conta?{" "}
-            <Link to="/login" style={{ textDecoration: "none", color: "primary-main" }}>
+            <Link
+              to="/login"
+              style={{ textDecoration: "none", color: "blue" }}
+            >
               Faça login
             </Link>
           </Typography>
@@ -284,17 +313,55 @@ const Register = () => {
         </Typography>
         {/* Futuros links do footer */}
         <Box sx={{ mt: 1 }}>
-          <Link to="/register" style={{ textDecoration: "none", color: "primary.main", marginRight: 2 }}>
+          <Link
+            to="/register"
+            style={{
+              textDecoration: "none",
+              color: "gray",
+              marginRight: 15,
+            }}
+          >
             Registrar
           </Link>
-          <Link to="/login" style={{ textDecoration: "none", color: "primary.main", marginRight: 2 }}>
+          <Link
+            to="/login"
+            style={{
+              textDecoration: "none",
+              color: "gray",
+              marginRight: 15,
+            }}
+          >
             Entrar
           </Link>
-          <Link to="/about" style={{ textDecoration: "none", color: "primary.main", marginRight: 2 }}>
+          <Link
+            to="/about"
+            style={{
+              textDecoration: "none",
+              color: "gray",
+              marginRight: 15,
+            }}
+          >
             Sobre
           </Link>
-          <Link to="/messenger" style={{ textDecoration: "none", color: "primary.main" }}>
+          <Link
+            to="/messenger"
+            style={{
+              textDecoration: "none",
+              color: "gray",
+              marginRight: 15,
+            }}
+          >
             Messenger
+          </Link>
+          <Link
+            to="/desenvolvedor"
+            style={{
+              textDecoration: "none",
+              color: "gray",
+              marginRight: 15,
+            }}
+          >
+            Desenvolvedores
           </Link>
         </Box>
       </Box>

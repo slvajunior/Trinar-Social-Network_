@@ -1,0 +1,14 @@
+<!-- backend/templates/mail_body.html -->
+ 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirmação de E-mail</title>
+</head>
+<body>
+    <h1>Olá, {{ user.username }}!</h1>
+    <p>Clique no link abaixo para confirmar seu e-mail:</p>
+    <p><a href="{{ link }}">Confirmar E-mail</a></p>
+    <p>Se você não solicitou esta confirmação, ignore este e-mail.</p>
+</body>
+</html>

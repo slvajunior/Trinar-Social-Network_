@@ -61,6 +61,7 @@ const Login = () => {
           fontWeight: 600,
           mt: 4,
           mb: 2,
+          marginTop: 5,
         }}
       >
         trinar
@@ -69,10 +70,10 @@ const Login = () => {
       {/* Formulário */}
       <Box
         sx={{
-          backgroundColor: "background.paper",
+          backgroundColor: "#ffffff",
           borderRadius: 2,
           boxShadow: 3,
-          p: 4,
+          p: 5,
           mt: 2,
         }}
       >
@@ -81,8 +82,16 @@ const Login = () => {
         </Typography>
 
         {/* Mensagens de erro e sucesso */}
-        {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
-        {success && <Alert severity="success" sx={{ mt: 2 }}>{success}</Alert>}
+        {error && (
+          <Alert severity="error" sx={{ mt: 2 }}>
+            {error}
+          </Alert>
+        )}
+        {success && (
+          <Alert severity="success" sx={{ mt: 2 }}>
+            {success}
+          </Alert>
+        )}
 
         {/* Campos do Formulário */}
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
@@ -119,7 +128,10 @@ const Login = () => {
           {/* Link para o Registro */}
           <Typography variant="body2" align="center" sx={{ mt: 2 }}>
             Não tem uma conta?{" "}
-            <Link to="/register" style={{ textDecoration: "none", color: "primary.main" }}>
+            <Link
+              to="/register"
+              style={{ textDecoration: "none", color: "primary.main" }}
+            >
               Cadastre-se
             </Link>
           </Typography>
@@ -127,23 +139,102 @@ const Login = () => {
       </Box>
 
       {/* Footer */}
-      <Box sx={{ mt: 4, textAlign: "center" }}>
+      <Box
+        sx={{
+          position: "fixed",
+          bottom: 0,
+          width: "100%",
+          backgroundColor: "#ffffff",
+          left: "50%",
+          transform: "translateX(-50%)",
+          textAlign: "center",
+          py: 6, // Adiciona algum padding vertical
+        }}
+      >
         <Typography variant="body2" color="textSecondary">
           © 2025 Trinar. Todos os direitos reservados.
         </Typography>
-        {/* Futuros links do footer */}
+        
         <Box sx={{ mt: 1 }}>
-          <Link to="/register" style={{ textDecoration: "none", color: "primary.main", marginRight: 2 }}>
+          <Link
+            to="/register"
+            style={{
+              textDecoration: "none",
+              color: "gray",
+              marginRight: 15,
+            }}
+          >
             Registrar
           </Link>
-          <Link to="/login" style={{ textDecoration: "none", color: "primary.main", marginRight: 2 }}>
+          <Link
+            to="/login"
+            style={{
+              textDecoration: "none",
+              color: "gray",
+              marginRight: 15,
+            }}
+          >
             Entrar
           </Link>
-          <Link to="/about" style={{ textDecoration: "none", color: "primary.main", marginRight: 2 }}>
+          <Link
+            to="/about"
+            style={{
+              textDecoration: "none",
+              color: "gray",
+              marginRight: 15,
+            }}
+          >
             Sobre
           </Link>
-          <Link to="/messenger" style={{ textDecoration: "none", color: "primary.main" }}>
+          <Link
+            to="/messenger"
+            style={{
+              textDecoration: "none",
+              color: "gray",
+              marginRight: 15,
+            }}
+          >
             Messenger
+          </Link>
+          <Link
+            to="/lite"
+            style={{
+              textDecoration: "none",
+              color: "gray",
+              marginRight: 15,
+            }}
+          >
+            Trinar Lite
+          </Link>
+          <Link
+            to="/pay"
+            style={{
+              textDecoration: "none",
+              color: "gray",
+              marginRight: 15,
+            }}
+          >
+            Trinar Pay
+          </Link>
+          <Link
+            to="/campanha"
+            style={{
+              textDecoration: "none",
+              color: "gray",
+              marginRight: 15,
+            }}
+          >
+            Threads
+          </Link>
+          <Link
+            to="/anuncio"
+            style={{
+              textDecoration: "none",
+              color: "gray",
+              marginRight: 15,
+            }}
+          >
+            Desenvolvedores
           </Link>
         </Box>
       </Box>

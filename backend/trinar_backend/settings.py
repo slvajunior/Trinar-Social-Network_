@@ -14,7 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
-LOGIN_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = 'two_factor:profile'  # Redireciona para a página de 2FA
 
 LOGOUT_REDIRECT_URL = "/users/login/"
 
@@ -23,6 +23,8 @@ LOGIN_URL = "/users/login/"
 LOGOUT_URL = "/users/logout/"
 
 ALLOWED_HOSTS = []
+
+EMAIL_PAGE_DOMAIN = "http://localhost:3000"  # ou o domínio do seu frontend
 
 
 # Application definition
@@ -35,9 +37,13 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework_simplejwt",  # meus apps a partir daqui
+    "django_email_verification",
     "drf_spectacular",
     "corsheaders",
     "drf_yasg",
+    "django_otp",
+    "django_otp.plugins.otp_totp",
+    "two_factor",
     "core",
 ]
 
@@ -77,7 +83,7 @@ ROOT_URLCONF = "trinar_backend.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, 'templates')],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -176,3 +182,22 @@ EMAIL_PORT = int(os.getenv("EMAIL_PORT"))
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS") == "True"
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+
+# Configurações do django-email-verification
+def verified_callback(user):
+    user.is_active = True
+    user.save()
+
+
+EMAIL_VERIFIED_CALLBACK = verified_callback
+
+
+# Configurações específicas para django_email_verification
+EMAIL_FROM_ADDRESS = os.getenv('EMAIL_FROM_ADDRESS', 'seuemail@gmail.com')
+EMAIL_PAGE_DOMAIN = os.getenv('EMAIL_PAGE_DOMAIN', 'http://localhost:3000')
+EMAIL_MAIL_SUBJECT = os.getenv('EMAIL_MAIL_SUBJECT', 'Confirme seu email')
+EMAIL_MAIL_PLAIN = os.getenv('EMAIL_MAIL_PLAIN', 'mail_body.txt')
+EMAIL_MAIL_HTML = os.getenv('EMAIL_MAIL_HTML', 'mail_body.html')
+EMAIL_MAIL_TOKEN_LIFE = int(os.getenv('EMAIL_MAIL_TOKEN_LIFE', 3600))
+EMAIL_MAIL_PAGE_TEMPLATE = os.getenv('EMAIL_MAIL_PAGE_TEMPLATE', 'email_confirmation.html')

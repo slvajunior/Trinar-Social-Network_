@@ -7,6 +7,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
+from core.views import email_verification
 
 
 # Configuração do Swagger
@@ -23,8 +24,10 @@ schema_view = get_schema_view(
     permission_classes=(permissions.AllowAny,),
 )
 
+
 urlpatterns = [
-    path("api/", include("core.urls")),
+    path('confirm-email/<str:token>/', email_verification, name='confirm-email'),
+
     path("", home),
     path("admin/", admin.site.urls),
     # Inclui as rotas do app 'core'

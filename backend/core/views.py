@@ -14,16 +14,41 @@ from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
+from .utils import send_email_confirmation
+from django.http import HttpResponse
+from .utils import confirm_token
 import logging
+from django.http import HttpResponseRedirect
+
 
 logger = logging.getLogger(__name__)
+
+
+def email_verification(request, token):
+    # Valide o token e obtenha o email associado
+    email = confirm_token(token)
+    if email is None:
+        return HttpResponse("Token inválido ou expirado.", status=400)
+
+    # Busque o usuário pelo email
+    user = get_object_or_404(User, email=email)
+
+    # Ative a conta do usuário
+    user.is_active = True
+    user.save()
+
+    # Redirecione o usuário para uma página do frontend
+    frontend_url = "http://localhost:3000/email-confirmed"  # Substitua pela URL do frontend
+    print(f"Redirecionando para: {frontend_url}")
+    return HttpResponseRedirect(frontend_url)
 
 
 class RegisterView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            user = serializer.save()
+            send_email_confirmation(user)  # Envia o email de confirmação
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
