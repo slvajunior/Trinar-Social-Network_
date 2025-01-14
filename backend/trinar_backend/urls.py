@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from core.views import PostListCreateView, PostDetailView, RepostPostView, home
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from django.contrib.auth import views as auth_views
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
@@ -58,4 +59,14 @@ urlpatterns = [
     re_path(
         r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
     ),
+
+    path('api/password-reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
+    path('api/password-reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path(
+        'api/password-reset-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(),
+        name='password_reset_confirm'),
+    path(
+        'api/password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(),
+        name='password_reset_complete'),
+    
 ]

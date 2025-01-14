@@ -10,9 +10,23 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+}
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+
 
 LOGIN_REDIRECT_URL = 'two_factor:profile'  # Redireciona para a página de 2FA
 
@@ -22,10 +36,13 @@ LOGIN_URL = "/users/login/"
 
 LOGOUT_URL = "/users/logout/"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 EMAIL_PAGE_DOMAIN = "http://localhost:3000"  # ou o domínio do seu frontend
 
+CSRF_COOKIE_HTTPONLY = False
+
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
@@ -63,6 +80,7 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -78,6 +96,10 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Endereço do frontend
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
 ]
 
 ROOT_URLCONF = "trinar_backend.urls"
