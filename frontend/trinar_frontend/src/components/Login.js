@@ -1,4 +1,3 @@
-// src/components/Login.js
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
@@ -125,14 +124,20 @@ const Login = () => {
             {loading ? "Entrando..." : "Entrar"}
           </Button>
 
-          {/* Link para o Registro */}
+          {/* Links para Registro e Esqueceu a Conta */}
           <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-            Não tem uma conta?{" "}
             <Link
               to="/register"
-              style={{ textDecoration: "none", color: "primary.main" }}
+              style={{ textDecoration: "none", color: "#1976d2", marginRight: 15, }}
             >
-              Cadastre-se
+              Cadastre-se no Trinar
+            </Link>
+            {" "}
+            <Link
+              to="/request-password-reset"
+              style={{ textDecoration: "none", color: "#1976d2" }}
+            >
+              Esqueceu a conta?
             </Link>
           </Typography>
         </Box>
@@ -154,7 +159,7 @@ const Login = () => {
         <Typography variant="body2" color="textSecondary">
           © 2025 Trinar. Todos os direitos reservados.
         </Typography>
-        
+
         <Box sx={{ mt: 1 }}>
           <Link
             to="/register"

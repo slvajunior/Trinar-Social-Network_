@@ -1,44 +1,81 @@
-# backend/core/views.py
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import User
-from .models import Post, Repost, Like
-from .serializers import UserSerializer
-from .serializers import PostSerializer, RepostSerializer
+from .models import Post, Repost, Like  # Remova a importação de User aqui
+from .serializers import UserSerializer, PostSerializer, RepostSerializer, CommentSerializer
 from django.db.models import Q
-from .serializers import CommentSerializer
 from django.db import models
 from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
-from .utils import send_email_confirmation
-from django.http import HttpResponse
-from .utils import confirm_token
+from .utils import send_email_confirmation, confirm_token
 import logging
-from django.http import HttpResponseRedirect
-
+import json
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
+from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.core.mail import send_mail
 
 logger = logging.getLogger(__name__)
 
+User = get_user_model()
+
+
+@csrf_exempt
+def request_password_reset(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            email = data.get('email')
+            user = User.objects.filter(email=email).first()
+            if user:
+                token = default_token_generator.make_token(user)
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+                reset_url = f"http://localhost:3000/reset-password/{uid}/{token}/"
+                send_mail(
+                    'Redefinição de Senha',
+                    f'Clique no link para redefinir sua senha: {reset_url}',
+                    'noreply@trinar.com',
+                    [email],
+                    fail_silently=False,
+                )
+                return JsonResponse({'message': 'Email de redefinição enviado.'}, status=200)
+            else:
+                return JsonResponse({'error': 'Email não encontrado.'}, status=404)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Dados inválidos.'}, status=400)
+    return JsonResponse({'error': 'Método não permitido.'}, status=405)
+
+
+@api_view(['POST'])
+def reset_password(request, uid, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uid))
+        user = User.objects.get(pk=uid)
+        if default_token_generator.check_token(user, token):
+            new_password = request.data.get('new_password')
+            user.set_password(new_password)
+            user.save()
+            return Response({'message': 'Senha redefinida com sucesso.'}, status=status.HTTP_200_OK)
+        return Response({'error': 'Token inválido.'}, status=status.HTTP_400_BAD_REQUEST)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        return Response({'error': 'Link inválido.'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 def email_verification(request, token):
-    # Valide o token e obtenha o email associado
     email = confirm_token(token)
     if email is None:
         return HttpResponse("Token inválido ou expirado.", status=400)
 
-    # Busque o usuário pelo email
     user = get_object_or_404(User, email=email)
-
-    # Ative a conta do usuário
     user.is_active = True
     user.save()
 
-    # Redirecione o usuário para uma página do frontend
-    frontend_url = "http://localhost:3000/email-confirmed"  # Substitua pela URL do frontend
+    frontend_url = "http://localhost:3000/email-confirmed"
     print(f"Redirecionando para: {frontend_url}")
     return HttpResponseRedirect(frontend_url)
 
@@ -48,7 +85,7 @@ class RegisterView(APIView):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            send_email_confirmation(user)  # Envia o email de confirmação
+            send_email_confirmation(user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

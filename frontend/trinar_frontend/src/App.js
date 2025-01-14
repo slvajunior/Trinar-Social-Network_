@@ -6,6 +6,9 @@ import Login from "./components/Login";
 import Logout from "./components/Logout";
 import Home from "./components/Home";
 import EmailConfirmed from "./components/EmailConfirmed";
+import RequestPasswordReset from './components/RequestPasswordReset';
+import ResetPassword from './components/ResetPassword';
+
 
 function App() {
   return (
@@ -25,6 +28,12 @@ function App() {
 
         {/* Rota para Email-confirmed */}
         <Route path="/email-confirmed" element={<EmailConfirmed />} />
+
+        {/* Rota para request-password */}
+        <Route path="/request-password-reset" element={<RequestPasswordReset />} />
+
+        {/* Rota para reset-password */}
+        <Route path="/reset-password/:uid/:token" element={<ResetPassword />} />
       </Routes>
     </Router>
   );
