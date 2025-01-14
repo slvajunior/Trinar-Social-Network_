@@ -38,14 +38,18 @@ LOGOUT_URL = "/users/logout/"
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
-EMAIL_PAGE_DOMAIN = "http://localhost:3000"  # ou o domínio do seu frontend
+EMAIL_PAGE_DOMAIN = "http://localhost:3000"
 
 CSRF_COOKIE_HTTPONLY = False
 
 CORS_ALLOW_CREDENTIALS = True
 
-# Application definition
+CSRF_COOKIE_NAME = "csrftoken"
 
+CSRF_COOKIE_HTTPONLY = False
+
+
+# Application definition
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -53,7 +57,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework_simplejwt",  # meus apps a partir daqui
+    "rest_framework_simplejwt",  # Meus apps a partir daqui
+    "rest_framework",
     "django_email_verification",
     "drf_spectacular",
     "corsheaders",
@@ -215,7 +220,6 @@ def verified_callback(user):
 
 
 EMAIL_VERIFIED_CALLBACK = verified_callback
-
 
 # Configurações específicas para django_email_verification
 EMAIL_FROM_ADDRESS = os.getenv('EMAIL_FROM_ADDRESS', 'seuemail@gmail.com')

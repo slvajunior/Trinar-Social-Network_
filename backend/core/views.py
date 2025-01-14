@@ -1,17 +1,17 @@
+import json
+import logging
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Post, Repost, Like  # Remova a importação de User aqui
-from .serializers import UserSerializer, PostSerializer, RepostSerializer, CommentSerializer
+from .models import Post, Repost, Like
 from django.db.models import Q
 from django.db import models
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
+from .serializers import UserSerializer, PostSerializer, RepostSerializer, CommentSerializer
 from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
 from .utils import send_email_confirmation, confirm_token
-import logging
-import json
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from django.contrib.auth import get_user_model
