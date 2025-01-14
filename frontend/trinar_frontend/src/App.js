@@ -1,4 +1,5 @@
 // src/App.js
+
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Register from "./components/Register";
@@ -8,6 +9,7 @@ import Home from "./components/Home";
 import EmailConfirmed from "./components/EmailConfirmed";
 import RequestPasswordReset from './components/RequestPasswordReset';
 import ResetPassword from './components/ResetPassword';
+import RequestPasswordResetDone from "./components/RequestPasswordResetDone";
 
 
 function App() {
@@ -34,6 +36,12 @@ function App() {
 
         {/* Rota para reset-password */}
         <Route path="/reset-password/:uid/:token" element={<ResetPassword />} />
+
+        {/* Rota para RequestPasswordResetDone */}
+        <Route
+          path="/request-password-reset/done"
+          element={<RequestPasswordResetDone />}
+        />
       </Routes>
     </Router>
   );
