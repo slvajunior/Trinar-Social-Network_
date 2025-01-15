@@ -85,7 +85,10 @@ const PostField = () => {
           {media.map((file, index) => (
             <div key={index} className="media-item">
               <img src={file} alt={`Mídia ${index}`} />
-              <button onClick={() => removeMedia(index)} className="remove-media">
+              <button
+                onClick={() => removeMedia(index)}
+                className="remove-media"
+              >
                 <FontAwesomeIcon icon={faTimes} />
               </button>
             </div>
@@ -105,8 +108,13 @@ const PostField = () => {
               maxLength={500}
               autoFocus
             ></textarea>
+            {/* Contador de Caracteres no Modal */}
+            <div className="char-count">{content.length}/500</div>
             <div className="modal-actions">
-              <button onClick={() => setIsModalOpen(false)} className="cancel-button">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="cancel-button"
+              >
                 Cancelar
               </button>
               <button onClick={handlePost} className="post-button">
