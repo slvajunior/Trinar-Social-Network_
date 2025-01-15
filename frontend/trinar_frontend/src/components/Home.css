@@ -1,0 +1,19 @@
+/* src/components/Home.css */
+
+.home-content {
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  html {
+    background-color: #f2f4f7;
+  }
+  @media (max-width: 768px) {
+    .home-container h1 {
+      font-size: 2rem;
+    }
+  }
+  

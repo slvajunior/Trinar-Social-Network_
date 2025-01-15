@@ -1,22 +1,20 @@
-// src/components/Home.js
-import React, { useState } from "react";
+//src/components/Home.js
+
+import React from "react";
 import Sidebar from "./Sidebar";
 import NavBar from "./NavBar";
+import PostField from "./PostField";
+import Timeline from "./Timeline";
+import "./Home.css";
 
 const Home = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
   return (
     <div>
-      <NavBar toggleSidebar={toggleSidebar} />
-      <Sidebar isOpen={isSidebarOpen} />
-      <div style={{ marginLeft: isSidebarOpen ? '0' : '260px', padding: '20px', marginTop: '80px' }}>
-        <h1>Bem-vindo ao Trinar!</h1>
-        <p>Conteúdo da Home</p>
+      <NavBar />
+      <Sidebar />
+      <div className="home-content">
+        <PostField />
+        <Timeline />
       </div>
     </div>
   );

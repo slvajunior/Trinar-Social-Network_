@@ -1,0 +1,22 @@
+.timeline-container {
+    width: 100%;
+    max-width: 666px;
+    margin: 0 auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    margin-top:-40px;
+    gap: 15px;
+  }
+  
+  .post {
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #ffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    line-height: 1.6;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+  
