@@ -6,13 +6,13 @@
     right: 0;
     z-index: 1000;
     background-color: #333;
-    padding: 10px 20px;
+    padding: 5px 20px;
     color: #f2f4f7;
     display: flex;
     justify-content: space-between;
     align-items: center;
     background-color: #f2f4f7;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
   
   .navbar-logo {
@@ -29,16 +29,27 @@
   }
   
   .search-input {
-    padding: 5px 10px;
+    padding: 7px 20px; /* Mais espaço interno */
     margin-right: 20px;
-    border: none;
-    border-radius: 5px;
+    border: 2px solid #e0e0e0; /* Borda sutil */
+    border-radius: 25px; /* Bordas mais arredondadas */
     outline: none;
-    font-size: 14px;
+    font-size: 16px; /* Tamanho de fonte maior */
+    color: #333; /* Cor do texto */
+    background-color: #f9f9f9; /* Fundo claro */
+    transition: all 0.3s ease; /* Transição suave */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+  }
+  
+  .search-input:focus {
+    border-color: #6200ee; /* Cor da borda ao focar (roxo moderno) */
+    background-color: #fff; /* Fundo branco ao focar */
+    box-shadow: 0 4px 10px rgba(98, 0, 238, 0.2); /* Sombra maior ao focar */
   }
   
   .search-input::placeholder {
-    color: #aaa;
+    color: #aaa; /* Cor do placeholder */
+    font-style: italic; /* Estilo itálico para o placeholder */
   }
   
   .user-photo {
