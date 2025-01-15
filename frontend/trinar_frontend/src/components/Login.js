@@ -1,3 +1,5 @@
+// frontend/trinar_frontend/src/components/Login.js
+
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
@@ -128,17 +130,20 @@ const Login = () => {
           <Typography variant="body2" align="center" sx={{ mt: 2 }}>
             <Link
               to="/register"
-              style={{ textDecoration: "none", color: "#1976d2", marginRight: 15, }}
+              style={{
+                textDecoration: "none",
+                color: "#1976d2",
+                marginRight: 15,
+              }}
             >
               Cadastre-se no Trinar
-            </Link>
-            {" "}
-            <Link
-              to="/request-password-reset"
+            </Link>{" "}
+            <a
+              href="http://localhost:8000/api/password-reset/"
               style={{ textDecoration: "none", color: "#1976d2" }}
             >
               Esqueceu a conta?
-            </Link>
+            </a>
           </Typography>
         </Box>
       </Box>

@@ -19,6 +19,13 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import send_mail
+from django.views.decorators.http import require_POST
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
+from django.middleware.csrf import get_token
+from core.utils import decode_confirmation_token
+
 
 logger = logging.getLogger(__name__)
 
@@ -51,19 +58,40 @@ def request_password_reset(request):
     return JsonResponse({'error': 'Método não permitido.'}, status=405)
 
 
-@api_view(['POST'])
-def reset_password(request, uid, token):
+@ensure_csrf_cookie
+@require_POST
+def reset_password_confirm(request, uidb64, token):
     try:
-        uid = force_str(urlsafe_base64_decode(uid))
-        user = User.objects.get(pk=uid)
+        # Decodifica o UID
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = get_user_model().objects.get(pk=uid)  # Obtém o usuário com base no UID
+
+        # Verifica se o token é válido
         if default_token_generator.check_token(user, token):
-            new_password = request.data.get('new_password')
+            # Decodifica o corpo da requisição JSON
+            data = json.loads(request.body)
+            new_password = data.get('new_password')
+
+            # Valida a nova senha
+            if not new_password or len(new_password) < 8:
+                return JsonResponse({'error': 'A senha deve ter pelo menos 8 caracteres.'}, status=400)
+
+            # Redefine a senha
             user.set_password(new_password)
             user.save()
-            return Response({'message': 'Senha redefinida com sucesso.'}, status=status.HTTP_200_OK)
-        return Response({'error': 'Token inválido.'}, status=status.HTTP_400_BAD_REQUEST)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        return Response({'error': 'Link inválido.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Garante que o CSRF está configurado corretamente
+            csrf_token = get_token(request)
+
+            logger.info(f"Senha redefinida com sucesso para o usuário: {user.email}")
+
+            return JsonResponse({'message': 'Senha redefinida com sucesso.'}, status=200)
+        else:
+            logger.warning(f"Token inválido para o usuário: {user.email}")
+            return JsonResponse({'error': 'Token inválido.'}, status=400)
+    except (TypeError, ValueError, OverflowError, user.DoesNotExist) as e:
+        logger.error(f"Erro ao redefinir a senha: {str(e)}")
+        return JsonResponse({'error': 'Link inválido ou usuário não encontrado.'}, status=400)
 
 
 def email_verification(request, token):
@@ -357,3 +385,10 @@ class UserSearchView(APIView):
 # View simples para a URL raiz
 def home(request):
     return JsonResponse({"message": "Bem-vindo à API Trinar!"})
+
+
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import CustomTokenObtainPairSerializer
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer

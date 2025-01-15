@@ -2,6 +2,9 @@
 
 from rest_framework import serializers
 from .models import Post, Comment, User, Repost
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework.exceptions import AuthenticationFailed
+from django.contrib.auth import authenticate
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -113,3 +116,26 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
     def get_following_count(self, obj):
         return obj.following.count()
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Adicione campos extras ao token se necessário
+        token['email'] = user.email
+        return token
+
+    def validate(self, attrs):
+        credentials = {
+            'email': attrs.get('email'),
+            'password': attrs.get('password')
+        }
+
+        user = authenticate(**credentials)
+        if user is None:
+            raise AuthenticationFailed('Nenhum usuário encontrado com essas credenciais.', 'no_active_account')
+
+        data = super().validate(attrs)
+        return data

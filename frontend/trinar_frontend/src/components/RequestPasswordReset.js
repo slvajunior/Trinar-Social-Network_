@@ -1,6 +1,8 @@
+// frontend/trinar_fontend/src/components/RequestPasswordReset.js
+
 import React, { useState } from "react";
 import axios from "axios";
-import Cookies from "js-cookie"; // Importe a biblioteca js-cookie
+import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 
 const RequestPasswordReset = () => {
@@ -11,19 +13,24 @@ const RequestPasswordReset = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     // Validação básica do email
     if (!email || !email.includes("@")) {
       setError("Por favor, insira um email válido.");
       return;
     }
-
+  
     try {
       // Obtenha o token CSRF do cookie
       const csrfToken = Cookies.get("csrftoken");
-
+  
+      console.log("Enviando requisição para redefinição de senha...");
+      console.log("Email:", email);
+      console.log("CSRF Token:", csrfToken);
+  
       const response = await axios.post(
         "http://localhost:8000/api/password-reset/",
+
         { email },
         {
           headers: {
@@ -33,7 +40,9 @@ const RequestPasswordReset = () => {
           withCredentials: true, // Envie cookies junto com a requisição
         }
       );
-
+  
+      console.log("Resposta do servidor:", response.data);
+  
       if (response.status === 200) {
         setMessage("Email enviado com sucesso! Verifique sua caixa de entrada.");
         setError("");

@@ -8,7 +8,7 @@ from django.contrib.auth import views as auth_views
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
-from core.views import email_verification
+from core.views import email_verification, reset_password_confirm
 
 
 # Configuração do Swagger
@@ -59,7 +59,6 @@ urlpatterns = [
     re_path(
         r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
     ),
-
     path('api/password-reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
     path('api/password-reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
     path(
@@ -69,4 +68,5 @@ urlpatterns = [
         'api/password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(),
         name='password_reset_complete'),
     path('api/login/', auth_views.LoginView.as_view(), name='login'),
+    path('api/password-reset-confirm/<uidb64>/<token>/', reset_password_confirm, name='password_reset_confirm'),
 ]

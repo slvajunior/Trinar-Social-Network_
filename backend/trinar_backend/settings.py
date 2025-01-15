@@ -7,8 +7,10 @@ import pymysql
 pymysql.install_as_MySQLdb()
 load_dotenv()
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 LOGGING = {
     'version': 1,
@@ -28,28 +30,32 @@ LOGGING = {
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 
-LOGIN_REDIRECT_URL = 'two_factor:profile'  # Redireciona para a página de 2FA
-
+LOGIN_REDIRECT_URL = 'two_factor:profile'
 LOGOUT_REDIRECT_URL = "/users/login/"
-
 LOGIN_URL = "/users/login/"
-
 LOGOUT_URL = "/users/logout/"
 
+# Hosts permitidos
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
+# Configuração do email (para links de redefinição de senha)
 EMAIL_PAGE_DOMAIN = "http://localhost:3000"
 
+# Configurações de CSRF
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_NAME = "csrftoken"
 CSRF_COOKIE_HTTPONLY = False
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
+CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"
 
+# CORS (para permitir que o frontend acesse a API)
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
+
+# Para permitir que cookies sejam enviados entre frontend e backend
 CORS_ALLOW_CREDENTIALS = True
 
-CSRF_COOKIE_NAME = "csrftoken"
 
-CSRF_COOKIE_HTTPONLY = False
-
-
-# Application definition
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -69,6 +75,7 @@ INSTALLED_APPS = [
     "core",
 ]
 
+
 AUTH_USER_MODEL = 'core.User'
 
 REST_FRAMEWORK = {
@@ -85,7 +92,6 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
-
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -97,7 +103,9 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Endereço do frontend
@@ -162,6 +170,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        'OPTIONS': {'min_length': 8},
     },
     {
         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
@@ -211,6 +220,9 @@ EMAIL_PORT = int(os.getenv("EMAIL_PORT"))
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS") == "True"
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+SITE_DOMAIN = os.getenv("SITE_DOMAIN")
+SITE_NAME = os.getenv("SITE_NAME")
 
 
 # Configurações do django-email-verification

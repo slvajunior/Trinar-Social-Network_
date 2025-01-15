@@ -1,14 +1,26 @@
-<!-- backend/templates/mail_body.html -->
- 
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Confirmação de E-mail</title>
 </head>
-<body>
-    <h1>Olá, {{ user.first_name }}!</h1>
-    <p>Clique no link abaixo para confirmar o seu registro no Trinar:</p>
-    <p><a href="{{ link }}">Confirmar E-mail</a></p>
-    <p>Se você não solicitou esta confirmação, ignore este e-mail.</p>
+<body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f1f1f1; color: #333;">
+    <div style="width: 100%; max-width: 600px; margin: 20px auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);">
+        <div style="background-color: #1976d2; color: #ffffff; text-align: center; padding: 18px;">
+            <h1 style="font-weight: bold; font-size: 24px; margin: 0;">Trinar</h1>
+            <h2 style="font-weight: 600; font-size: 20px; margin: 0;">Confirmação de E-mail</h2>
+        </div>
+        <div style="padding: 20px; text-align: center;">
+            <p style="margin: 0 0 10px;">Olá <strong>{{ user.first_name }}</strong>,</p>
+            <p style="margin: 0 0 10px;">Obrigado por se registrar no <strong>{{ site_name }}</strong>!</p>
+            <p style="margin: 0 0 20px;">Por favor, clique no botão abaixo para confirmar seu e-mail:</p>
+            <a href="{{ link }}" style="display: inline-block; padding: 10px 20px; background-color: #1976d2; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">Confirmar E-mail</a>
+        </div>
+        <p style="text-align: center; font-size: 13px; color: #666666; padding: 10px;">Se você não se registrou, ignore este e-mail.</p>
+        <div style="background-color: #f4f4f4; text-align: center; padding: 10px; font-size: 12px; color: #666666;">
+            <p style="margin: 0;">© Copyright {{ site_name }}. Todos os direitos reservados</p>
+        </div>
+    </div>
 </body>
 </html>

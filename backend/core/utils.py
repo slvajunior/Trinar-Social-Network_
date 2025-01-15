@@ -1,18 +1,17 @@
-from itsdangerous import URLSafeTimedSerializer
+from itsdangerous import URLSafeTimedSerializer, BadData
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from django.utils.html import strip_tags
 from dotenv import load_dotenv
+from django.conf import settings
 import os
 
 load_dotenv()
 
-# Defina uma chave secreta para gerar tokens
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-salt = "email-confirmation"  # Um salt para aumentar a segurança
+salt = "email-confirmation"
 
-# Crie um serializer para gerar e validar tokens
 serializer = URLSafeTimedSerializer(SECRET_KEY, salt=salt)
 
 
@@ -38,27 +37,32 @@ def confirm_token(token, max_age=3600):
 
 
 def send_email_confirmation(user):
-    # Gere o token de confirmação
-    token = generate_confirmation_token(user.email)  # Gera o token com base no email
+    token = generate_confirmation_token(user.email)
 
-    # Defina o link de confirmação manualmente (apenas o token)
-    domain = 'http://127.0.0.1:8000'  # Use o domínio do backend
-    confirmation_link = f"{domain}/confirm-email/{token}/"  # Apenas o token na URL
+    domain = 'http://127.0.0.1:8000'
+    confirmation_link = f"{domain}/confirm-email/{token}/"
 
-    print(f"Link de confirmação: {confirmation_link}")  # Adicione este log
+    print(f"Link de confirmação: {confirmation_link}")
 
-    # Renderize o template de email
     context = {
         'user': user,
-        'link': confirmation_link,  # Passa o link correto para o template
+        'link': confirmation_link,
+        'site_name': 'Trinar',
     }
     email_body = render_to_string('mail_body.html', context)
 
-    # Envie o email
     send_mail(
         subject='Confirme seu email',
-        message=strip_tags(email_body),  # Versão em texto simples
+        message=strip_tags(email_body),
         from_email='Trinar <juniorazevedosilva43@gmail.com>',
         recipient_list=[user.email],
-        html_message=email_body,  # Versão em HTML
+        html_message=email_body,
     )
+
+
+def decode_confirmation_token(token, max_age=3600):
+    serializer = URLSafeTimedSerializer(settings.SECRET_KEY)
+    try:
+        return serializer.loads(token, salt='email-confirmation-salt', max_age=max_age)
+    except BadData:
+        return None

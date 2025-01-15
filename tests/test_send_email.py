@@ -4,6 +4,6 @@ send_mail(
     'Assunto do Email',
     'Aqui vai o corpo do email. Isso mostra que o envio de Email está ok.',
     'your-email@gmail.com',
-    ['johnf.foto@gmail.com'],
+    ['svajunior8@gmail.com'],
     fail_silently=False,
 )
