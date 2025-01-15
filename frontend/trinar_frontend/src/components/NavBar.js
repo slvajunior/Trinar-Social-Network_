@@ -13,7 +13,7 @@ const NavBar = () => {
           className="search-input"
           placeholder="Pesquisar..."
         />
-        <div className="user-photo">
+        <div className="user-photo-nav">
           <FaUserCircle size={45} />
         </div>
       </div>

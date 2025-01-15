@@ -29,7 +29,7 @@
   }
   
   .search-input {
-    padding: 7px 20px; /* Mais espaço interno */
+    padding: 12px 20px; /* Mais espaço interno */
     margin-right: 20px;
     border: 2px solid #e0e0e0; /* Borda sutil */
     border-radius: 25px; /* Bordas mais arredondadas */
@@ -52,11 +52,11 @@
     font-style: italic; /* Estilo itálico para o placeholder */
   }
   
-  .user-photo {
+  .user-photo-nav {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #444;
+    background-color: #6200ee;
     border-radius: 50%;
     padding: 5px;
     width: 30px;
