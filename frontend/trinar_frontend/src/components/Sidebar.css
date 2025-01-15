@@ -1,75 +1,78 @@
 /* src/components/Sidebar.css */
 
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+:root {
+  --color-secondary: #ffffff;
+  --color-primary: #f2f4f7;
+  --colo-tertiary: #6200ee;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 
 /* Sidebar */
 .sidebar {
-    position: fixed;
-    top: 80px; /* Ajusta a Sidebar para que ela fique abaixo da NavBar */
-    left: 0;
-    width: 260px;
-    height: 100%;
-    background-color: #f2f4f7; /* Fundo branco suave */
-    color: #333;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.3s ease-in-out; /* Adiciona uma transição suave para o menu deslizante */
+  position: fixed;
+  top: 80px; /* Ajusta a Sidebar para que ela fique abaixo da NavBar */
+  left: 0;
+  width: 260px;
+  height: 100%;
+  color: #333;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease-in-out; /* Adiciona uma transição suave para o menu deslizante */
+  background-color: var(--color-primary);
+}
 
-  }
-  
-  .sidebar-links {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .sidebar-links li {
-    font-size: 18px;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .sidebar-links li:hover {
-    background-color: #ddd;
-  }
-  
-  .sidebar-links li svg {
-    margin-right: 10px;
-    font-size: 20px;
-    color: #555;
+.sidebar-links {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
 
+.sidebar-links li {
+  font-size: 18px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.sidebar-links li:hover {
+  background-color: #ddd;
+}
+
+.sidebar-links li svg {
+  margin-right: 10px;
+  font-size: 20px;
+  color: #555;
+}
+
+.sidebar-links li:hover svg {
+  color: #000;
+}
+
+/* Media Queries para Responsividade */
+@media (max-width: 768px) {
+  /* Quando a tela for menor que 768px, a sidebar será escondida e terá um menu deslizante */
+  .sidebar {
+    transform: translateX(-100%); /* Sidebar fica escondida */
   }
-  
-  .sidebar-links li:hover svg {
-    color: #000;
+
+  .sidebar.open {
+    transform: translateX(0); /* Sidebar desliza para a direita */
   }
-  
-  /* Media Queries para Responsividade */
-  @media (max-width: 768px) {
-    /* Quando a tela for menor que 768px, a sidebar será escondida e terá um menu deslizante */
-    .sidebar {
-      transform: translateX(-100%); /* Sidebar fica escondida */
-    }
-  
-    .sidebar.open {
-      transform: translateX(0); /* Sidebar desliza para a direita */
-    }
-  
-    /* Ajusta a margem do conteúdo principal para o caso de telas pequenas */
-    .content {
-      margin-left: 0;
-    }
+
+  /* Ajusta a margem do conteúdo principal para o caso de telas pequenas */
+  .content {
+    margin-left: 0;
   }
-  
-  /* Para telas grandes, ajusta o conteúdo */
-  @media (min-width: 769px) {
-    .content {
-      margin-left: 260px; /* Ajusta a margem para o conteúdo não ficar sobre a sidebar */
-    }
+}
+
+/* Para telas grandes, ajusta o conteúdo */
+@media (min-width: 769px) {
+  .content {
+    margin-left: 260px; /* Ajusta a margem para o conteúdo não ficar sobre a sidebar */
   }
-  
+}

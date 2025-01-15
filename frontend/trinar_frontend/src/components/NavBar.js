@@ -1,4 +1,5 @@
 // src/components/NavBar.js
+
 import React from "react";
 import { FaUserCircle } from "react-icons/fa"; // Importe o ícone correto
 import "./NavBar.css";

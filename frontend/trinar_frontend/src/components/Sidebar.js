@@ -1,4 +1,5 @@
 // src/components/Sidebar.js
+
 import React from "react";
 import { FaHome, FaBell, FaEnvelope, FaUser, FaCog, FaShieldAlt } from "react-icons/fa"; // Importando ícones
 import "./Sidebar.css";
@@ -13,6 +14,8 @@ const Sidebar = () => {
         <li><FaUser /> Profile</li>
         <li><FaCog /> Settings</li>
         <li><FaShieldAlt /> Privacy</li>
+
+        <hr className="divider" />
       </ul>
     </div>
   );

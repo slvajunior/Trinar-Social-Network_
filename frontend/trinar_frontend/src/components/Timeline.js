@@ -1,4 +1,5 @@
 // src/components/Timeline.js
+
 import React from "react";
 import { FaThumbsUp, FaRetweet, FaComment } from "react-icons/fa"; // Importe os ícones
 import "./Timeline.css";
@@ -9,7 +10,7 @@ const Timeline = () => {
       <div className="post">
         <p>
           Eu não sei vocês mas sei la eu.
-          <hr />
+          <hr className="divider" />
           <ul className="lista-icones">
             <li>
               <FaThumbsUp /> {/* Ícone de like */}
@@ -40,7 +41,7 @@ const Timeline = () => {
           <br />
           <br />
           Paulo Leminski
-          <hr />
+          <hr className="divider" />
           <ul className="lista-icones">
             <li>
               <FaThumbsUp /> {/* Ícone de like */}
