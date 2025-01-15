@@ -1,42 +1,22 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+// src/components/Home.js
+import React, { useState } from "react";
+import Sidebar from "./Sidebar";
+import NavBar from "./NavBar";
 
 const Home = () => {
-  // Estado para armazenar os posts (Trinados)
-  const [posts, setPosts] = useState([]);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Simulação de fetch dos posts
-  useEffect(() => {
-    // Aqui você pode chamar a API para buscar os posts reais
-    const fetchPosts = async () => {
-      // Exemplo de posts simulados
-      const postsData = [
-        { id: 1, user: "João", content: "Meu primeiro Trinado!", date: "2025-01-15" },
-        { id: 2, user: "Maria", content: "Explorando o Trinar!", date: "2025-01-14" },
-        // Mais posts aqui
-      ];
-      setPosts(postsData);
-    };
-
-    fetchPosts();
-  }, []);
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
   return (
     <div>
-      <h1>Bem-vindo ao Trinar!</h1>
-      <nav>
-        <Link to="/register">Registrar</Link> | <Link to="/login">Entrar</Link> |{" "}
-        <Link to="/logout">Sair</Link>
-      </nav>
-
-      <div className="timeline">
-        {posts.map((post) => (
-          <div key={post.id} className="post">
-            <h3>{post.user}</h3>
-            <p>{post.content}</p>
-            <small>{post.date}</small>
-          </div>
-        ))}
+      <NavBar toggleSidebar={toggleSidebar} />
+      <Sidebar isOpen={isSidebarOpen} />
+      <div style={{ marginLeft: isSidebarOpen ? '0' : '260px', padding: '20px', marginTop: '80px' }}>
+        <h1>Bem-vindo ao Trinar!</h1>
+        <p>Conteúdo da Home</p>
       </div>
     </div>
   );
