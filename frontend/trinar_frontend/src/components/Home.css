@@ -6,6 +6,10 @@
   --color-secondary: #ffffff;
   --color-primary: #f2f4f7;
   --color-tertiary: #6200ee;
+
+  --font-logo: 'Poppins', Arial, Helvetica, sans-serif;
+  --font-primary: 'Helvetica', Arial, sans-serif;
+  --font-secondary: 'Montserrat', Arial, Helvetica, sans-serif;
 }
 
 .home-content {
@@ -17,10 +21,7 @@
   align-items: center;
 }
 
-html,
-div {
-  background-color: var(--color-primary);
-}
+
 
 @media (max-width: 768px) {
   .home-container h1 {

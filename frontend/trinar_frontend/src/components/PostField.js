@@ -2,7 +2,8 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage, faVideo, faTimes } from "@fortawesome/free-solid-svg-icons";
-import { FaUserCircle } from "react-icons/fa"; // Importação do ícone
+import { FaRegUserCircle, FaUserCircle } from "react-icons/fa"; // Importação do ícone
+
 import "./PostField.css";
 
 const PostField = () => {
@@ -21,6 +22,11 @@ const PostField = () => {
   };
 
   const handlePost = () => {
+    if (content.trim() === "") {
+      alert("Por favor, adicione um texto ao seu post!");
+      return;
+    }
+
     // Lógica para postar o conteúdo
     console.log("Postando:", { content, media });
     alert("Post criado com sucesso!");
@@ -29,16 +35,23 @@ const PostField = () => {
     setIsModalOpen(false); // Fechar o modal após postar
   };
 
+  const handleClickOutside = (e) => {
+    if (e.target.classList.contains("modal-overlay")) {
+      setIsModalOpen(false); // Fecha o modal quando clica fora dele
+    }
+  };
+
   return (
     <div className="post-field-container">
       {/* Foto do Usuário e Campo de Texto */}
       <div className="user-input-container">
         <div className="user-photo">
-          <FaUserCircle size={45} color="#6200ee" /> {/* Ícone do usuário */}
+          <FaUserCircle size={45} /> {/* Ícone do usuário */}
         </div>
         <textarea
           className="post-input"
-          placeholder="O que você quer compartilhar?"
+          placeholder="What is happening?
+"
           value={content}
           onFocus={() => setIsModalOpen(true)} // Abrir modal ao focar
           readOnly // Impede a digitação direta no textarea
@@ -98,7 +111,7 @@ const PostField = () => {
 
       {/* Modal para Texto */}
       {isModalOpen && (
-        <div className="modal-overlay">
+        <div className="modal-overlay" onClick={handleClickOutside}>
           <div className="modal-content">
             <textarea
               className="modal-textarea"
