@@ -1,13 +1,12 @@
 /* src/components/PostField.css */
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 
 :root {
   --color-secondary: #ffffff;
   --color-primary: #f2f4f7;
-  --colo-tertiary: #6200ee;
+  --color-tertiary: #6200ee;
 }
-
-@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 
 /* Container Principal */
 .post-field-container {
@@ -62,7 +61,7 @@
 }
 
 .post-input:focus {
-  border-color: var(--colo-tertiary);
+  border-color: var(--color-tertiary);
   box-shadow: 0 4px 10px rgba(98, 0, 238, 0.2);
 }
 
@@ -103,7 +102,7 @@
   align-items: center;
   gap: 8px;
   padding: 12px 20px;
-  background-color: var(--colo-tertiary);
+  background-color: var(--color-tertiary);
   color: #ffffff;
   border: none;
   border-radius: 20px;
@@ -229,7 +228,7 @@
 
 .post-button {
   padding: 10px 28px;
-  background-color: var(--colo-tertiary);
+  background-color: var(--color-tertiary);
   color: #fff;
   border: none;
   border-radius: 25px;

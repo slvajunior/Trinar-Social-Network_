@@ -1,19 +1,23 @@
 /* src/components/Timeline.js */
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 
 :root {
   --color-secondary: #ffffff;
   --color-primary: #f2f4f7;
-  --colo-tertiary: #6200ee;
-}
+  --color-tertiary: #6200ee;
 
-@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+  --font-logo: 'Poppins', Arial, Helvetica, sans-serif;
+  --font-primary: 'Helvetica', Arial, sans-serif;
+  --font-secondary: 'Montserrat', Arial, Helvetica, sans-serif;
+}
 
 .post {
   padding: 15px;
   border-radius: 8px;
   border: 1px solid var(--color-secondary);
   background-color: var(--color-secondary);
+  font-family: var(--font-primary);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.09);
   line-height: 1.6;

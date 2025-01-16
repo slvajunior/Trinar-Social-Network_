@@ -1,13 +1,16 @@
 /* src/components/Sidebar.css */
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 
 :root {
   --color-secondary: #ffffff;
   --color-primary: #f2f4f7;
-  --colo-tertiary: #6200ee;
-}
+  --color-tertiary: #6200ee;
 
-@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+  --font-logo: 'Poppins', Arial, Helvetica, sans-serif;
+  --font-primary: 'Helvetica', Arial, sans-serif;
+  --font-secondary: 'Montserrat', Arial, Helvetica, sans-serif;
+}
 
 /* Sidebar */
 .sidebar {
@@ -22,6 +25,7 @@
   flex-direction: column;
   transition: transform 0.3s ease-in-out; /* Adiciona uma transição suave para o menu deslizante */
   background-color: var(--color-primary);
+  font-family: var(--font-primary);
 }
 
 .sidebar-links {
