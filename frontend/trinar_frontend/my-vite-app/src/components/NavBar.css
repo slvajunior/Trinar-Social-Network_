@@ -112,8 +112,130 @@
   height: 40px;
   border-radius: 100%;
   margin-top: 2px;
+  cursor: pointer;
   border: 1px solid var(--color-primary);
   box-shadow: inset 0 1px 1px 0 rgba(0, 0, 0, 0.1);
+}
+
+.user-modal {
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  background-color: white;
+  width: 351px;
+  height: 522;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.2);
+  color: #333;
+  display: flex;
+  flex-direction: column; /* Para empilhar os itens verticalmente */
+  gap: 15px; /* Controla o espaçamento entre os itens de forma fácil */
+  overflow: visible; /* Permite que a sombra de um filho transborde */
+  justify-content: center;
+}
+
+.user-modal-item {
+  display: flex;
+  align-items: center;  /* Centraliza verticalmente */
+  padding: 1px 0;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  min-height: 36px;
+  justify-content: flex-start; /* Alinha o conteúdo à esquerda */
+}
+
+.icon-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #d4d6d8;
+  border-radius: 50%;
+  margin-right: 10px; /* Espaçamento entre o círculo e o texto */
+}
+
+.user-profile {
+  position: relative; /* Garante o posicionamento correto */
+  z-index: 10;
+  width: 321px;
+  height: 165px;
+  background-color: var(--color-secondary); /* Adicione um fundo claro para que a sombra fique visível */
+  align-items: center;
+  padding: 12px;
+  justify-content: center;
+  border-radius: 8px;
+  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.2);
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  height: 90px;
+}
+
+.profile-name {
+  margin-left: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333; /* Cor do texto */
+}
+
+.modal-divider {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 10px 0;
+}
+
+.edit-profile-btn {
+  width: 297px;
+  padding: 8px 0;
+  background-color: #e6e8ea;
+  color: #333;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  align-items: center;
+}
+
+.edit-profile-btn:hover {
+  background-color: #d4d6d8; /* Cor ao passar o mouse */
+}
+
+.user-modal-item span {
+  margin-left: 10px;
+  font-size: 14px;
+}
+
+.user-modal-item:hover {
+  background-color: #e6e8ea; /* Somente cor de fundo muda */
+  border-radius: 8px;
+}
+
+.user-modal-item .text {
+  /* Texto alinhado à esquerda, próximo do ícone */
+  display: inline;  /* Tornando o texto inline */
+}
+
+.user-modal-item .icon {
+  margin-right: 12px;  /* Espaço entre o ícone e o texto */
+}
+
+.user-modal-item:last-child {
+  margin-bottom: 0;
+}
+
+.modal-footer {
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+  text-align: center;
+  font-size: 12px;
+  color: #777;
 }
 
 @keyframes fadeIn {

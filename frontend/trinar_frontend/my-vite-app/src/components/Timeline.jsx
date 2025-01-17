@@ -1,5 +1,4 @@
 // src/components/Timeline.js
-
 import React from "react";
 import { FaThumbsUp, FaRetweet, FaComment } from "react-icons/fa"; // Importe os ícones
 import "./Timeline.css";
@@ -7,9 +6,12 @@ import "./Timeline.css";
 const Timeline = () => {
   return (
     <div className="timeline-container">
+      {/* Primeiro post */}
       <div className="post">
-        <p>
-          Eu não sei vocês mas sei la eu.
+        <div className="post-content">
+          <p>
+            Eu não sei vocês mas sei la eu.
+          </p>
           <hr className="divider" />
           <ul className="lista-icones">
             <li>
@@ -25,22 +27,26 @@ const Timeline = () => {
               <span>Comments</span>
             </li>
           </ul>
-        </p>
+        </div>
       </div>
+
+      {/* Segundo post */}
       <div className="post">
-        <p>
-          isso de querer
-          <br />
-          ser exatamente aquilo
-          <br />
-          que a gente é
-          <br />
-          ainda vai
-          <br />
-          nos levar além
-          <br />
-          <br />
-          Paulo Leminski
+        <div className="post-content">
+          <p>
+            isso de querer
+            <br />
+            ser exatamente aquilo
+            <br />
+            que a gente é
+            <br />
+            ainda vai
+            <br />
+            nos levar além
+            <br />
+            <br />
+            Paulo Leminski
+          </p>
           <hr className="divider" />
           <ul className="lista-icones">
             <li>
@@ -56,7 +62,7 @@ const Timeline = () => {
               <span>Comments</span>
             </li>
           </ul>
-        </p>
+        </div>
       </div>
     </div>
   );

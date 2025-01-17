@@ -63,7 +63,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework_simplejwt",  # Meus apps a partir daqui
+    "rest_framework_simplejwt.token_blacklist",
     "rest_framework",
     "django_email_verification",
     "drf_spectacular",
@@ -72,11 +72,12 @@ INSTALLED_APPS = [
     "django_otp",
     "django_otp.plugins.otp_totp",
     "two_factor",
+    "users",
     "core",
 ]
 
-
 AUTH_USER_MODEL = 'core.User'
+AUTH_USER_MODEL = 'users.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -88,8 +89,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
 }
 
 MIDDLEWARE = [

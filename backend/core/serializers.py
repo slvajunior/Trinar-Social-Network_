@@ -1,10 +1,15 @@
 # backend/core/serializers.py
-
 from rest_framework import serializers
 from .models import Post, Comment, User, Repost
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth import authenticate
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'birth_date', 'followers_count', 'following_count']
 
 
 class UserSerializer(serializers.ModelSerializer):

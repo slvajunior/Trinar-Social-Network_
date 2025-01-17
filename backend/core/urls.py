@@ -3,6 +3,7 @@
 from django.contrib.auth import views as auth_views
 from .views import RegisterView, email_verification
 from django.urls import path
+from .views import get_current_user, UserProfileView
 
 from .views import (
     UserListCreateView,
@@ -21,6 +22,8 @@ from .views import (
 app_name = "core"
 
 urlpatterns = [
+    path('api/auth/user/', UserProfileView.as_view(), name='user-profile'),
+    path('api/users/me/', get_current_user, name='get_current_user'),
     path('confirm-email/<str:token>/', email_verification, name='confirm-email'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),

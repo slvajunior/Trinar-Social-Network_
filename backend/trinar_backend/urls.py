@@ -9,6 +9,9 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
 from core.views import email_verification, reset_password_confirm
+from rest_framework.authtoken.views import obtain_auth_token
+from core import views
+from core.views import UserProfileView
 
 
 # Configuração do Swagger
@@ -27,8 +30,13 @@ schema_view = get_schema_view(
 
 
 urlpatterns = [
-    path('confirm-email/<str:token>/', email_verification, name='confirm-email'),
+    path('api/auth/', include('users.urls')),
+    path('api/auth/user/', UserProfileView.as_view(), name='user-profile'),
+    path('api/users/me/', views.get_current_user, name='get_current_user'),
+    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 
+    path('confirm-email/<str:token>/', email_verification, name='confirm-email'),
     path("", home),
     path("admin/", admin.site.urls),
     # Inclui as rotas do app 'core'
@@ -44,8 +52,6 @@ urlpatterns = [
     path(
         "posts/<int:post_id>/repost/", RepostPostView.as_view(), name="repost-post"
     ),  # Endpoint para repostar
-    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
         schema_view.without_ui(cache_timeout=0),
@@ -68,5 +74,6 @@ urlpatterns = [
         'api/password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(),
         name='password_reset_complete'),
     path('api/login/', auth_views.LoginView.as_view(), name='login'),
+    path('api/login/', obtain_auth_token, name='api_login'),
     path('api/password-reset-confirm/<uidb64>/<token>/', reset_password_confirm, name='password_reset_confirm'),
 ]

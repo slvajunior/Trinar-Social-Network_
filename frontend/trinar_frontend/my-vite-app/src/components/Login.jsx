@@ -1,5 +1,3 @@
-// frontend/trinar_frontend/src/components/Login.js
-
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
@@ -37,12 +35,17 @@ const Login = () => {
         username: formData.email, // Usar o email como username
         password: formData.password,
       });
-      localStorage.setItem("accessToken", response.data.access); // Armazena o token JWT
-      localStorage.setItem("refreshToken", response.data.refresh); // Armazena o refresh token
+
+      // Armazena o token JWT no localStorage
+      localStorage.setItem("token", response.data.access); // Token de acesso
+      localStorage.setItem("refreshToken", response.data.refresh); // Refresh token
+
       setSuccess("Login realizado com sucesso! Redirecionando...");
+
+      // Redireciona para a página inicial após 2 segundos
       setTimeout(() => {
-        navigate("/"); // Redireciona para a página inicial após o login
-      }, 2000); // Redireciona após 2 segundos
+        navigate("/"); // Redireciona para a página inicial
+      }, 2000);
     } catch (err) {
       setError("Credenciais inválidas. Tente novamente.");
     } finally {
@@ -253,4 +256,3 @@ const Login = () => {
 };
 
 export default Login;
-

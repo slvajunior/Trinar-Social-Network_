@@ -8,7 +8,7 @@ from django.db.models import Q
 from django.db import models
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
-from .serializers import UserSerializer, PostSerializer, RepostSerializer, CommentSerializer
+from .serializers import UserSerializer, PostSerializer, RepostSerializer, CommentSerializer, UserProfileSerializer
 from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
 from .utils import send_email_confirmation, confirm_token
@@ -25,6 +25,11 @@ from django.core.exceptions import ValidationError
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.middleware.csrf import get_token
 from core.utils import decode_confirmation_token
+from django.contrib.auth.decorators import login_required
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.exceptions import AuthenticationFailed
+from django.contrib.auth.backends import ModelBackend
 
 
 logger = logging.getLogger(__name__)
@@ -116,6 +121,37 @@ class RegisterView(APIView):
             send_email_confirmation(user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_current_user(request):
+    user = request.user
+    serializer = UserSerializer(user)
+    return Response(serializer.data)
+
+
+# views.py
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        print("Usuário autenticado:", user.username)  # Log para depuração
+        return Response({
+            'first_name': user.first_name,
+            'last_name': user.last_name
+        })
+
+
+class CustomJWTAuthentication(JWTAuthentication):
+    def authenticate(self, request):
+        try:
+            return super().authenticate(request)
+        except AuthenticationFailed as e:
+            print("Erro de autenticação:", e)
+            raise
+
 
 
 class UserListCreateView(APIView):
