@@ -19,8 +19,8 @@ const NavBar = () => {
   const [user, setUser] = useState({ first_name: "", last_name: "" });
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const modalRef = useRef(null);
-  const userIconRef = useRef(null);
+  const modalRef = useRef(null); // Referência para o modal
+  const userIconRef = useRef(null); // Referência para o ícone do usuário
   const navigate = useNavigate();
 
   // Função para buscar os dados do usuário
@@ -73,6 +73,25 @@ const NavBar = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
+
+  // Função para fechar o modal ao clicar fora dele
+  const handleClickOutside = (event) => {
+    if (
+      modalRef.current && // Verifica se o modal está aberto
+      !modalRef.current.contains(event.target) && // Verifica se o clique foi fora do modal
+      !userIconRef.current.contains(event.target) // Verifica se o clique não foi no ícone do usuário
+    ) {
+      setIsModalOpen(false); // Fecha o modal
+    }
+  };
+
+  // Adiciona o event listener para detectar cliques fora do modal
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="navbar">

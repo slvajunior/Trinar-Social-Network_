@@ -67,3 +67,20 @@ class UserDetailView(APIView):
         user = request.user
         serializer = UserSerializer(user)
         return Response(serializer.data)
+
+
+class UploadProfilePictureView(APIView):
+    def put(self, request, *args, **kwargs):
+        user = request.user  # Obtém o usuário autenticado
+        profile_picture = request.FILES.get("profile_picture")  # Obtém a foto enviada
+
+        if not profile_picture:
+            return Response({"error": "Nenhuma foto enviada."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Salva a foto de perfil no campo `profile_picture` do usuário
+        user.profile_picture = profile_picture
+        user.save()
+
+        # Retorna os dados atualizados do usuário
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
