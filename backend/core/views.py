@@ -42,7 +42,7 @@ def request_password_reset(request):
             if user:
                 token = default_token_generator.make_token(user)
                 uid = urlsafe_base64_encode(force_bytes(user.pk))
-                reset_url = f"http://localhost:3000/reset-password/{uid}/{token}/"
+                reset_url = f"http://localhost:5173/reset-password/{uid}/{token}/"
                 send_mail(
                     'Redefinição de Senha',
                     f'Clique no link para redefinir sua senha: {reset_url}',
@@ -103,7 +103,7 @@ def email_verification(request, token):
     user.is_active = True
     user.save()
 
-    frontend_url = "http://localhost:3000/email-confirmed"
+    frontend_url = "http://localhost:5173/email-confirmed"
     print(f"Redirecionando para: {frontend_url}")
     return HttpResponseRedirect(frontend_url)
 

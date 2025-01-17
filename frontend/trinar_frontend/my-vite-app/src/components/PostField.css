@@ -1,0 +1,270 @@
+/* src/components/PostField.css */
+
+/* Ajuste na importação de fontes */
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap");
+
+/* Cores principais */
+:root {
+  --color-secondary: #ffffff;
+  --color-primary: #f2f4f7;
+  --color-tertiary: #6200ee;
+
+  --font-logo: 'Poppins', Arial, Helvetica, sans-serif;
+  --font-primary: 'Helvetica', Arial, sans-serif;
+  --font-secondary: 'Montserrat', Arial, Helvetica, sans-serif;
+}
+
+/* Container Principal */
+.post-field-container {
+  background-color: var(--color-secondary);
+  width: 100%;
+  max-width: 666px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.09);
+  margin-top: 65px;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Foto do Usuário e Campo de Texto */
+.user-input-container {
+  background-color: var(--color-secondary);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.user-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 100%;
+  object-fit: cover;
+}
+
+.user-photo {
+  background-color: var(--color-secondary);
+  color: #e6e6ec;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;
+  margin-top: 22px;
+  border: 1px solid var(--color-primary);
+  box-shadow: inset 0 1px 1px 0 rgba(0, 0, 0, 0.1);
+
+}
+
+/* Centralizando o placeholder verticalmente */
+.post-input {
+  width: 100%;
+  padding: 12px 12px; /* Padding igual em cima e embaixo */
+  border: 1px solid var(--color-primary);
+  border-radius: 8px;
+  outline: none;
+  font-size: 1rem;
+  color: #333;
+  background-color: var(--color-primary);
+  resize: none;
+  transition: all 0.3s ease;
+  cursor: text;
+  line-height: 1.4; /* Defina o line-height para ajustar a altura do texto */
+  box-shadow: inset 0 1px 1px 0 rgba(0, 0, 0, 0.09);
+}
+
+/* Ajustando o estilo do placeholder */
+.post-input::placeholder {
+  color: #aaa;
+  line-height: 2.3; /* Alinha o placeholder no centro vertical */
+  font-family: var(--font-primary);
+  font-size: 1.2rem;
+}
+
+.post-input:focus {
+  border-color: var(--color-tertiary);
+  box-shadow: 0 4px 10px rgba(98, 0, 238, 0.2);
+}
+
+/* Contador de Caracteres */
+.char-count {
+  text-align: right;
+  font-size: 0.875rem;
+  color: #666;
+  margin: 10px 0;
+  background-color: #ffffff;
+}
+
+/* Divisor */
+.divider {
+  border: 0;
+  height: 1px;
+  background-color: #e0e0e0;
+  margin: 15px 0;
+}
+
+/* Botões de Upload */
+.media-upload-container {
+  background-color: var(--color-secondary);
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.media-upload-button {
+  width: 100%;
+  max-width: 130px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  gap: 9px;
+  padding: 10px 20px;
+  background-color: var(--color-tertiary);
+  color: #ffffff;
+  border: none;
+  border-radius: 40px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-family: var(--font-primary);
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.media-upload-button:hover {
+  background-color: #3700b3;
+}
+
+/* Pré-visualização de Mídia */
+.media-preview {
+  background-color: var(--color-secondary);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.media-item {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.media-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-media {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.remove-media:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.modal-textarea {
+  width: 95%;
+  height: 120px;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  outline: none;
+  font-size: 1rem;
+  color: #333;
+  background-color: #f9f9f9;
+  resize: vertical;
+  margin-bottom: 15px;
+}
+
+/* Contador de Caracteres (Modal e Campo Principal) */
+.char-count {
+  text-align: right;
+  font-size: 0.875rem; /* 14px */
+  color: #666;
+  margin: 10px 0;
+}
+
+.modal-actions {
+  background-color: var(--color-secondary);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.cancel-button {
+  background-color: var(--color-primary);
+  padding: 10px 20px;
+  color: #333;
+  border: none;
+  border-radius: 25px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cancel-button:hover {
+  background-color: #ccc;
+}
+
+.post-button {
+  padding: 10px 28px;
+  background-color: var(--color-tertiary);
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-family: var(--font-logo);
+}
+
+.post-button:hover {
+  background-color: #3700b3;
+}
+
+/* Acessibilidade: Foco visível nos botões */
+button:focus {
+  outline: 3px solid var(--color-tertiary);
+}
+

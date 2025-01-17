@@ -39,18 +39,18 @@ LOGOUT_URL = "/users/logout/"
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 # Configuração do email (para links de redefinição de senha)
-EMAIL_PAGE_DOMAIN = "http://localhost:3000"
+EMAIL_PAGE_DOMAIN = "http://localhost:5173"
 
 # Configurações de CSRF
 CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_NAME = "csrftoken"
 CSRF_COOKIE_HTTPONLY = False
-CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:5173']
 CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"
 
 # CORS (para permitir que o frontend acesse a API)
 CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
+CORS_ALLOWED_ORIGINS = ["http://localhost:5173"]
 
 # Para permitir que cookies sejam enviados entre frontend e backend
 CORS_ALLOW_CREDENTIALS = True
@@ -108,11 +108,11 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # Endereço do frontend
+    "http://localhost:5173",  # Endereço do frontend
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000',
+    'http://localhost:5173',
 ]
 
 ROOT_URLCONF = "trinar_backend.urls"
@@ -235,7 +235,7 @@ EMAIL_VERIFIED_CALLBACK = verified_callback
 
 # Configurações específicas para django_email_verification
 EMAIL_FROM_ADDRESS = os.getenv('EMAIL_FROM_ADDRESS', 'seuemail@gmail.com')
-EMAIL_PAGE_DOMAIN = os.getenv('EMAIL_PAGE_DOMAIN', 'http://localhost:3000')
+EMAIL_PAGE_DOMAIN = os.getenv('EMAIL_PAGE_DOMAIN', 'http://localhost:5173')
 EMAIL_MAIL_SUBJECT = os.getenv('EMAIL_MAIL_SUBJECT', 'Confirme seu email')
 EMAIL_MAIL_PLAIN = os.getenv('EMAIL_MAIL_PLAIN', 'mail_body.txt')
 EMAIL_MAIL_HTML = os.getenv('EMAIL_MAIL_HTML', 'mail_body.html')
