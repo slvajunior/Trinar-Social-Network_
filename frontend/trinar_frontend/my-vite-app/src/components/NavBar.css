@@ -1,16 +1,4 @@
 /* src/components/NavBar.css */
-@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
-
-:root {
-  --color-secondary: #ffffff;
-  --color-primary: #f2f4f7;
-  --color-tertiary: #6200ee;
-
-  --font-logo: 'Poppins', Arial, Helvetica, sans-serif;
-  --font-primary: 'Helvetica', Arial, sans-serif;
-  --font-secondary: 'Montserrat', Arial, Helvetica, sans-serif;
-}
 
 .navbar {
   top: 0;
@@ -160,13 +148,13 @@
   position: relative; /* Garante o posicionamento correto */
   z-index: 10;
   width: 321px;
-  height: 165px;
+  height: 175px;
   background-color: var(--color-secondary); /* Adicione um fundo claro para que a sombra fique visível */
   align-items: center;
   padding: 12px;
   justify-content: center;
   border-radius: 8px;
-  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
 }
 
 .profile-header {
@@ -190,7 +178,7 @@
 }
 
 .edit-profile-btn {
-  width: 297px;
+  width: 283px;
   padding: 8px 0;
   background-color: #e6e8ea;
   color: #333;

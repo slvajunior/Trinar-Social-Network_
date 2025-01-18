@@ -10,11 +10,15 @@ import EmailConfirmed from './components/EmailConfirmed';
 import RequestPasswordReset from './components/RequestPasswordReset';
 import ResetPassword from './components/ResetPassword';
 import RequestPasswordResetDone from './components/RequestPasswordResetDone';
+import UserProfile from "./components/UserProfile";
+
 
 function App() {
   return (
     <Router>
       <Routes>
+      <Route path="/profile/:userId" element={<UserProfile />} />
+
         {/* Rota para a página inicial */}
         <Route path="/" element={<Home />} />
 

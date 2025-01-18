@@ -1,3 +1,5 @@
+// src/components/NavBar.jsx
+
 import React, { useState, useEffect, useRef } from "react";
 import {
   FaUserCircle,
@@ -132,7 +134,7 @@ const NavBar = () => {
                 ) : (
                   <p>
                     {user.first_name
-                      ? `Olá, ${user.first_name} ${user.last_name}!`
+                      ? ` ${user.first_name} ${user.last_name}`
                       : "Olá, visitante!"}
                   </p>
                 )}

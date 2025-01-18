@@ -1,58 +1,58 @@
 /* ProfilePictureUpload.css */
 .profile-picture-upload {
-    text-align: center;
-    margin-top: 20px;
-  }
-  
-  .profile-picture-preview {
-    margin-bottom: 20px;
-  }
-  
-  .profile-picture {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-  
-  .default-profile-picture {
-    color: #ccc;
-  }
-  
-  .upload-controls {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-  }
-  
-  .upload-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #0073b1;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .upload-button:hover {
-    background-color: #005f8b;
-  }
-  
-  button {
-    padding: 10px 20px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-  
-  .error-message {
-    color: red;
-    margin-top: 10px;
-  }
+  text-align: center;
+  margin-top: 20px;
+}
+
+.profile-picture-preview {
+  margin-bottom: 20px;
+}
+
+.profile-picture {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.default-profile-picture {
+  color: #ccc;
+}
+
+.upload-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.upload-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #0073b1;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.upload-button:hover {
+  background-color: #005f8b;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+}

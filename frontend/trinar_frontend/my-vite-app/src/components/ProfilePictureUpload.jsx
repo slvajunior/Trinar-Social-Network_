@@ -1,3 +1,5 @@
+// src/components/ProfilePictureUpload.jsx
+
 import React, { useState } from "react";
 import axios from "axios";
 import { FaUserCircle, FaUpload } from "react-icons/fa";

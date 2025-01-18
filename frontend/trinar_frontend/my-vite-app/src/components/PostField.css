@@ -1,30 +1,15 @@
 /* src/components/PostField.css */
 
-/* Ajuste na importação de fontes */
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100..900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap");
-
-/* Cores principais */
-:root {
-  --color-secondary: #ffffff;
-  --color-primary: #f2f4f7;
-  --color-tertiary: #6200ee;
-
-  --font-logo: 'Poppins', Arial, Helvetica, sans-serif;
-  --font-primary: 'Helvetica', Arial, sans-serif;
-  --font-secondary: 'Montserrat', Arial, Helvetica, sans-serif;
-}
-
 /* Container Principal */
 .post-field-container {
   background-color: var(--color-secondary);
   width: 100%;
   max-width: 666px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 15px;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.09);
-  margin-top: 65px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 4px 4px rgba(0, 0, 0, 0.01);
+  margin-top: 35px;
   font-family: 'Roboto', sans-serif;
 }
 
@@ -100,9 +85,12 @@
 /* Divisor */
 .divider {
   border: 0;
-  height: 1px;
+  height: 0.1px;
   background-color: #e0e0e0;
+  color: #666;
   margin: 15px 0;
+  box-shadow: inset 0 1px 4px 0 rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
 }
 
 /* Botões de Upload */
@@ -120,7 +108,7 @@
   align-items: center;
   text-align: center;
   gap: 9px;
-  padding: 10px 20px;
+  padding: 9px 24px;
   background-color: var(--color-tertiary);
   color: #ffffff;
   border: none;
@@ -129,8 +117,7 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
   font-family: var(--font-primary);
-  font-weight: 500;
-  margin-bottom: 2px;
+  font-weight: 600;
 }
 
 .media-upload-button:hover {
@@ -166,13 +153,16 @@
   border: none;
   border-radius: 50%;
   color: #fff;
-  width: 24px;
-  height: 24px;
+  width: 30px !important;
+  height: 30px !important;
+  padding: 0;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  overflow: hidden;
 }
 
 .remove-media:hover {
