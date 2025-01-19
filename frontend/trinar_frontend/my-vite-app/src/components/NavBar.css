@@ -1,5 +1,30 @@
 /* src/components/NavBar.css */
 
+.user-photo-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.photo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 7px;
+}
+
+.profile-photo-nav {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-photo {
+  color: var(--color-primary);
+}
+
 .navbar {
   top: 0;
   left: 0;
@@ -12,15 +37,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 60px;
+  height: 55px;
   background-color: var(--color-secondary);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.09);
+  box-shadow: 0 1px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.logo {
+  color: var(--black-color);
+  font-family: var(--font-family-logo);
 }
 
 .navbar-extra {
   display: flex;
   align-items: center;
+  margin-top: 8px;
 }
 
 /* Container do Search */
@@ -34,21 +64,22 @@
   display: flex;
   align-items: center;
   height: 60px;
-  background-color: var(--color-secondary);
+  width: 100%;
+  height: 60px;
+  position: relative;
 }
 
 .search-input {
-  padding: 15px 20px 15px 45px; /* Espaço para o ícone */
+  padding: 15px 20px 6px 45px; /* Espaço para o ícone */
   margin-right: 20px;
-  border: 2px solid #e0e0e0; /* Borda sutil */
+  background-color: var(--color-primary);
   border-radius: 25px; /* Bordas mais arredondadas */
   outline: none;
   font-size: 16px; /* Tamanho de fonte maior */
   color: #333; /* Cor do texto */
-  background-color: #f9f9f9; /* Fundo claro */
   transition: all 0.3s ease; /* Transição suave */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra sutil */
   width: 240px; /* Largura fixa para o input */
+  border: 2px solid #e0e0e0;
 }
 
 .search-input:focus {
@@ -68,26 +99,12 @@
   color: #aaa;
   font-size: 1rem;
   transition: color 0.3s ease;
+  margin-bottom: 6px;
+
 }
 
 .search-input:focus + .search-icon {
   color: var(--color-tertiary); /* Muda a cor do ícone ao focar */
-}
-
-/* Div de Resultados */
-.search-results {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  background-color: var(--color-secondary);
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
-  
-  margin-top: 10px;
-  padding: 10px;
-  animation: fadeIn 0.3s ease;
-  box-shadow: inset 0 1px 1px 0 rgba(0, 0, 0, 0.1);
 }
 
 .user-photo-nav {
@@ -101,6 +118,7 @@
   border-radius: 100%;
   margin-top: 2px;
   cursor: pointer;
+  margin: 0;
   border: 1px solid var(--color-primary);
   box-shadow: inset 0 1px 1px 0 rgba(0, 0, 0, 0.1);
 }
@@ -114,7 +132,7 @@
   height: 522;
   padding: 15px;
   border-radius: 8px;
-  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.2);
+  box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.2), -8px -8px 16px rgba(255, 255, 255, 0.5);
   color: #333;
   display: flex;
   flex-direction: column; /* Para empilhar os itens verticalmente */
@@ -148,7 +166,7 @@
   position: relative; /* Garante o posicionamento correto */
   z-index: 10;
   width: 321px;
-  height: 175px;
+  height: 150px;
   background-color: var(--color-secondary); /* Adicione um fundo claro para que a sombra fique visível */
   align-items: center;
   padding: 12px;
@@ -157,11 +175,25 @@
   box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
 }
 
+/* Foto de usuário no Modal */
+.user-profile img {
+  width: 100px; /* Definindo a largura para que se ajuste ao espaço */
+  height: 100px; /* A altura também será ajustada */
+  border-radius: 50%; /* Manter as bordas arredondadas */
+  object-fit: cover; /* Garante que a imagem seja cortada de forma adequada */
+
+  border-radius: 100%;
+  padding: 3px;
+  border: 3px solid var(--border-color-gray);
+  width: 50px;
+  height: 50px;
+}
+
 .profile-header {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
-  height: 90px;
+  margin-bottom: 15px;
+  height: 50px;
 }
 
 .profile-name {
@@ -171,15 +203,18 @@
   color: #333; /* Cor do texto */
 }
 
-.modal-divider {
+hr.modal-divider {
   border: none;
   border-top: 1px solid #ccc;
   margin: 10px 0;
+  position: relative;
+  height: 0.01px;
+  box-shadow: inset 0 1px 4px 0 rgba(0, 0, 0, 0.01);
 }
 
 .edit-profile-btn {
   width: 283px;
-  padding: 8px 0;
+  padding: 13px 0px;
   background-color: #e6e8ea;
   color: #333;
   border: none;

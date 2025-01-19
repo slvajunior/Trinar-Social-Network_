@@ -1,254 +1,243 @@
+/* src/styles/global.css */
+
 /* =====================================
    Variáveis
    ===================================== */
-   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
 
    :root {
-    --font-family-base: 'Helvetica', Arial, sans-serif;  /* Fonte base: Helvetica */
-    --font-family-logo: 'Poppins', sans-serif;  /* Fonte do logo */
-    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    --primary-color: #4CAF50; /* Verde */
-    --secondary-color: #f1f1f1; /* Cinza claro */
-    --accent-color: #FFC107; /* Amarelo */
-    --background-color: #f2f4f7; /* Branco */
-    --text-color: #333333; /* Preto suave */
-    --border-radius: 8px; /* Bordas arredondadas */
-    --transition-time: 0.3s;
-    --purple-color: #6200ee;
-  }
-
-/* =====================================
-   Reset/Normalize
-   ===================================== */
-
-/* Reset margens, espaçamentos e outros padrões de navegadores */
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* Remover a borda de foco em todos os elementos */
-:focus {
-  outline: none;
-}
-
-/* =====================================
-   Corpo da Página
-   ===================================== */
-
-/* Definir o padrão do body para uso global */
-body {
-  font-family: var(--font-family-base);
-  background-color: var(--background-color);
-  color: var(--text-color);
-  line-height: 1.6;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  padding: 0;
-}
-
-/* =====================================
-   Estilos específicos para o logo
-   ===================================== */
+     --font-family-base: 'Helvetica', Arial, sans-serif;
+     --font-family-logo: 'Poppins', sans-serif;
+     --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+     --primary-color: #6200ee; /* Adicionado */
+     --green-color: #4CAF50;
+     --accent-color: #FFC107;
+     --background-color: #f2f4f7;
+     --text-color: #333333;
+     --border-radius: 8px;
+     --transition-time: 0.3s;
+     --black-color: #111;
+     --color-primary: #f2f4f7;
+     --color-secondary: #ffffff;
+     --border-color-gray: rgb(185, 185, 185);
+   }
+   
+   /* =====================================
+      Reset/Normalize
+      ===================================== */
+   *,
+   *::before,
+   *::after {
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+   }
+   
+   :focus {
+     outline: none;
+   }
+   
+   /* =====================================
+      Corpo da Página
+      ===================================== */
+   body {
+     font-family: var(--font-family-base);
+     background-color: var(--background-color);
+     color: var(--text-color);
+     line-height: 1.6;
+     min-height: 100vh;
+     display: flex;
+     flex-direction: column;
+     margin: 0;
+     padding: 0;
+   }
+   
+   /* =====================================
+      Estilos específicos para o logo
+      ===================================== */
    .logo {
-    font-family: var(--font-family-logo);  /* Aplica Poppins somente no logo */
-    font-weight: 510; /* Poppins em negrito */
-    font-size: 2.4rem;
-    color: var(--purple-color);
-    transform: translateY(-1px);
-    margin-top: 17px;
-    padding: 0;
-  }
-
-/* =====================================
-   Links
-   ===================================== */
-
-/* Estilizando links */
-a {
-  color: var(--primary-color);
-  text-decoration: none;
-  transition: color var(--transition-time);
-}
-
-a:hover {
-  color: var(--accent-color);
-}
-
-/* =====================================
-   Títulos
-   ===================================== */
-
-/* Definir estilos globais para títulos */
-h1, h2, h3, h4, h5, h6 {
-  font-weight: bold;
-  margin: 1em 0 0.5em;
-}
-
-h1 {
-  font-size: 2rem;
-}
-
-h2 {
-  font-size: 1.75rem;
-}
-
-h3 {
-  font-size: 1.5rem;
-}
-
-/* =====================================
-   Containers
-   ===================================== */
-
-/* Centralizar conteúdo de forma responsiva */
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1em;
-}
-
-/* =====================================
-   Botões
-   ===================================== */
-
-button {
-  background-color: var(--primary-color);
-  color: var(--background-color);
-  font-size: 1rem;
-  border: none;
-  padding: 0.9rem 0.6rem;
-  cursor: pointer;
-  border-radius: var(--border-radius);
-  transition: background-color var(--transition-time);
-  font-family: var(--font-family-base);
-  font-weight: 300;
-}
-
-button:hover {
-  background-color: var(--accent-color);
-}
-
-/* =====================================
-   Forms
-   ===================================== */
-
-input,
-select,
-textarea {
-  width: 100%;
-  padding: 0.8rem;
-  border: 1px solid #ccc;
-  border-radius: var(--border-radius);
-  font-size: 1rem;
-  margin: 0.5em 0;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-  outline: none;
-  border-color: var(--primary-color);
-}
-
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-}
-
-/* =====================================
-   Grid e Layout
-   ===================================== */
-
-/* Usando o flexbox para layouts básicos */
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1em;
-}
-
-.col {
-  flex: 1;
-  min-width: 300px;
-  box-sizing: border-box;
-}
-
-/* =====================================
-   Cores e Utilitários
-   ===================================== */
-
-/* Usar classes para temas ou elementos específicos */
-.bg-primary {
-  background-color: var(--primary-color);
-}
-
-.text-center {
-  text-align: center;
-}
-
-.text-light {
-  color: #fff;
-}
-
-.text-dark {
-  color: var(--text-color);
-}
-
-.hidden {
-  display: none;
-}
-
-/* =====================================
-   Responsividade
-   ===================================== */
-
-/* Utilizando media queries para melhorar a usabilidade em dispositivos móveis */
-@media (max-width: 768px) {
-  .container {
-    padding: 0 2em;
-  }
-
-  button {
-    width: 100%;
-  }
-
-  .row {
-    flex-direction: column;
-  }
-}
-
-@media (max-width: 480px) {
-  h1 {
-    font-size: 1.5rem;
-  }
-
-  h2 {
-    font-size: 1.25rem;
-  }
-
-  .container {
-    padding: 0 1em;
-  }
-}
-
-/* =====================================
-   Animações e Transições
-   ===================================== */
-
-/* Animação suave para elementos */
-.fade-in {
-  opacity: 0;
-  animation: fadeIn var(--transition-time) forwards;
-}
-
-@keyframes fadeIn {
-  to {
-    opacity: 1;
-  }
-}
+     font-family: var(--font-family-logo);
+     font-weight: 510;
+     font-size: 2.4rem;
+     color: var(--primary-color); /* Substituído */
+     transform: translateY(-1px);
+     margin-top: 17px;
+     padding: 0;
+   }
+   
+   /* =====================================
+      Links
+      ===================================== */
+   a {
+     color: var(--primary-color);
+     text-decoration: none;
+     transition: color var(--transition-time);
+   }
+   
+   a:hover {
+     color: var(--accent-color);
+   }
+   
+   a:visited {
+     color: var(--primary-color);
+   }
+   
+   /* =====================================
+      Títulos
+      ===================================== */
+   h1, h2, h3, h4, h5, h6 {
+     font-weight: bold;
+     margin: 1em 0 0.5em;
+   }
+   
+   h1 {
+     font-size: 2rem;
+   }
+   
+   h2 {
+     font-size: 1.75rem;
+   }
+   
+   h3 {
+     font-size: 1.5rem;
+   }
+   
+   /* =====================================
+      Containers
+      ===================================== */
+   .container {
+     width: 100%;
+     max-width: 1200px;
+     margin: 0 auto;
+     padding: 1em;
+   }
+   
+   /* =====================================
+      Botões
+      ===================================== */
+   button {
+     background-color: var(--primary-color);
+     color: var(--background-color);
+     font-size: 1rem;
+     border: none;
+     padding: 0.9rem 0.6rem;
+     cursor: pointer;
+     border-radius: var(--border-radius);
+     transition: background-color var(--transition-time);
+     font-family: var(--font-family-base);
+     font-weight: 500; /* Aumentado */
+   }
+   
+   button:hover {
+     background-color: var(--accent-color);
+   }
+   
+   /* =====================================
+      Forms
+      ===================================== */
+   input,
+   select,
+   textarea {
+     width: 100%;
+     padding: 0.8rem;
+     border: 1px solid #ccc;
+     border-radius: var(--border-radius);
+     font-size: 1rem;
+     margin-bottom: 0.5em; /* Substituído */
+   }
+   
+   input:focus,
+   select:focus,
+   textarea:focus {
+     outline: none;
+     border-color: var(--primary-color);
+   }
+   
+   label {
+     display: block;
+     margin-bottom: 0.5rem;
+   }
+   
+   /* =====================================
+      Grid e Layout
+      ===================================== */
+   .row {
+     display: flex;
+     flex-wrap: wrap;
+     gap: 1em;
+   }
+   
+   .col {
+     flex: 1;
+     min-width: 300px;
+     box-sizing: border-box;
+   }
+   
+   /* =====================================
+      Cores e Utilitários
+      ===================================== */
+   .bg-primary {
+     background-color: var(--primary-color);
+   }
+   
+   .text-center {
+     text-align: center;
+   }
+   
+   .text-light {
+     color: #fff;
+   }
+   
+   .text-dark {
+     color: var(--text-color);
+   }
+   
+   .hidden {
+     display: none;
+   }
+   
+   /* =====================================
+      Responsividade
+      ===================================== */
+   @media (max-width: 768px) {
+     .container {
+       padding: 0 1em; /* Reduzido */
+       max-width: 100%; /* Adicionado */
+     }
+   
+     button {
+       width: 100%;
+     }
+   
+     .row {
+       flex-direction: column;
+     }
+   }
+   
+   @media (max-width: 480px) {
+     h1 {
+       font-size: 1.5rem;
+     }
+   
+     h2 {
+       font-size: 1.25rem;
+     }
+   
+     .container {
+       padding: 0 1em;
+     }
+   }
+   
+   /* =====================================
+      Animações e Transições
+      ===================================== */
+   .fade-in {
+     opacity: 0;
+     animation: fadeIn var(--transition-time) forwards;
+     transition: opacity var(--transition-time); /* Adicionado */
+   }
+   
+   @keyframes fadeIn {
+     to {
+       opacity: 1;
+     }
+   }

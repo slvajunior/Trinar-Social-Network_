@@ -1,5 +1,3 @@
-// src/components/NavBar.jsx
-
 import React, { useState, useEffect, useRef } from "react";
 import {
   FaUserCircle,
@@ -10,7 +8,6 @@ import {
   FaMoon,
   FaSignOutAlt,
 } from "react-icons/fa";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./NavBar.css";
 
@@ -18,18 +15,23 @@ const NavBar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showResults, setShowResults] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [user, setUser] = useState({ first_name: "", last_name: "" });
+  const [user, setUser] = useState({
+    first_name: "",
+    last_name: "",
+    profile_picture: "",
+  });
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const modalRef = useRef(null); // Referência para o modal
   const userIconRef = useRef(null); // Referência para o ícone do usuário
   const navigate = useNavigate();
 
-  // Função para buscar os dados do usuário
+  // Função para buscar dados do usuário
   const fetchUserData = async () => {
     setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
+
       if (!token) {
         setError("Nenhum token foi encontrado. Faça login novamente.");
         setIsLoading(false);
@@ -44,13 +46,22 @@ const NavBar = () => {
         },
       });
 
+      if (response.status === 401) {
+        const data = await response.json();
+        setError("Token inválido. Redirecionando para login...");
+        localStorage.removeItem("token"); // Limpa o token expirado
+        navigate("/login");
+        return;
+      }
+
       if (response.ok) {
         const data = await response.json();
+        console.log("Resposta da API:", data); // Inspecione a estrutura da resposta
         setUser(data);
         setError(null);
       } else {
         const errorData = await response.json();
-        setError(`Erro ao buscar dados do usuário: ${errorData.detail || "Erro desconhecido"}`);
+        setError(`Erro ao buscar dados do usuário: ${errorData.detail}`);
       }
     } catch (error) {
       setError("Erro ao conectar ao servidor. Tente novamente mais tarde.");
@@ -62,6 +73,7 @@ const NavBar = () => {
   // Verifica o token ao carregar o componente
   useEffect(() => {
     const token = localStorage.getItem("token");
+
     if (!token) {
       setError("Nenhum token foi encontrado. Faça login novamente.");
       navigate("/login"); // Redireciona para a página de login
@@ -79,11 +91,11 @@ const NavBar = () => {
   // Função para fechar o modal ao clicar fora dele
   const handleClickOutside = (event) => {
     if (
-      modalRef.current && // Verifica se o modal está aberto
-      !modalRef.current.contains(event.target) && // Verifica se o clique foi fora do modal
-      !userIconRef.current.contains(event.target) // Verifica se o clique não foi no ícone do usuário
+      modalRef.current &&
+      !modalRef.current.contains(event.target) &&
+      !userIconRef.current.contains(event.target)
     ) {
-      setIsModalOpen(false); // Fecha o modal
+      setIsModalOpen(false);
     }
   };
 
@@ -116,16 +128,41 @@ const NavBar = () => {
             </div>
           )}
         </div>
-        <div className="user-photo-nav" onClick={() => setIsModalOpen(!isModalOpen)} ref={userIconRef}>
-          <FaUserCircle size={45} />
+
+        {/* Exibe foto de perfil na navbar */}
+        <div
+          className="user-photo-nav"
+          onClick={() => setIsModalOpen(!isModalOpen)}
+          ref={userIconRef}
+        >
+          <div className="photo-container">
+            {user.profile_picture ? (
+              <img
+                src={`http://localhost:8000${user.profile_picture}`}
+                alt="Profile"
+                className="profile-photo-nav"
+              />
+            ) : (
+              <FaUserCircle className="user-photo" size={55} />
+            )}
+          </div>
         </div>
       </div>
 
+      {/* Modal de perfil */}
       {isModalOpen && (
         <div className="user-modal" ref={modalRef}>
           <div className="user-profile">
             <div className="profile-header">
-              <FaUserCircle size={45} />
+              {user.profile_picture ? (
+                <img
+                  src={`http://localhost:8000${user.profile_picture}`}
+                  alt="Profile"
+                  className="profile-photo"
+                />
+              ) : (
+                <FaUserCircle className="user-photo" size={45} />
+              )}
               <div className="profile-name">
                 {isLoading ? (
                   <p>Carregando...</p>
@@ -133,9 +170,7 @@ const NavBar = () => {
                   <p style={{ color: "red" }}>{error}</p>
                 ) : (
                   <p>
-                    {user.first_name
-                      ? ` ${user.first_name} ${user.last_name}`
-                      : "Olá, visitante!"}
+                    {user.first_name} {user.last_name}
                   </p>
                 )}
               </div>

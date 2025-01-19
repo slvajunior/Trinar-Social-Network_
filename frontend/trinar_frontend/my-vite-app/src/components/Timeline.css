@@ -1,16 +1,4 @@
-/* src/components/Timeline.js */
-@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 
-:root {
-  --color-secondary: #ffffff;
-  --color-primary: #f2f4f7;
-  --color-tertiary: #6200ee;
-
-  --font-logo: 'Poppins', Arial, Helvetica, sans-serif;
-  --font-primary: 'Helvetica', Arial, sans-serif;
-  --font-secondary: 'Montserrat', Arial, Helvetica, sans-serif;
-}
 
 .post {
   padding: 15px;

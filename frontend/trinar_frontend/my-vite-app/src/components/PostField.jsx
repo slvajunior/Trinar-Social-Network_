@@ -1,16 +1,47 @@
-// src/components/PostField.js
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage, faVideo, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FaUserCircle } from "react-icons/fa"; // Importação do ícone
-
+import axios from "axios"; // Usando axios para buscar dados do usuário
 import "./PostField.css";
 
 const PostField = () => {
   const [content, setContent] = useState("");
   const [media, setMedia] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [user, setUser] = useState({ profile_picture: "" });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Função para buscar os dados do usuário
+  const fetchUserData = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Nenhum token encontrado.");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.get("http://localhost:8000/api/auth/user/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data) {
+        setUser(response.data);
+      }
+    } catch (error) {
+      setError("Erro ao buscar os dados do usuário.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
 
   const handleMediaUpload = (e) => {
     const files = Array.from(e.target.files);
@@ -47,12 +78,19 @@ const PostField = () => {
       {/* Foto do Usuário e Campo de Texto */}
       <div className="user-input-container">
         <div className="user-photo">
-          <FaUserCircle size={55} /> {/* Ícone do usuário */}
+          {user.profile_picture ? (
+            <img
+              src={`http://localhost:8000${user.profile_picture}`}
+              alt="Profile"
+              className="profile-photo"
+            />
+          ) : (
+            <FaUserCircle className="user-photo" size={55} />
+          )}
         </div>
         <textarea
           className="post-input"
-          placeholder="What is happening?
-"
+          placeholder="What is happening?"
           value={content}
           onFocus={() => setIsModalOpen(true)} // Abrir modal ao focar
           readOnly // Impede a digitação direta no textarea

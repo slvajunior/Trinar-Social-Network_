@@ -1,7 +1,9 @@
 // src/components/Timeline.js
 import React from "react";
 import { FaThumbsUp, FaRetweet, FaComment } from "react-icons/fa"; // Importe os ícones
+
 import "./Timeline.css";
+
 
 const Timeline = () => {
   return (

@@ -36,6 +36,13 @@ logger = logging.getLogger(__name__)
 
 User = get_user_model()
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_current_user(request):
+    user = request.user
+    serializer = UserSerializer(user)
+    return Response(serializer.data)
+
 
 @csrf_exempt
 def request_password_reset(request):
@@ -61,6 +68,16 @@ def request_password_reset(request):
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Dados inválidos.'}, status=400)
     return JsonResponse({'error': 'Método não permitido.'}, status=405)
+
+
+class RegisterView(APIView):
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            send_email_confirmation(user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @ensure_csrf_cookie
@@ -113,24 +130,6 @@ def email_verification(request, token):
     return HttpResponseRedirect(frontend_url)
 
 
-class RegisterView(APIView):
-    def post(self, request):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            send_email_confirmation(user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_current_user(request):
-    user = request.user
-    serializer = UserSerializer(user)
-    return Response(serializer.data)
-
-
 # views.py
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
@@ -151,7 +150,6 @@ class CustomJWTAuthentication(JWTAuthentication):
         except AuthenticationFailed as e:
             print("Erro de autenticação:", e)
             raise
-
 
 
 class UserListCreateView(APIView):

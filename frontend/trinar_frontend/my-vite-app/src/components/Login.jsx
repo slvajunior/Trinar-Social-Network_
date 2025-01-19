@@ -1,3 +1,8 @@
+import '@fontsource/poppins/500.css'; // Peso 500 (medium)
+import '@fontsource/poppins/700.css'; // Peso 700 (bold)
+import '@fontsource/roboto/700.css'; // Peso 700 (bold)
+import '@fontsource/roboto/500.css'; // Peso 500 (medium)
+
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";

@@ -11,8 +11,8 @@ import RequestPasswordReset from './components/RequestPasswordReset';
 import ResetPassword from './components/ResetPassword';
 import RequestPasswordResetDone from "./components/RequestPasswordResetDone";
 import UserProfile from "./components/UserProfile";
-
-import './global.css';
+import '@fontsource/poppins/500.css'; // Peso 500 (medium)
+import '@fontsource/poppins/700.css'; // Peso 700 (bold)
 
 function App() {
   return (
