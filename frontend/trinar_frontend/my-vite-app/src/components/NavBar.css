@@ -60,13 +60,26 @@
 
 /* Input de Busca */
 .search-input-wrapper {
-  position: relative;
+  position: absolute;
   display: flex;
   align-items: center;
-  height: 60px;
-  width: 100%;
+  width: 260px;
   height: 60px;
   position: relative;
+  margin-right: 30px;
+}
+
+.search-results {
+  position: absolute;
+  top: 100%; /* Posiciona o modal abaixo do input */
+  left: 0;
+  width: 255px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000; /* Garante que o modal apareça acima de outros elementos */
+  padding:20px 100px;
 }
 
 .search-input {
@@ -78,8 +91,10 @@
   font-size: 16px; /* Tamanho de fonte maior */
   color: #333; /* Cor do texto */
   transition: all 0.3s ease; /* Transição suave */
-  width: 240px; /* Largura fixa para o input */
+  width: 250px; /* Largura fixa para o input */
   border: 2px solid #e0e0e0;
+  margin-right: 90px;
+
 }
 
 .search-input:focus {
@@ -106,6 +121,7 @@
 .search-input:focus + .search-icon {
   color: var(--color-tertiary); /* Muda a cor do ícone ao focar */
 }
+
 
 .user-photo-nav {
   background-color: var(--color-secondary);

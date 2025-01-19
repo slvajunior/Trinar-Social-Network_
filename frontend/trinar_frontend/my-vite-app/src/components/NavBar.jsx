@@ -119,12 +119,16 @@ const NavBar = () => {
               className="search-input"
               placeholder="Pesquisar..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setShowResults(e.target.value.trim() !== ""); // Mostra resultados se houver texto
+              }}
             />
           </div>
           {showResults && (
             <div className="search-results">
               <p>Resultados para: "{searchQuery}"</p>
+              {/* Aqui você pode adicionar os resultados da pesquisa */}
             </div>
           )}
         </div>
