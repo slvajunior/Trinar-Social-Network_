@@ -4,7 +4,6 @@ import { FaThumbsUp, FaRetweet, FaComment } from "react-icons/fa"; // Importe os
 
 import "./Timeline.css";
 
-
 const Timeline = () => {
   return (
     <div className="timeline-container">

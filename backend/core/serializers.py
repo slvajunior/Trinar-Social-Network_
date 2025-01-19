@@ -1,33 +1,9 @@
 # backend/core/serializers.py
 from rest_framework import serializers
-from .models import Post, Comment, User, Repost
+from .models import Post, Comment, Repost
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth import authenticate
-
-
-class UserProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name', 'email', 'birth_date', 'followers_count', 'following_count']
-
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'password', 'first_name', 'last_name', 'birth_date']
-        extra_kwargs = {'password': {'write_only': True}}
-
-    def create(self, validated_data):
-        user = User.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            password=validated_data['password'],
-            first_name=validated_data.get('first_name', ''),
-            last_name=validated_data.get('last_name', ''),
-            birth_date=validated_data.get('birth_date', None),
-        )
-        return user
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -98,29 +74,6 @@ class RepostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Repost
         fields = ["id", "original_post", "reposted_by", "text", "created_at"]
-
-
-class UserDetailSerializer(serializers.ModelSerializer):
-    followers_count = serializers.SerializerMethodField()
-    following_count = serializers.SerializerMethodField()
-    posts = PostSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = User
-        fields = [
-            "id",
-            "username",
-            "email",
-            "followers_count",
-            "following_count",
-            "posts",
-        ]
-
-    def get_followers_count(self, obj):
-        return obj.followers.count()
-
-    def get_following_count(self, obj):
-        return obj.following.count()
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):

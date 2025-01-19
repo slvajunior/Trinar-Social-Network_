@@ -1,4 +1,3 @@
-import json
 import logging
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -7,140 +6,29 @@ from .models import Post, Repost, Like
 from django.db.models import Q
 from django.db import models
 from django.shortcuts import get_object_or_404
-from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
-from .serializers import UserSerializer, PostSerializer, RepostSerializer, CommentSerializer, UserProfileSerializer
+from django.http import JsonResponse
+from .serializers import PostSerializer, RepostSerializer, CommentSerializer
+from users.serializers import UserSerializer
 from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
-from .utils import send_email_confirmation, confirm_token
-from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from django.contrib.auth import get_user_model
-from django.contrib.auth.tokens import default_token_generator
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_str
-from django.core.mail import send_mail
-from django.views.decorators.http import require_POST
-from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import ValidationError
-from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
-from django.middleware.csrf import get_token
-from core.utils import decode_confirmation_token
-from django.contrib.auth.decorators import login_required
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.exceptions import AuthenticationFailed
-from django.contrib.auth.backends import ModelBackend
 
 
 logger = logging.getLogger(__name__)
 
 User = get_user_model()
 
-@api_view(['GET'])
+
+@api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_current_user(request):
     user = request.user
     serializer = UserSerializer(user)
     return Response(serializer.data)
-
-
-@csrf_exempt
-def request_password_reset(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            email = data.get('email')
-            user = User.objects.filter(email=email).first()
-            if user:
-                token = default_token_generator.make_token(user)
-                uid = urlsafe_base64_encode(force_bytes(user.pk))
-                reset_url = f"http://localhost:5173/reset-password/{uid}/{token}/"
-                send_mail(
-                    'Redefinição de Senha',
-                    f'Clique no link para redefinir sua senha: {reset_url}',
-                    'noreply@trinar.com',
-                    [email],
-                    fail_silently=False,
-                )
-                return JsonResponse({'message': 'Email de redefinição enviado.'}, status=200)
-            else:
-                return JsonResponse({'error': 'Email não encontrado.'}, status=404)
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Dados inválidos.'}, status=400)
-    return JsonResponse({'error': 'Método não permitido.'}, status=405)
-
-
-class RegisterView(APIView):
-    def post(self, request):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            send_email_confirmation(user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@ensure_csrf_cookie
-@require_POST
-def reset_password_confirm(request, uidb64, token):
-    try:
-        # Decodifica o UID
-        uid = urlsafe_base64_decode(uidb64).decode()
-        user = get_user_model().objects.get(pk=uid)  # Obtém o usuário com base no UID
-
-        # Verifica se o token é válido
-        if default_token_generator.check_token(user, token):
-            # Decodifica o corpo da requisição JSON
-            data = json.loads(request.body)
-            new_password = data.get('new_password')
-
-            # Valida a nova senha
-            if not new_password or len(new_password) < 8:
-                return JsonResponse({'error': 'A senha deve ter pelo menos 8 caracteres.'}, status=400)
-
-            # Redefine a senha
-            user.set_password(new_password)
-            user.save()
-
-            # Garante que o CSRF está configurado corretamente
-            csrf_token = get_token(request)
-
-            logger.info(f"Senha redefinida com sucesso para o usuário: {user.email}")
-
-            return JsonResponse({'message': 'Senha redefinida com sucesso.'}, status=200)
-        else:
-            logger.warning(f"Token inválido para o usuário: {user.email}")
-            return JsonResponse({'error': 'Token inválido.'}, status=400)
-    except (TypeError, ValueError, OverflowError, user.DoesNotExist) as e:
-        logger.error(f"Erro ao redefinir a senha: {str(e)}")
-        return JsonResponse({'error': 'Link inválido ou usuário não encontrado.'}, status=400)
-
-
-def email_verification(request, token):
-    email = confirm_token(token)
-    if email is None:
-        return HttpResponse("Token inválido ou expirado.", status=400)
-
-    user = get_object_or_404(User, email=email)
-    user.is_active = True
-    user.save()
-
-    frontend_url = "http://localhost:5173/email-confirmed"
-    print(f"Redirecionando para: {frontend_url}")
-    return HttpResponseRedirect(frontend_url)
-
-
-# views.py
-class UserProfileView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        user = request.user
-        print("Usuário autenticado:", user.username)  # Log para depuração
-        return Response({
-            'first_name': user.first_name,
-            'last_name': user.last_name
-        })
 
 
 class CustomJWTAuthentication(JWTAuthentication):
@@ -150,20 +38,6 @@ class CustomJWTAuthentication(JWTAuthentication):
         except AuthenticationFailed as e:
             print("Erro de autenticação:", e)
             raise
-
-
-class UserListCreateView(APIView):
-    def get(self, request):
-        users = User.objects.all()
-        serializer = UserSerializer(users, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
 
 
 class PostListCreateView(APIView):
@@ -423,6 +297,7 @@ def home(request):
 
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import CustomTokenObtainPairSerializer
+
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer

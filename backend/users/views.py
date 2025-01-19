@@ -1,22 +1,43 @@
-""" backend/users/views.py """
-
+import json
+import logging
+from io import BytesIO
+from PIL import Image
+from django.core.mail import send_mail
+from django.http import JsonResponse
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
+from django.views.decorators.http import require_POST
+from django.contrib.auth import get_user_model, authenticate
+from django.contrib.auth.tokens import default_token_generator
+from django.core.files.base import ContentFile
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .serializers import UserSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
-
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import authenticate
-import logging
+from django.middleware.csrf import get_token
+from .utils import confirm_token, send_email_confirmation
+from django.shortcuts import get_object_or_404
+from .serializers import UserSerializer
+from .models import User
+from django.http import HttpResponse, HttpResponseRedirect
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.exceptions import AuthenticationFailed
 
-from PIL import Image
-from io import BytesIO
-from django.core.files.base import ContentFile
 
-
+# Inicializa o logger
 logger = logging.getLogger(__name__)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_current_user(request):
+    user = request.user
+    serializer = UserSerializer(user)
+    return Response(serializer.data)
 
 
 class RegisterUserView(APIView):
@@ -29,10 +50,15 @@ class RegisterUserView(APIView):
 
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            user = serializer.save()
             logger.info(
                 "Usuário registrado com sucesso: %s", serializer.data
             )  # Log de sucesso
+
+            # Enviar email de confirmação
+            send_email_confirmation(user)
+            logger.info("Email de confirmação enviado para: %s", user.email)
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         logger.error("Erros de validação: %s", serializer.errors)  # Log de erros
@@ -88,9 +114,126 @@ class UserDetailView(APIView):
                     user.profile_picture.url if user.profile_picture else None
                 ),
                 "first_name": user.first_name,  # Adiciona o first_name
-                "last_name": user.last_name,    # Adiciona o last_name
+                "last_name": user.last_name,  # Adiciona o last_name
             }
         )
+
+
+class UserListCreateView(APIView):
+    def get(self, request):
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+
+@csrf_exempt
+def request_password_reset(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            email = data.get("email")
+            user = User.objects.filter(email=email).first()
+            if user:
+                token = default_token_generator.make_token(user)
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+                reset_url = f"http://localhost:5173/reset-password/{uid}/{token}/"
+                send_mail(
+                    "Redefinição de Senha",
+                    f"Clique no link para redefinir sua senha: {reset_url}",
+                    "noreply@trinar.com",
+                    [email],
+                    fail_silently=False,
+                )
+                return JsonResponse(
+                    {"message": "Email de redefinição enviado."}, status=200
+                )
+            else:
+                return JsonResponse({"error": "Email não encontrado."}, status=404)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Dados inválidos."}, status=400)
+    return JsonResponse({"error": "Método não permitido."}, status=405)
+
+
+@ensure_csrf_cookie
+@require_POST
+def reset_password_confirm(request, uidb64, token):
+    try:
+        # Decodifica o UID
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = get_user_model().objects.get(pk=uid)  # Obtém o usuário com base no UID
+
+        # Verifica se o token é válido
+        if default_token_generator.check_token(user, token):
+            # Decodifica o corpo da requisição JSON
+            data = json.loads(request.body)
+            new_password = data.get("new_password")
+
+            # Valida a nova senha
+            if not new_password or len(new_password) < 8:
+                return JsonResponse(
+                    {"error": "A senha deve ter pelo menos 8 caracteres."}, status=400
+                )
+
+            # Redefine a senha
+            user.set_password(new_password)
+            user.save()
+
+            # Garante que o CSRF está configurado corretamente
+            csrf_token = get_token(request)
+
+            logger.info(f"Senha redefinida com sucesso para o usuário: {user.email}")
+
+            return JsonResponse(
+                {"message": "Senha redefinida com sucesso.", "csrf_token": csrf_token},
+                status=200,
+            )
+        else:
+            logger.warning(f"Token inválido para o usuário: {user.email}")
+            return JsonResponse({"error": "Token inválido."}, status=400)
+    except (TypeError, ValueError, OverflowError, user.DoesNotExist) as e:
+        logger.error(f"Erro ao redefinir a senha: {str(e)}")
+        return JsonResponse(
+            {"error": "Link inválido ou usuário não encontrado."}, status=400
+        )
+
+
+def email_verification(request, token):
+    email = confirm_token(token)
+    if email is None:
+        return HttpResponse("Token inválido ou expirado.", status=400)
+
+    user = get_object_or_404(User, email=email)
+    user.is_active = True
+    user.save()
+
+    frontend_url = "http://localhost:5173/email-confirmed"
+    print(f"Redirecionando para: {frontend_url}")
+    return HttpResponseRedirect(frontend_url)
+
+
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        print("Usuário autenticado:", user.username)  # Log para depuração
+        return Response({"first_name": user.first_name, "last_name": user.last_name})
+
+
+class CustomJWTAuthentication(JWTAuthentication):
+    def authenticate(self, request):
+        try:
+            return super().authenticate(request)
+        except AuthenticationFailed as e:
+            print("Erro de autenticação:", e)
+            raise
 
 
 class UploadProfilePictureView(APIView):
@@ -108,7 +251,9 @@ class UploadProfilePictureView(APIView):
         try:
             # Abre a imagem com o PIL
             img = Image.open(profile_picture)
-            print(f"Tamanho original da imagem: {img.size}")  # Debug: Verifica o tamanho original
+            print(
+                f"Tamanho original da imagem: {img.size}"
+            )  # Debug: Verifica o tamanho original
 
             # Faz o crop da imagem para mantê-la quadrada, usando a parte superior como referência
             width, height = img.size
@@ -118,15 +263,19 @@ class UploadProfilePictureView(APIView):
             right = left + min_dimension
             bottom = top + min_dimension
             img = img.crop((left, top, right, bottom))
-            print(f"Tamanho após o crop: {img.size}")  # Debug: Verifica o tamanho após o crop
+            print(
+                f"Tamanho após o crop: {img.size}"
+            )  # Debug: Verifica o tamanho após o crop
 
             # Redimensiona a imagem para 400x400 pixels
             img = img.resize((400, 400), Image.ANTIALIAS)
-            print(f"Tamanho após redimensionamento: {img.size}")  # Debug: Verifica o tamanho após redimensionamento
+            print(
+                f"Tamanho após redimensionamento: {img.size}"
+            )  # Debug: Verifica o tamanho após redimensionamento
 
             # Salva a imagem redimensionada em memória
             buffer = BytesIO()
-            img.save(buffer, format='JPEG')  # Salva como JPEG
+            img.save(buffer, format="JPEG")  # Salva como JPEG
             buffer.seek(0)
 
             # Cria um arquivo Django a partir do conteúdo
@@ -139,14 +288,18 @@ class UploadProfilePictureView(APIView):
 
             # Salva a nova imagem no campo profile_picture
             user.profile_picture.save(file_name, resized_image, save=True)
-            print(f"Imagem salva em: {user.profile_picture.path}")  # Debug: Verifica o caminho do arquivo salvo
+            print(
+                f"Imagem salva em: {user.profile_picture.path}"
+            )  # Debug: Verifica o caminho do arquivo salvo
 
             # Serializa os dados do usuário e retorna a resposta
             serializer = UserSerializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         except Exception as e:
-            print(f"Erro durante o processamento da imagem: {str(e)}")  # Debug: Log de erro
+            print(
+                f"Erro durante o processamento da imagem: {str(e)}"
+            )  # Debug: Log de erro
             return Response(
                 {"error": f"Erro ao processar a imagem: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

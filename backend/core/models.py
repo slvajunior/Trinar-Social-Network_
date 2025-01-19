@@ -2,46 +2,7 @@
 
 from django.db import models
 import re
-from django.contrib.auth.models import AbstractUser
-
-
-class User(AbstractUser):
-    email = models.EmailField(unique=True)
-    first_name = models.CharField(max_length=30, blank=True)  # Adicionando first_name
-    last_name = models.CharField(max_length=30, blank=True)   # Adicionando last_name
-    birth_date = models.DateField(null=True, blank=True)      # Adicionando birth_date
-    followers = models.ManyToManyField(
-        "self", symmetrical=False, related_name="following"
-    )
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    # Adicionando 'related_name' para resolver o conflito de 'groups' e 'user_permissions'
-    groups = models.ManyToManyField(
-        "auth.Group", related_name="custom_user_set", blank=True
-    )
-    user_permissions = models.ManyToManyField(
-        "auth.Permission", related_name="custom_user_set", blank=True
-    )
-
-    def __str__(self):
-        return self.username
-
-    @property
-    def followers_count(self):
-        return self.followers.count()
-
-    @property
-    def following_count(self):
-        return self.following.count()  # Corrigido: estava 'following_count.count()'
-
-    class Meta:
-        verbose_name = "User"
-        verbose_name_plural = "Users"
-
-    def check_password(self, raw_password):
-        from django.contrib.auth.hashers import check_password
-
-        return check_password(raw_password, self.password)
+from users.models import User
 
 
 class Post(models.Model):
