@@ -11,10 +11,10 @@ const EmailConfirmed = () => {
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: 400,
+        width: 500,
         bgcolor: 'background.paper',
         boxShadow: 24,
-        p: 4,
+        p: 2,
         borderRadius: 2,
         textAlign: 'center',
         outline: 'none', // Remove o outline
@@ -39,8 +39,19 @@ const EmailConfirmed = () => {
         fontFamily: 'Poppins, sans-serif',
         fontSize: '2.5rem',
         fontWeight: 700,
-        color: '#1976d2', // Cor primária do Material-UI
-        marginBottom: '1rem',
+        color: '#111', // Cor primária do Material-UI
+        marginBottom: '0.5rem',
+        marginTop: '0', // Remove o espaçamento acima do logo
+    };
+
+    // Estilo do divisor
+    const dividerStyle = {
+        border: '0', // Remove a borda padrão
+        height: '1px', // Altura da linha
+        backgroundColor: '#ccc', // Cor da linha
+        margin: '0 auto', // Centraliza o divisor
+        width: '100%', // Largura da linha (ajuste conforme necessário)
+        marginBottom: '1.5rem', // Espaçamento abaixo do divisor
     };
 
     return (
@@ -58,6 +69,9 @@ const EmailConfirmed = () => {
                     {/* Logo "Trinar" */}
                     <h1 style={logoStyle}>trinar</h1>
 
+                    {/* Divisor estilizado */}
+                    <hr style={dividerStyle} />
+
                     {/* Mensagem de confirmação */}
                     <Typography variant="h5" id="modal-title" gutterBottom>
                         E-mail confirmado com sucesso!
@@ -73,7 +87,7 @@ const EmailConfirmed = () => {
                         onClick={() => navigate('/login')}
                         sx={{ outline: 'none' }} // Remove o outline do botão
                     >
-                        Ir para o Login
+                        Logue-se
                     </Button>
                 </Box>
             </Modal>
