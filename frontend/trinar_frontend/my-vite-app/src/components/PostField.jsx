@@ -106,11 +106,11 @@ const PostField = () => {
       {/* Botões de Upload */}
       <div className="media-upload-container">
         <label htmlFor="image-upload" className="media-upload-button">
-          <FontAwesomeIcon icon={faImage} />
+          <FontAwesomeIcon className="media-icon-img" icon={faImage} />
           <span>Imagem</span>
         </label>
         <label htmlFor="video-upload" className="media-upload-button">
-          <FontAwesomeIcon icon={faVideo} />
+          <FontAwesomeIcon className="media-icon-video" icon={faVideo} />
           <span>Vídeo</span>
         </label>
         <input

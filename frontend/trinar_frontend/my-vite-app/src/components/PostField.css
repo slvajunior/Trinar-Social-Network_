@@ -8,9 +8,9 @@
   margin: 0 auto;
   padding: 15px;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 4px 4px rgba(0, 0, 0, 0.01);
   margin-top: 35px;
   font-family: 'Roboto', sans-serif;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.09);
 }
 
 /* Foto do Usuário e Campo de Texto */
@@ -50,6 +50,11 @@
     height: 55px;
 }
 
+.profile-photo:hover {
+  border-color: #666;
+  box-shadow: 0 4px 10px rgba(98, 0, 238, 0.2);
+}
+
 /* Centralizando o placeholder verticalmente */
 .post-input {
   width: 100%;
@@ -60,7 +65,7 @@
   border-radius: 8px;
   outline: none;
   font-size: 1rem;
-  color: #333;
+  color: #64686c;
   background-color: var(--color-primary);
   resize: none;
   transition: all 0.3s ease;
@@ -68,6 +73,11 @@
   overflow-y: hidden;
   line-height: 1.4; /* Defina o line-height para ajustar a altura do texto */
   box-shadow: inset 0 1px 2px 0.05px rgba(0, 0, 0, 0.09);
+}
+
+.post-input:hover {
+  border-color: var(--color-tertiary);
+  box-shadow: 0 4px 10px rgba(98, 0, 238, 0.2);
 }
 
 /* Ajustando o estilo do placeholder */
@@ -119,19 +129,19 @@
   text-align: center;
   gap: 9px;
   padding: 9px 24px;
-  background-color: var(--color-tertiary);
-  color: #ffffff;
+  background-color: var(--button-media-color);
+  color: #64686c;
   border: none;
-  border-radius: 40px;
+  border-radius: 4px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s ease;
   font-family: var(--font-primary);
   font-weight: 600;
 }
 
 .media-upload-button:hover {
-  background-color: #3700b3;
+  background-color: var(--button-media-hover-color);
 }
 
 /* Pré-visualização de Mídia */
@@ -145,7 +155,7 @@
 
 .media-item {
   position: relative;
-  border-radius: 10px;
+  border-radius: 8px;
   overflow: hidden;
 }
 
@@ -153,6 +163,14 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+svg.svg-inline--fa.fa-image.media-icon-img {
+  color: var(--green-color);
+}
+
+svg.svg-inline--fa.fa-video.media-icon-video {
+  color: var(--red-color);
 }
 
 .remove-media {
