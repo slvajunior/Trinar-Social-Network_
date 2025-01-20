@@ -66,3 +66,41 @@ def decode_confirmation_token(token, max_age=3600):
         return serializer.loads(token, salt='email-confirmation-salt', max_age=max_age)
     except BadData:
         return None
+
+
+salt = "password-reset-salt"
+serializer = URLSafeTimedSerializer(SECRET_KEY, salt=salt)
+
+
+def generate_reset_token(email):
+    """
+    Gera um token para a redefinição de senha do e-mail fornecido.
+    """
+    token = serializer.dumps(email)
+    print(f"Token gerado: {token}")
+    return token
+
+
+def send_email_reset_confirmation(user):
+    token = generate_reset_token(user.email)
+
+    domain = 'http://127.0.0.1:8000'
+    reset_link = f"{domain}/reset-password/{token}/"  # Link para reset de senha
+
+    print(f"Link de redefinição: {reset_link}")
+
+    context = {
+        'user': user,
+        'link': reset_link,
+        'site_name': 'Trinar',
+    }
+
+    email_body = render_to_string('mail_body_reset_password.html', context)
+
+    send_mail(
+        subject='Redefinição de senha',
+        message=strip_tags(email_body),
+        from_email=settings.DEFAULT_FROM_EMAIL,  # Usando a configuração correta
+        recipient_list=[user.email],
+        html_message=email_body,
+    )

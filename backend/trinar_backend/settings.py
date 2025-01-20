@@ -245,3 +245,5 @@ EMAIL_MAIL_PLAIN = os.getenv('EMAIL_MAIL_PLAIN', 'mail_body.txt')
 EMAIL_MAIL_HTML = os.getenv('EMAIL_MAIL_HTML', 'mail_body.html')
 EMAIL_MAIL_TOKEN_LIFE = int(os.getenv('EMAIL_MAIL_TOKEN_LIFE', 3600))
 EMAIL_MAIL_PAGE_TEMPLATE = os.getenv('EMAIL_MAIL_PAGE_TEMPLATE', 'email_confirmation.html')
+
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'Trinar <juniorazevedosilva43@gmail.com>')

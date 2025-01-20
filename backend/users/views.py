@@ -17,8 +17,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.middleware.csrf import get_token
-from .utils import confirm_token, send_email_confirmation
+from .utils import confirm_token, send_email_confirmation, send_email_reset_confirmation
 from django.shortcuts import get_object_or_404
 from .serializers import UserSerializer
 from .models import User
@@ -185,14 +184,12 @@ def reset_password_confirm(request, uidb64, token):
             user.set_password(new_password)
             user.save()
 
-            # Garante que o CSRF está configurado corretamente
-            csrf_token = get_token(request)
-
-            logger.info(f"Senha redefinida com sucesso para o usuário: {user.email}")
+            # Envia o e-mail de confirmação de redefinição de senha
+            send_email_reset_confirmation(user)
+            logger.info(f"E-mail de confirmação de redefinição de senha enviado para: {user.email}")
 
             return JsonResponse(
-                {"message": "Senha redefinida com sucesso.", "csrf_token": csrf_token},
-                status=200,
+                {"message": "Senha redefinida com sucesso."}, status=200
             )
         else:
             logger.warning(f"Token inválido para o usuário: {user.email}")
