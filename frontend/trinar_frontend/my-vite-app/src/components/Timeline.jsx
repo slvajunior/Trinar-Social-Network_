@@ -23,10 +23,6 @@ const Timeline = () => {
               <FaRetweet /> {/* Ícone de repost */}
               <span>Repost</span>
             </li>
-            <li>
-              <FaComment /> {/* Ícone de comments */}
-              <span>Comments</span>
-            </li>
           </ul>
         </div>
       </div>
@@ -58,10 +54,7 @@ const Timeline = () => {
               <FaRetweet /> {/* Ícone de repost */}
               <span>Repost</span>
             </li>
-            <li>
-              <FaComment /> {/* Ícone de comments */}
-              <span>Comments</span>
-            </li>
+
           </ul>
         </div>
       </div>

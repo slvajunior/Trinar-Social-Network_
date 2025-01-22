@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { FaUserCircle, FaUpload } from "react-icons/fa";
-import "./ProfilePictureUpload.css"; // Estilização (opcional)
 
 const ProfilePictureUpload = ({ user, onUpdate }) => {
   const [file, setFile] = useState(null);

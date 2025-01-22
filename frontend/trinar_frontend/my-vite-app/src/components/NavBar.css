@@ -63,7 +63,7 @@
   position: absolute;
   display: flex;
   align-items: center;
-  width: 260px;
+  width: 240px;
   height: 60px;
   position: relative;
   margin-right: 30px;
@@ -288,4 +288,18 @@ hr.modal-divider {
   }
 }
 
+@media (max-width: 450px) {
+  /* Quando a tela for menor que 768px, a sidebar será escondida e terá um menu deslizante */
+  .logo {
+    transform: translateX(-100%); /* Sidebar fica escondida */
+  }
 
+  .logo.open {
+    transform: translateX(0); /* Sidebar desliza para a direita */
+  }
+
+  /* Ajusta a margem do conteúdo principal para o caso de telas pequenas */
+  .content {
+    margin-left: 0;
+  }
+}

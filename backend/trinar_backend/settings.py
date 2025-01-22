@@ -36,7 +36,7 @@ LOGIN_URL = "/users/login/"
 LOGOUT_URL = "/users/logout/"
 
 # Hosts permitidos
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'http://localhost:5173']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'http://127.0.0.1:8000',]
 
 # Configuração do email (para links de redefinição de senha)
 EMAIL_PAGE_DOMAIN = "http://localhost:5173"
@@ -54,6 +54,7 @@ CORS_ALLOWED_ORIGINS = ["http://localhost:5173"]
 
 # Para permitir que cookies sejam enviados entre frontend e backend
 CORS_ALLOW_CREDENTIALS = True
+DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 10  # Limite de 10 MB, por exemplo
 
 
 INSTALLED_APPS = [
@@ -63,15 +64,17 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_email_verification",
+    "django_otp.plugins.otp_totp",
+    'django_extensions',
+    "django_otp",
     "rest_framework_simplejwt.token_blacklist",
     "rest_framework",
     'rest_framework.authtoken',
-    "django_email_verification",
     "drf_spectacular",
     "corsheaders",
     "drf_yasg",
-    "django_otp",
-    "django_otp.plugins.otp_totp",
+    'authentication',
     "two_factor",
     "users",
     "core",
@@ -84,7 +87,6 @@ AUTH_USER_MODEL = 'users.User'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
@@ -92,8 +94,9 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    # 'AUTH_HEADER_TYPES': ('Bearer',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
 MIDDLEWARE = [
@@ -113,6 +116,7 @@ AUTHENTICATION_BACKENDS = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Endereço do frontend
+    "http://192.168.1.235:5173",
 ]
 
 CSRF_TRUSTED_ORIGINS = [

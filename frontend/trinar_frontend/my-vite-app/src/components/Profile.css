@@ -1,0 +1,60 @@
+
+.bory {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: var(--background-color);
+}
+
+/* Contêiner principal do perfil */
+.profile-container {
+  position: relative;
+  width: 100%;
+}
+
+/* Contêiner para a foto de capa */
+.cover-photo-container {
+  width: 100%; /* Largura de 70% da tela */
+  height: 450px; /* Altura ajustável conforme necessário */
+  overflow: hidden;
+  position: relative;
+  margin: 0 auto; /* Centraliza horizontalmente */
+  margin-bottom: 20px; /* Espaçamento entre a foto de capa e o restante do conteúdo */
+  display: grid;
+  place-items: center; /* Centraliza o conteúdo horizontal e verticalmente */
+}
+
+.cover-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Garante que a imagem cubra o espaço sem distorção */
+  object-position: top; /* Corta a imagem a partir do topo */
+}
+
+/* Contêiner para a foto de perfil */
+.profile-picture-container {
+  position: absolute;
+  top: 365px; /* Ajuste a posição vertical da foto de perfil */
+  left: 30%; /* Centraliza horizontalmente */
+  transform: translateX(-50%); /* Ajusta o posicionamento horizontal */
+  width: 250px; /* Largura da foto de perfil */
+  height: 250px; /* Altura da foto de perfil */
+  border-radius: 50%; /* Formato redondo */
+  overflow: hidden;
+  border: 5px solid white; /* Borda opcional */
+  padding: 2px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra opcional */
+}
+
+.profile-picture {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Garante que a imagem cubra o espaço sem distorção */
+}
+
+/* Conteúdo do perfil (h1 e biografia) */
+.profile-content {
+  margin-top: 100px; /* Ajuste o espaçamento conforme necessário */
+  text-align: center; /* Centraliza o texto */
+  padding: 20px;
+}

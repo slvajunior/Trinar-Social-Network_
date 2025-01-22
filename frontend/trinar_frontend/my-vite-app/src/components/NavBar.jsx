@@ -8,7 +8,7 @@ import {
   FaMoon,
   FaSignOutAlt,
 } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; // Importando useNavigate
 import "./NavBar.css";
 
 const NavBar = () => {
@@ -24,7 +24,7 @@ const NavBar = () => {
   const [isLoading, setIsLoading] = useState(true);
   const modalRef = useRef(null); // Referência para o modal
   const userIconRef = useRef(null); // Referência para o ícone do usuário
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Hook para navegação
 
   // Função para buscar dados do usuário
   const fetchUserData = async () => {
@@ -107,9 +107,16 @@ const NavBar = () => {
     };
   }, []);
 
+  // Função para redirecionar ao clicar no logo
+  const handleLogoClick = () => {
+    window.location.href = "http://localhost:5173/";
+  };
+
   return (
     <div className="navbar">
-      <h1 className="logo">trinar</h1>
+      <h1 className="logo" onClick={handleLogoClick} style={{ cursor: "pointer" }}>
+        trinar
+      </h1>
       <div className="navbar-extra">
         <div className="search-container">
           <div className="search-input-wrapper">
@@ -163,9 +170,16 @@ const NavBar = () => {
                   src={`http://localhost:8000${user.profile_picture}`}
                   alt="Profile"
                   className="profile-photo"
+                  onClick={() => navigate("/profile")} // Redireciona para a página de perfil
+                  style={{ cursor: "pointer" }} // Adiciona cursor de ponteiro
                 />
               ) : (
-                <FaUserCircle className="user-photo" size={45} />
+                <FaUserCircle
+                  className="user-photo"
+                  size={45}
+                  onClick={() => navigate("/profile")} // Redireciona para a página de perfil
+                  style={{ cursor: "pointer" }} // Adiciona cursor de ponteiro
+                />
               )}
               <div className="profile-name">
                 {isLoading ? (
@@ -180,7 +194,12 @@ const NavBar = () => {
               </div>
             </div>
             <hr className="modal-divider" />
-            <button className="edit-profile-btn">Editar perfil</button>
+            <button
+              className="edit-profile-btn"
+              onClick={() => navigate("/profile/edit")} // Redireciona para a página de edição de perfil
+            >
+              Editar perfil
+            </button>
           </div>
 
           <div className="user-modal-item">

@@ -17,7 +17,9 @@ class User(AbstractUser):
         "auth.Permission", related_name="custom_user_permissions", blank=True
     )
 
-    profile_picture = models.ImageField(upload_to="profile_pictures/", null=True, blank=True)  # Adiciona foto de perfil
+    profile_picture = models.ImageField(upload_to="profile_pictures/", null=True, blank=True)
+    cover_photo = models.ImageField(upload_to="cover_photos/", null=True, blank=True)  # Foto de capa
+    bio = models.TextField(blank=True)  # Biografia
 
     def __str__(self):
         return self.username
@@ -33,3 +35,13 @@ class User(AbstractUser):
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "Users"
+
+
+class Photo(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="photos")
+    image = models.ImageField(upload_to="user_photos/")
+    description = models.CharField(max_length=255, blank=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Photo {self.id} by {self.user.username}"

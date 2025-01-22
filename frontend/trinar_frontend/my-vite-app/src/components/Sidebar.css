@@ -46,7 +46,7 @@
 }
 
 /* Media Queries para Responsividade */
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
   /* Quando a tela for menor que 768px, a sidebar será escondida e terá um menu deslizante */
   .sidebar {
     transform: translateX(-100%); /* Sidebar fica escondida */

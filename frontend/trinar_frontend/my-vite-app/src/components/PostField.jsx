@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage, faVideo, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FaUserCircle } from "react-icons/fa"; // Importação do ícone
 import axios from "axios"; // Usando axios para buscar dados do usuário
+import { useNavigate } from "react-router-dom"; // Importando useNavigate
 import "./PostField.css";
 
 const PostField = () => {
@@ -12,6 +13,7 @@ const PostField = () => {
   const [user, setUser] = useState({ profile_picture: "" });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate(); // Hook para navegação
 
   // Função para buscar os dados do usuário
   const fetchUserData = async () => {
@@ -73,11 +75,16 @@ const PostField = () => {
     }
   };
 
+  // Função para redirecionar ao clicar na foto de perfil
+  const handleProfileClick = () => {
+    navigate("/profile");
+  };
+
   return (
     <div className="post-field-container">
       {/* Foto do Usuário e Campo de Texto */}
       <div className="user-input-container">
-        <div className="user-photo">
+        <div className="user-photo" onClick={handleProfileClick} style={{ cursor: "pointer" }}>
           {user.profile_picture ? (
             <img
               src={`http://localhost:8000${user.profile_picture}`}

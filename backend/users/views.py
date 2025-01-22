@@ -26,6 +26,10 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 
+# from .serializers import PhotoSerializer
+# from .models import Photo
+from rest_framework import generics, permissions
+
 
 # Inicializa o logger
 logger = logging.getLogger(__name__)
@@ -186,7 +190,9 @@ def reset_password_confirm(request, uidb64, token):
 
             # Envia o e-mail de confirmação de redefinição de senha
             send_email_reset_confirmation(user)
-            logger.info(f"E-mail de confirmação de redefinição de senha enviado para: {user.email}")
+            logger.info(
+                f"E-mail de confirmação de redefinição de senha enviado para: {user.email}"
+            )
 
             return JsonResponse(
                 {"message": "Senha redefinida com sucesso."}, status=200
@@ -215,15 +221,6 @@ def email_verification(request, token):
     return HttpResponseRedirect(frontend_url)
 
 
-class UserProfileView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        user = request.user
-        print("Usuário autenticado:", user.username)  # Log para depuração
-        return Response({"first_name": user.first_name, "last_name": user.last_name})
-
-
 class CustomJWTAuthentication(JWTAuthentication):
     def authenticate(self, request):
         try:
@@ -231,6 +228,172 @@ class CustomJWTAuthentication(JWTAuthentication):
         except AuthenticationFailed as e:
             print("Erro de autenticação:", e)
             raise
+
+
+""" AREA DA PAGINA PERFIL DO USUARIO E EDIT PROFILE USERS"""
+
+
+# class UserProfileView(APIView):
+#     permission_classes = [IsAuthenticated]
+
+#     def get(self, request, *args, **kwargs):
+#         user = request.user  # Obtém o usuário autenticado
+#         serializer = UserSerializer(user)
+#         return Response(serializer.data)
+
+
+# class UserProfileEditView(APIView):
+#     permission_classes = [IsAuthenticated]
+
+#     def put(self, request, *args, **kwargs):
+#         user = request.user
+#         # Dados do usuário
+#         username = request.data.get("username")
+#         email = request.data.get("email")  # Exemplo para outros dados
+
+#         # Atualiza os dados do usuário
+#         if username:
+#             user.username = username
+#         if email:
+#             user.email = email
+
+#         # Foto de perfil
+#         profile_picture = request.FILES.get("profile_picture")
+#         if profile_picture:
+#             try:
+#                 # Processamento da imagem aqui (se existir foto nova)
+#                 img = Image.open(profile_picture)
+#                 # Redimensionamento e edição, como você já fez
+#                 buffer = BytesIO()
+#                 img.save(buffer, format="JPEG")
+#                 buffer.seek(0)
+#                 file_name = f"profile_picture_{user.id}.jpg"
+#                 resized_image = ContentFile(buffer.read(), name=file_name)
+#                 if user.profile_picture:
+#                     user.profile_picture.delete(save=False)
+#                 user.profile_picture.save(file_name, resized_image, save=True)
+#             except Exception as e:
+#                 return Response(
+#                     {"error": f"Erro ao processar a imagem: {str(e)}"},
+#                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#                 )
+
+#         # Salvar no banco
+#         user.save()
+
+#         # Retorna os dados atualizados
+#         serializer = UserSerializer(user)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# class UserPhotosView(APIView):
+#     permission_classes = [IsAuthenticated]
+#     parser_classes = [MultiPartParser, FormParser]
+
+#     def get(self, request, *args, **kwargs):
+#         photos = Photo.objects.filter(user=request.user)
+#         serializer = PhotoSerializer(photos, many=True)
+#         return Response(serializer.data)
+
+#     def put(self, request, *args, **kwargs):
+#         # Exemplo de como processar a imagem enviada no `PUT`
+#         cover_picture = request.data.get("cover_picture")
+#         if cover_picture:
+#             # Associe a imagem ao usuário autenticado
+#             request.user.cover_picture = cover_picture
+#             request.user.save()
+#             return Response(
+#                 {"detail": "Foto de capa atualizada com sucesso!"},
+#                 status=status.HTTP_200_OK,
+#             )
+#         return Response(
+#             {"detail": "Nenhuma imagem enviada."}, status=status.HTTP_400_BAD_REQUEST
+#         )
+
+
+# class UserProfilePhotoView(APIView):
+#     permission_classes = [IsAuthenticated]
+#     parser_classes = [MultiPartParser]  # Responsável por processar o arquivo
+
+#     def put(self, request, *args, **kwargs):
+#         user = request.user  # Usuário autenticado
+#         cover_picture = request.FILES.get(
+#             "cover_photo"
+#         )  # Verificando o campo de foto de capa
+
+#         if not cover_picture:
+#             return Response(
+#                 {"error": "Nenhuma foto enviada."}, status=status.HTTP_400_BAD_REQUEST
+#             )
+
+#         try:
+#             # Lógica para processar a foto, por exemplo redimensionando e salvando
+#             img = Image.open(cover_picture)
+#             print(f"Tamanho original da imagem: {img.size}")
+
+#             # Opções de manipulação da imagem podem ser aplicadas aqui (como redimensionamento)
+#             img = img.resize((800, 800))  # Exemplo de redimensionamento
+
+#             # Salva a imagem em memória
+#             buffer = BytesIO()
+#             img.save(buffer, format="JPEG")
+#             buffer.seek(0)
+#             file_name = f"cover_picture_{user.id}.jpg"
+#             resized_image = ContentFile(buffer.read(), name=file_name)
+
+#             if user.cover_photo:
+#                 user.cover_photo.delete(save=False)  # Deleta foto anterior, se existir
+
+#             user.cover_photo.save(
+#                 file_name, resized_image, save=True
+#             )  # Salva a nova imagem
+#             print(f"Imagem de capa salva em: {user.cover_photo.path}")
+
+#             # Retorna os dados do usuário após o upload
+#             serializer = UserSerializer(user)
+#             return Response(serializer.data, status=status.HTTP_200_OK)
+
+#         except Exception as e:
+#             return Response(
+#                 {"error": f"Erro ao processar a imagem: {str(e)}"},
+#                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#             )
+
+
+"""
+O CODIGO ABAIXO É FORNECIDO PELO DEEPSEEK O DE CIMA É UM BOSTA DO CHATGPT
+"""
+
+
+class ProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user  # Obtém o usuário autenticado
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+
+
+class EditProfileView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]  # Importante para receber arquivos
+
+    def get_object(self):
+        return self.request.user
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
+
+
+"""
+AREA DE UPLOAD DE FOTOS DO USUARIO E UPLOAD DE FOTO DE PERFIL DO USUARIO
+"""
 
 
 class UploadProfilePictureView(APIView):
