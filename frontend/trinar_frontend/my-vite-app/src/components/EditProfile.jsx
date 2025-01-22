@@ -6,6 +6,7 @@ const EditProfile = () => {
         first_name: '',
         last_name: '',
         bio: '',
+        location: '', // Adicionado campo location
         profile_picture: null,
         cover_photo: null,
     });
@@ -58,30 +59,31 @@ const EditProfile = () => {
             alert("Token não encontrado. Faça login novamente.");
             return;
         }
-    
+
         try {
             const formDataToSend = new FormData();
             formDataToSend.append("first_name", formData.first_name);
             formDataToSend.append("last_name", formData.last_name);
             formDataToSend.append("bio", formData.bio);
-    
+            formDataToSend.append("location", formData.location); // Adicionando location
+
             // Adiciona a foto de perfil (se for um arquivo)
             if (formData.profile_picture instanceof File) {
                 formDataToSend.append("profile_picture", formData.profile_picture);
             }
-    
+
             // Adiciona a foto de capa (se for um arquivo)
             if (formData.cover_photo instanceof File) {
                 formDataToSend.append("cover_photo", formData.cover_photo);
             }
-    
+
             const response = await axios.patch("/api/users/profile/edit/", formDataToSend, {
                 headers: {
-                    "Content-Type": "multipart/form-data", // Define o tipo de conteúdo como multipart/form-data
+                    "Content-Type": "multipart/form-data",
                     Authorization: `Bearer ${token}`,
                 },
             });
-    
+
             console.log("Perfil atualizado:", response.data);
             alert("Perfil atualizado com sucesso!");
         } catch (error) {
@@ -111,6 +113,13 @@ const EditProfile = () => {
                 value={formData.bio}
                 onChange={handleChange}
                 placeholder="Biografia"
+            />
+            <input
+                type="text"
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
+                placeholder="Localidade" // Campo para localidade
             />
             <input
                 type="file"

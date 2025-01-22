@@ -8,7 +8,7 @@ import {
   FaMoon,
   FaSignOutAlt,
 } from "react-icons/fa";
-import { useNavigate } from "react-router-dom"; // Importando useNavigate
+import { useNavigate } from "react-router-dom";
 import "./NavBar.css";
 
 const NavBar = () => {
@@ -22,11 +22,10 @@ const NavBar = () => {
   });
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const modalRef = useRef(null); // Referência para o modal
-  const userIconRef = useRef(null); // Referência para o ícone do usuário
-  const navigate = useNavigate(); // Hook para navegação
+  const modalRef = useRef(null);
+  const userIconRef = useRef(null);
+  const navigate = useNavigate();
 
-  // Função para buscar dados do usuário
   const fetchUserData = async () => {
     setIsLoading(true);
     try {
@@ -35,7 +34,7 @@ const NavBar = () => {
       if (!token) {
         setError("Nenhum token foi encontrado. Faça login novamente.");
         setIsLoading(false);
-        navigate("/login"); // Redireciona para a página de login
+        navigate("/login");
         return;
       }
 
@@ -47,48 +46,43 @@ const NavBar = () => {
       });
 
       if (response.status === 401) {
-        const data = await response.json();
         setError("Token inválido. Redirecionando para login...");
-        localStorage.removeItem("token"); // Limpa o token expirado
+        localStorage.removeItem("token");
         navigate("/login");
         return;
       }
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Resposta da API:", data); // Inspecione a estrutura da resposta
         setUser(data);
         setError(null);
       } else {
         const errorData = await response.json();
         setError(`Erro ao buscar dados do usuário: ${errorData.detail}`);
       }
-    } catch (error) {
+    } catch {
       setError("Erro ao conectar ao servidor. Tente novamente mais tarde.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Verifica o token ao carregar o componente
   useEffect(() => {
     const token = localStorage.getItem("token");
 
     if (!token) {
       setError("Nenhum token foi encontrado. Faça login novamente.");
-      navigate("/login"); // Redireciona para a página de login
+      navigate("/login");
     } else {
-      fetchUserData(); // Busca os dados do usuário se o token existir
+      fetchUserData();
     }
   }, [navigate]);
 
-  // Função para fazer logout
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
 
-  // Função para fechar o modal ao clicar fora dele
   const handleClickOutside = (event) => {
     if (
       modalRef.current &&
@@ -99,7 +93,6 @@ const NavBar = () => {
     }
   };
 
-  // Adiciona o event listener para detectar cliques fora do modal
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -107,7 +100,6 @@ const NavBar = () => {
     };
   }, []);
 
-  // Função para redirecionar ao clicar no logo
   const handleLogoClick = () => {
     window.location.href = "http://localhost:5173/";
   };
@@ -128,19 +120,17 @@ const NavBar = () => {
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
-                setShowResults(e.target.value.trim() !== ""); // Mostra resultados se houver texto
+                setShowResults(e.target.value.trim() !== "");
               }}
             />
           </div>
           {showResults && (
             <div className="search-results">
               <p>Resultados para: "{searchQuery}"</p>
-              {/* Aqui você pode adicionar os resultados da pesquisa */}
             </div>
           )}
         </div>
 
-        {/* Exibe foto de perfil na navbar */}
         <div
           className="user-photo-nav"
           onClick={() => setIsModalOpen(!isModalOpen)}
@@ -160,83 +150,83 @@ const NavBar = () => {
         </div>
       </div>
 
-      {/* Modal de perfil */}
-      {isModalOpen && (
-        <div className="user-modal" ref={modalRef}>
-          <div className="user-profile">
-            <div className="profile-header">
-              {user.profile_picture ? (
-                <img
-                  src={`http://localhost:8000${user.profile_picture}`}
-                  alt="Profile"
-                  className="profile-photo"
-                  onClick={() => navigate("/profile")} // Redireciona para a página de perfil
-                  style={{ cursor: "pointer" }} // Adiciona cursor de ponteiro
-                />
+      <div
+        className={`user-modal ${isModalOpen ? "modal-open" : "modal-close"}`}
+        ref={modalRef}
+      >
+        <div className="user-profile">
+          <div className="profile-header">
+            {user.profile_picture ? (
+              <img
+                src={`http://localhost:8000${user.profile_picture}`}
+                alt="Profile"
+                className="profile-photo"
+                onClick={() => navigate("/profile")}
+                style={{ cursor: "pointer" }}
+              />
+            ) : (
+              <FaUserCircle
+                className="user-photo"
+                size={45}
+                onClick={() => navigate("/profile")}
+                style={{ cursor: "pointer" }}
+              />
+            )}
+            <div className="profile-name">
+              {isLoading ? (
+                <p>Carregando...</p>
+              ) : error ? (
+                <p style={{ color: "red" }}>{error}</p>
               ) : (
-                <FaUserCircle
-                  className="user-photo"
-                  size={45}
-                  onClick={() => navigate("/profile")} // Redireciona para a página de perfil
-                  style={{ cursor: "pointer" }} // Adiciona cursor de ponteiro
-                />
+                <p>
+                  {user.first_name} {user.last_name}
+                </p>
               )}
-              <div className="profile-name">
-                {isLoading ? (
-                  <p>Carregando...</p>
-                ) : error ? (
-                  <p style={{ color: "red" }}>{error}</p>
-                ) : (
-                  <p>
-                    {user.first_name} {user.last_name}
-                  </p>
-                )}
-              </div>
             </div>
-            <hr className="modal-divider" />
-            <button
-              className="edit-profile-btn"
-              onClick={() => navigate("/profile/edit")} // Redireciona para a página de edição de perfil
-            >
-              Editar perfil
-            </button>
           </div>
-
-          <div className="user-modal-item">
-            <div className="icon-circle">
-              <FaCog size={25} />
-            </div>
-            <span>Configurações e privacidade</span>
-          </div>
-          <div className="user-modal-item">
-            <div className="icon-circle">
-              <FaQuestionCircle size={25} />
-            </div>
-            <span>Ajuda e Suporte</span>
-          </div>
-          <div className="user-modal-item">
-            <div className="icon-circle">
-              <FaSun size={25} />
-            </div>
-            <span>Modo Claro</span>
-          </div>
-          <div className="user-modal-item">
-            <div className="icon-circle">
-              <FaMoon size={25} />
-            </div>
-            <span>Modo Escuro</span>
-          </div>
-          <div className="user-modal-item" onClick={handleLogout}>
-            <div className="icon-circle">
-              <FaSignOutAlt size={25} />
-            </div>
-            <span>Sair</span>
-          </div>
-          <footer className="modal-footer">
-            <p>© 2025 Trinar. Todos os direitos reservados.</p>
-          </footer>
+          <hr className="modal-divider" />
+          <button
+            className="edit-profile-btn"
+            onClick={() => navigate("/profile/edit")}
+          >
+            Editar perfil
+          </button>
         </div>
-      )}
+
+        <div className="user-modal-item">
+          <div className="icon-circle">
+            <FaCog size={25} />
+          </div>
+          <span>Configurações e privacidade</span>
+        </div>
+        <div className="user-modal-item">
+          <div className="icon-circle">
+            <FaQuestionCircle size={25} />
+          </div>
+          <span>Ajuda e Suporte</span>
+        </div>
+        <div className="user-modal-item">
+          <div className="icon-circle">
+            <FaMoon size={25} />
+          </div>
+          <span>Modo Escuro</span>
+        </div>
+        <div className="user-modal-item">
+          <div className="icon-circle">
+            <FaSun size={25} />
+          </div>
+          <span>Modo Claro</span>
+        </div>
+        <div className="user-modal-item" onClick={handleLogout}>
+          <div className="icon-circle">
+            <FaSignOutAlt size={25} />
+          </div>
+          <span>Sair</span>
+        </div>
+        <footer className="modal-footer">
+          <p>© 2025 Trinar. Todos os direitos reservados.</p>
+        </footer>
+      </div>
     </div>
   );
 };

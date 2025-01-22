@@ -12,79 +12,81 @@
 /* =====================================
    Layout Container
    ===================================== */
-   .layout-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh; /* Garante que o layout ocupe toda a altura da tela */
-    width: 100%;
-    margin: 0;
-    padding: 0;
-  }
-  
-  /* =====================================
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Garante que o layout ocupe toda a altura da tela */
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* =====================================
      NavBar
      ===================================== */
-  .navbar {
-    width: 100%;
-    height: 57px; /* Altura da NavBar */
-    background-color: var(--color-secondary); /* Cor de fundo da NavBar */
-    color: white; /* Cor do texto da NavBar */
-    position: fixed; /* Fixa a NavBar no topo */
-    top: 0;
-    left: 0;
-    z-index: 1000; /* Garante que a NavBar fique acima dos outros elementos */
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px; /* Espaçamento interno */
-  }
-  
-  /* =====================================
+.navbar {
+  width: 100%;
+  height: 57px; /* Altura da NavBar */
+  background-color: var(--color-secondary); /* Cor de fundo da NavBar */
+  color: white; /* Cor do texto da NavBar */
+  position: fixed; /* Fixa a NavBar no topo */
+  top: 0;
+  left: 0;
+  z-index: 1000; /* Garante que a NavBar fique acima dos outros elementos */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px; /* Espaçamento interno */
+}
+
+/* =====================================
      Content (Área abaixo da NavBar)
      ===================================== */
-  .content {
-    flex: 1; /* Faz o conteúdo ocupar o espaço restante */
-    width: 100%;
-    max-width: 1200px; /* Largura máxima do conteúdo */
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  /* Ajuste para páginas com NavBar */
-  .content.with-navbar {
-    margin-top: 60px; /* Compensa a altura da NavBar */
-    padding: 20px; /* Espaçamento interno */
-  }
-  
-  /* Ajuste para páginas sem NavBar */
-  .content.without-navbar {
-    margin-top: 0; /* Sem margem no topo */
-    padding: 20px; /* Espaçamento interno */
-  }
-  
-  /* =====================================
+
+.content {
+  flex: 1; /* Faz o conteúdo ocupar o espaço restante */
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: auto;
+  overflow: visible; /* Permite que o conteúdo ultrapasse a largura máxima */
+}
+
+/* Ajuste para páginas com NavBar */
+.content.with-navbar {
+  margin-top: 60px; /* Compensa a altura da NavBar */
+  padding: 0 0 20px; /* Espaçamento interno */
+}
+
+/* Ajuste para páginas sem NavBar */
+.content.without-navbar {
+  margin-top: 0; /* Sem margem no topo */
+  padding: 20px; /* Espaçamento interno */
+}
+
+/* =====================================
      Responsividade
      ===================================== */
-  @media (max-width: 380px) {
-    .content.with-navbar,
-    .content.without-navbar {
-      padding: 10px; /* Reduz o espaçamento em telas menores */
-    }
-  
-    .navbar {
-      height: 10px; /* Reduz a altura da NavBar em telas menores */
-      padding: 0 10px; /* Reduz o espaçamento interno */
-    }
+@media (max-width: 380px) {
+  .content.with-navbar,
+  .content.without-navbar {
+    padding: 10px; /* Reduz o espaçamento em telas menores */
   }
-  
-  @media (max-width: 380px) {
-    .content.with-navbar,
-    .content.without-navbar {
-      padding: 5px; /* Reduz ainda mais o espaçamento em telas muito pequenas */
-    }
-  
-    .navbar {
-      height: 40px; /* Reduz a altura da NavBar em telas muito pequenas */
-      padding: 0 5px; /* Reduz o espaçamento interno */
-    }
+
+  .navbar {
+    height: 10px; /* Reduz a altura da NavBar em telas menores */
+    padding: 0 10px; /* Reduz o espaçamento interno */
   }
+}
+
+@media (max-width: 380px) {
+  .content.with-navbar,
+  .content.without-navbar {
+    padding: 5px; /* Reduz ainda mais o espaçamento em telas muito pequenas */
+  }
+
+  .navbar {
+    height: 40px; /* Reduz a altura da NavBar em telas muito pequenas */
+    padding: 0 5px; /* Reduz o espaçamento interno */
+  }
+}

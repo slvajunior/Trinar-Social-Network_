@@ -9,6 +9,7 @@ class User(AbstractUser):
     birth_date = models.DateField(null=True, blank=True)
     followers = models.ManyToManyField("self", symmetrical=False, related_name="following")
     created_at = models.DateTimeField(auto_now_add=True)
+    location = models.CharField(max_length=100, blank=True)  # Campo de localidade
 
     groups = models.ManyToManyField(
         "auth.Group", related_name="custom_user_groups", blank=True

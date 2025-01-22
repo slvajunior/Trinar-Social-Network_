@@ -39,7 +39,7 @@
   align-items: center;
   height: 55px;
   background-color: var(--color-secondary);
-  box-shadow: 0 1px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 3px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
 }
 
 .logo {
@@ -63,7 +63,7 @@
   position: absolute;
   display: flex;
   align-items: center;
-  width: 240px;
+  width: 250px;
   height: 60px;
   position: relative;
   margin-right: 30px;
@@ -141,29 +141,46 @@
 
 .user-modal {
   position: absolute;
-  top: 60px;
+  top: 55px;
   right: 20px;
-  background-color: white;
+  background-color: var(--color-secondary);
   width: 351px;
-  height: 522;
+  height: 522px;
   padding: 15px;
   border-radius: 8px;
-  box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.2), -8px -8px 16px rgba(255, 255, 255, 0.5);
   color: #333;
   display: flex;
-  flex-direction: column; /* Para empilhar os itens verticalmente */
-  gap: 15px; /* Controla o espaçamento entre os itens de forma fácil */
-  overflow: visible; /* Permite que a sombra de um filho transborde */
+  flex-direction: column;
+  gap: 15px;
   justify-content: center;
+  box-shadow: -2px 22px 42px -1px rgba(0, 0, 0, 0.2),
+    0 2px 4px -1px rgba(0, 0, 0, 0.1), 
+    inset 0 -1px 4px 0 rgba(0, 0, 0, 0.1);
+  transform: translateX(100%);  
+  opacity: 0;
+  transition: transform 0.4s ease, opacity 0.1s ease;
+  visibility: hidden; /* Garante que o modal não interfira ao ser oculto */
+}
+
+.modal-open {
+  transform: translateX(0);
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-close {
+  transform: translateX(100%); /* Move para fora novamente */
+  opacity: 0; /* Reduz opacidade */
+  visibility: visible; /* Visível enquanto recolhe */
 }
 
 .user-modal-item {
   display: flex;
   align-items: center;  /* Centraliza verticalmente */
-  padding: 1px 0;
+  padding: 1px 0px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  min-height: 36px;
+  min-height: 39px;
   justify-content: flex-start; /* Alinha o conteúdo à esquerda */
 }
 
@@ -171,24 +188,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   background-color: #d4d6d8;
   border-radius: 50%;
   margin-right: 10px; /* Espaçamento entre o círculo e o texto */
 }
 
-.user-profile {
+div.user-profile {
   position: relative; /* Garante o posicionamento correto */
   z-index: 10;
-  width: 321px;
+  width: 320px;
   height: 150px;
   background-color: var(--color-secondary); /* Adicione um fundo claro para que a sombra fique visível */
   align-items: center;
   padding: 12px;
   justify-content: center;
   border-radius: 8px;
-  box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: -2px -2px 2px -2px rgb(0, 0, 0), 2px 1px -1px 1px rgba(0, 0, 0, 0.01);
 }
 
 /* Foto de usuário no Modal */
@@ -199,17 +216,19 @@
   object-fit: cover; /* Garante que a imagem seja cortada de forma adequada */
 
   border-radius: 100%;
-  padding: 3px;
+  padding: 2px;
   border: 3px solid var(--border-color-gray);
-  width: 50px;
-  height: 50px;
+  width: 55px;
+  height: 55px;
+  margin-bottom: 10px;
 }
 
 .profile-header {
   display: flex;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   height: 50px;
+  border-radius: 8px;
 }
 
 .profile-name {
@@ -229,7 +248,7 @@ hr.modal-divider {
 }
 
 .edit-profile-btn {
-  width: 283px;
+  width: 297px;
   padding: 13px 0px;
   background-color: #e6e8ea;
   color: #333;
@@ -239,6 +258,7 @@ hr.modal-divider {
   font-size: 14px;
   font-weight: bold;
   align-items: center;
+  margin-top: 3.4px;
 }
 
 .edit-profile-btn:hover {

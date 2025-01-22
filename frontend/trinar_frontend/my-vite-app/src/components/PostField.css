@@ -8,7 +8,7 @@
   margin: 0 auto;
   padding: 10px;
   border-radius: 8px;
-  margin-top: -42px;
+  margin-top: -22px;
   font-family: 'Roboto', sans-serif;
   box-shadow: 0 3px 3px -2px rgba(0, 0, 0, 0.3), 0 2px 4px 1px rgba(0, 0, 0, 0.01);
 }
@@ -54,7 +54,7 @@
 .profile-photo:hover {
   border-color: #838383;
   box-shadow: 0 4px 10px rgba(98, 0, 238, 0.2);
-  transform: scale(1.03);
+  transition: all 0.5s ease;
 }
 
 /* Centralizando o placeholder verticalmente */

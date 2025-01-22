@@ -1,60 +1,146 @@
+/* Estilos gerais */
 
-.bory {
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-  background-color: var(--background-color);
-}
-
-/* Contêiner principal do perfil */
 .profile-container {
   position: relative;
   width: 100%;
+  margin: 0 auto;
+  height: 850px;
+  background-color: var(--color-secondary);
+  box-shadow: 0 3px 3px -2px rgba(0, 0, 0, 0.2), 0 2px 4px 1px rgba(0, 0, 0, 0.01);
 }
 
-/* Contêiner para a foto de capa */
+.content.with-navbar {
+  width: 100%;
+  height: 500px;
+}
+
+/* Responsividade para Foto de Capa */
 .cover-photo-container {
-  width: 100%; /* Largura de 70% da tela */
-  height: 450px; /* Altura ajustável conforme necessário */
+  width: 100%;
   overflow: hidden;
-  position: relative;
-  margin: 0 auto; /* Centraliza horizontalmente */
-  margin-bottom: 20px; /* Espaçamento entre a foto de capa e o restante do conteúdo */
-  display: grid;
-  place-items: center; /* Centraliza o conteúdo horizontal e verticalmente */
+  max-height: 500px; /* Limita a altura máxima */
+  height: auto;
 }
 
 .cover-photo {
   width: 100%;
-  height: 100%;
-  object-fit: cover; /* Garante que a imagem cubra o espaço sem distorção */
-  object-position: top; /* Corta a imagem a partir do topo */
+  height: auto; /* Ajusta a altura automaticamente */
+  object-fit: cover;
+  object-position: top;
+  transition: height 0.3s ease, width 0.3s ease; /* Suaviza mudanças */
+  padding: 0 200px;
 }
 
-/* Contêiner para a foto de perfil */
+/* Foto de perfil */
+.profile-picture-wrapper {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  top: -130px;
+  margin-bottom: -150px;
+  width: 100%;
+}
+
+/* Responsividade para Foto de Perfil */
 .profile-picture-container {
-  position: absolute;
-  top: 365px; /* Ajuste a posição vertical da foto de perfil */
-  left: 30%; /* Centraliza horizontalmente */
-  transform: translateX(-50%); /* Ajusta o posicionamento horizontal */
-  width: 250px; /* Largura da foto de perfil */
-  height: 250px; /* Altura da foto de perfil */
-  border-radius: 50%; /* Formato redondo */
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
   overflow: hidden;
-  border: 5px solid white; /* Borda opcional */
-  padding: 2px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra opcional */
+  border: 5px solid var(--background-color);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transition: width 0.3s ease, height 0.3s ease; /* Suaviza mudanças */
 }
 
 .profile-picture {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Garante que a imagem cubra o espaço sem distorção */
+  object-fit: cover;
 }
 
-/* Conteúdo do perfil (h1 e biografia) */
+/* Conteúdo */
 .profile-content {
-  margin-top: 100px; /* Ajuste o espaçamento conforme necessário */
-  text-align: center; /* Centraliza o texto */
-  padding: 20px;
+  padding: 0px;
+  margin-top: 0px; /* Compensa a altura da foto de perfil */
+  text-align: center;
+}
+
+/* Contadores de seguidores */
+.profile-stats {  margin-bottom: 500px;
+
+  margin: 0.5rem 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Biografia */
+.profile-bio {
+  margin: 0.5rem 0;
+  text-align: center;
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Detalhes do perfil */
+.profile-details {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: gray;
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* Media Queries */
+@media (max-width: 1443px) {
+  .cover-photo-container {
+    height: auto;
+  }
+
+  .cover-photo {
+    height: 60vh; /* Reduz proporcionalmente a altura da foto de capa */
+  }
+}
+
+@media (max-width: 700px) {
+  .cover-photo {
+    height: 50vh; /* Diminui altura até 50% da viewport */
+  }
+
+  .profile-picture-container {
+    width: 200px; /* Reduz tamanho da foto de perfil */
+    height: 200px;
+  }
+}
+
+@media (max-width: 400px) {
+  .cover-photo {
+    height: 40vh; /* Mantém a capa visível em telas muito pequenas */
+  }
+
+  .profile-picture-container {
+    width: 150px; /* Reduz ainda mais a foto de perfil */
+    height: 150px;
+  }
+}
+
+
+
+/* Estilo específico para telas grandes (desktop) */
+@media (min-width: 1024px) {
+  .cover-photo {
+    padding: 0 200px;
+  }
+}
+
+/* Para telas menores (mobile) */
+@media (max-width: 1023px) {
+  .cover-photo {
+    padding: 0; /* Remove padding em telas pequenas */
+  }
 }

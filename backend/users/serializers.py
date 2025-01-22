@@ -28,6 +28,8 @@ class UserSerializer(serializers.ModelSerializer):
             "created_at",
             "profile_picture_url",  # URL completa da foto de perfil
             "cover_photo_url",  # URL completa da foto de capa
+            "location",  # Novo campo de localidade
+            "date_joined",
         )
 
     def get_profile_picture_url(self, obj):
@@ -35,7 +37,7 @@ class UserSerializer(serializers.ModelSerializer):
             request = self.context.get("request")
             if request:
                 return request.build_absolute_uri(obj.profile_picture.url)
-            return obj.profile_picture.url  # Retorna a URL relativa se o request não estiver disponível
+            return obj.profile_picture.url
         return None
 
     def get_cover_photo_url(self, obj):
@@ -43,7 +45,7 @@ class UserSerializer(serializers.ModelSerializer):
             request = self.context.get("request")
             if request:
                 return request.build_absolute_uri(obj.cover_photo.url)
-            return obj.cover_photo.url  # Retorna a URL relativa se o request não estiver disponível
+            return obj.cover_photo.url
         return None
 
     def create(self, validated_data):
@@ -55,6 +57,7 @@ class UserSerializer(serializers.ModelSerializer):
             first_name=validated_data.get("first_name", ""),
             last_name=validated_data.get("last_name", ""),
             birth_date=validated_data.get("birth_date", None),
+            location=validated_data.get("location", ""),  # Incluindo localidade no create
         )
         return user
 
@@ -75,7 +78,9 @@ class UserDetailSerializer(serializers.ModelSerializer):
             "posts",
             "profile_picture",
             "cover_photo",  # Foto de capa no detalhamento
-            "bio",  # Adiciona biografia no detalhamento
+            "bio",  # Biografia
+            "location",  # Novo campo de localidade
+            "date_joined",
         ]
 
     def get_followers_count(self, obj):
