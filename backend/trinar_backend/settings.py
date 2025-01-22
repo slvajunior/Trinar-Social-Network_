@@ -116,7 +116,6 @@ AUTHENTICATION_BACKENDS = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Endereço do frontend
-    "http://192.168.1.235:5173",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
