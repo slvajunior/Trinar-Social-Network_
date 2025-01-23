@@ -11,11 +11,13 @@ from .serializers import PostSerializer, RepostSerializer, CommentSerializer
 from users.serializers import UserSerializer
 from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.decorators import api_view
 from django.contrib.auth import get_user_model
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import CustomTokenObtainPairSerializer
+from rest_framework import generics
 
 
 logger = logging.getLogger(__name__)
@@ -29,6 +31,12 @@ def get_current_user(request):
     user = request.user
     serializer = UserSerializer(user)
     return Response(serializer.data)
+
+
+class UserDetailByIdView(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    lookup_field = 'id'  # Campo usado para buscar o usuário
 
 
 class CustomJWTAuthentication(JWTAuthentication):
@@ -72,7 +80,7 @@ class PostListCreateView(APIView):
         },
     )
     def post(self, request):
-        serializer = PostSerializer(data=request.data)
+        serializer = PostSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save(author=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -293,10 +301,6 @@ class UserSearchView(APIView):
 # View simples para a URL raiz
 def home(request):
     return JsonResponse({"message": "Bem-vindo à API Trinar!"})
-
-
-from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import CustomTokenObtainPairSerializer
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):

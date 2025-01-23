@@ -1,15 +1,24 @@
 # backend/core/serializers.py
+
 from rest_framework import serializers
 from .models import Post, Comment, Repost
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth import authenticate
+from users.models import User  # Importe o modelo User
+
+
+class AuthorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'profile_picture']  # Campos do autor
 
 
 class PostSerializer(serializers.ModelSerializer):
     comments_count = serializers.SerializerMethodField()
     likes_count = serializers.SerializerMethodField()
     reposted_from = serializers.SerializerMethodField()
+    author = AuthorSerializer(read_only=True)  # Inclui os dados do autor
 
     class Meta:
         model = Post
@@ -18,7 +27,7 @@ class PostSerializer(serializers.ModelSerializer):
             "author",
             "text",
             "hashtags",
-            "mentions",
+            "mentions",  # Campo many-to-many
             "visibility",
             "created_at",
             "updated_at",
@@ -40,7 +49,8 @@ class PostSerializer(serializers.ModelSerializer):
         return None
 
     def create(self, validated_data):
-        # Remove 'reposted_from' do validated_data, pois é uma relação
+        # Remove 'mentions' e 'reposted_from' do validated_data
+        mentions_data = validated_data.pop("mentions", None)
         reposted_from_id = validated_data.pop("reposted_from", None)
         additional_text = validated_data.get("additional_text", "")
 
@@ -53,6 +63,10 @@ class PostSerializer(serializers.ModelSerializer):
             post.reposted_from = reposted_from
             post.text = f"Repost: {reposted_from.text} - {additional_text}"
             post.save()
+
+        # Atribui os valores ao campo 'mentions' usando .set()
+        if mentions_data:
+            post.mentions.set(mentions_data)
 
         return post
 
@@ -82,18 +96,17 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
 
         # Adicione campos extras ao token se necessário
-        token['email'] = user.email
+        token["email"] = user.email
         return token
 
     def validate(self, attrs):
-        credentials = {
-            'email': attrs.get('email'),
-            'password': attrs.get('password')
-        }
+        credentials = {"email": attrs.get("email"), "password": attrs.get("password")}
 
         user = authenticate(**credentials)
         if user is None:
-            raise AuthenticationFailed('Nenhum usuário encontrado com essas credenciais.', 'no_active_account')
+            raise AuthenticationFailed(
+                "Nenhum usuário encontrado com essas credenciais.", "no_active_account"
+            )
 
         data = super().validate(attrs)
         return data

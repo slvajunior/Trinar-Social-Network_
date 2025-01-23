@@ -1,80 +1,105 @@
-// src/components/UserProfile.jsx
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import ProfilePictureUpload from "./ProfilePictureUpload";
-import EditProfileForm from "./EditProfileForm";
-import "./UserProfile.css"; // Estilização (opcional)
+import { FaMapMarkerAlt, FaBirthdayCake, FaCalendarAlt } from "react-icons/fa"; // Ícones
+import "./Profile.css";
 
 const UserProfile = () => {
-  const [user, setUser] = useState({});
+  const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [isEditing, setIsEditing] = useState(false); // Estado para controlar a edição
-  const { userId } = useParams(); // Obtém o ID do usuário da URL
+  const { userId } = useParams(); // Captura o userId da URL
 
-  // Busca os dados do usuário
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(`http://localhost:8000/api/auth/user/${userId}/`, {
+        const response = await axios.get(`http://localhost:8000/api/users/user/${userId}/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setUser(response.data);
+        setProfileData(response.data);
         setLoading(false);
       } catch (error) {
-        setError("Erro ao carregar dados do usuário.");
+        setError("Erro ao carregar o perfil. Tente novamente.");
         setLoading(false);
       }
     };
 
-    fetchUserData();
+    fetchProfile();
   }, [userId]);
 
-  // Função para atualizar os dados do usuário após edição
-  const handleUpdate = (updatedUser) => {
-    setUser(updatedUser); // Atualiza o estado do usuário
-    setIsEditing(false); // Sai do modo de edição
-  };
-
   if (loading) {
-    return <p>Carregando...</p>;
+    return <div>Carregando...</div>;
   }
 
   if (error) {
-    return <p>{error}</p>;
+    return <div>{error}</div>;
   }
 
   return (
-    <div className="user-profile">
-      <h1>Perfil de {user.first_name} {user.last_name}</h1>
-
-      {/* Foto de perfil */}
-      <div className="profile-picture-section">
-        <ProfilePictureUpload user={user} onUpdate={handleUpdate} />
+    <div className="profile-container">
+      {/* Foto de capa */}
+      <div className="cover-photo-container">
+        {profileData.cover_photo && (
+          <img
+            className="cover-photo"
+            src={profileData.cover_photo}
+            alt="Foto de capa"
+          />
+        )}
       </div>
 
-      {/* Informações do usuário ou formulário de edição */}
-      {isEditing ? (
-        <EditProfileForm user={user} onUpdate={handleUpdate} />
-      ) : (
-        <div className="user-info">
-          <p><strong>Nome:</strong> {user.first_name} {user.last_name}</p>
-          <p><strong>Email:</strong> {user.email}</p>
-          <p><strong>Data de Nascimento:</strong> {user.birth_date}</p>
-          <p><strong>Seguidores:</strong> {user.followers_count}</p>
-          <p><strong>Seguindo:</strong> {user.following_count}</p>
+      {/* Foto de perfil */}
+      <div className="profile-picture-wrapper">
+        <div className="profile-picture-container">
+          {profileData.profile_picture && (
+            <img
+              className="profile-picture"
+              src={profileData.profile_picture}
+              alt="Foto de perfil"
+            />
+          )}
         </div>
-      )}
+      </div>
 
-      {/* Botão para editar perfil */}
-      <button onClick={() => setIsEditing(!isEditing)}>
-        {isEditing ? "Cancelar" : "Editar Perfil"}
-      </button>
+      {/* Conteúdo do perfil */}
+      <div className="profile-content">
+        <h1>
+          {profileData.first_name} {profileData.last_name}
+        </h1>
+
+        {/* Contadores de seguidores */}
+        <div className="profile-stats">
+          <span>{profileData.following_count} Seguindo</span>{" "}
+          <span>{profileData.followers_count} Seguidores</span>
+        </div>
+
+        {/* Biografia */}
+        <div className="profile-bio">
+          <p>{profileData.bio || "Nenhuma biografia fornecida."}</p>
+        </div>
+
+        {/* Detalhes (Localidade, Nascimento e Ingresso) */}
+        <div className="profile-details">
+          {profileData.location && (
+            <span>
+              <FaMapMarkerAlt /> {profileData.location}
+            </span>
+          )}
+          {profileData.birth_date && (
+            <span>
+              <FaBirthdayCake /> Nascido(a) em{" "}
+              {new Date(profileData.birth_date).toLocaleDateString()}
+            </span>
+          )}
+          <span>
+            <FaCalendarAlt /> Ingressou em{" "}
+            {new Date(profileData.date_joined).toLocaleDateString()}
+          </span>
+        </div>
+      </div>
     </div>
   );
 };

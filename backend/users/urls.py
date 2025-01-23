@@ -7,13 +7,14 @@ from . import views
 from .views import email_verification, reset_password_confirm
 from django.contrib.auth import views as auth_views
 # from .views import UserProfileView, UserProfileEditView, UserPhotosView, UserProfilePhotoView
-from .views import ProfileView, EditProfileView
+from .views import ProfileView, EditProfileView, UserDetailByIdView
 
 
 app_name = 'users'
 
 
 urlpatterns = [
+    path("user/<int:id>/", UserDetailByIdView.as_view(), name="user-detail-by-id"),
     path(
         "upload_profile_picture/",
         views.UploadProfilePictureView.as_view(),

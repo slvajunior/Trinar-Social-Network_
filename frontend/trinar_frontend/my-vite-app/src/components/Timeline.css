@@ -1,45 +1,82 @@
-
+/* Timeline.css */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centraliza horizontalmente */
+  padding: 10px; /* Reduz o padding para subir os posts */
+}
 
 .post {
+  width: 675px;
+  margin: 0px auto; /* Reduz a margem entre os posts */
   padding: 15px;
   border-radius: 8px;
-  border: 1px solid var(--color-secondary);
   background-color: var(--color-secondary);
-  font-family: var(--font-primary);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.09);
-  line-height: 1.6;
-  margin: 0;
-  font-size: 0.9rem;
-  margin-bottom: 20px;
+  box-shadow: 0 3px 3px -2px rgba(0, 0, 0, 0.3), 0 2px 4px 1px rgba(0, 0, 0, 0.01);
 }
 
-.timeline-container {
-  width: 100%;
-  display: flex;
-  max-width: 705px;
-  margin: 0 auto;
-  padding: 20px;
-  flex-direction: column;
-  margin-top: 50px;
-}
-
-/* src/components/Timeline.css */
-.lista-icones {
-  list-style-type: none;
-  padding: 0;
-  display: flex;
-  gap: 210px;
-}
-
-.lista-icones li {
+.author-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  margin-bottom: 10px;
 }
 
-.lista-icones svg {
-  width: 15px; /* Tamanho dos ícones */
-  height: 15px;
-  color: #333; /* Cor dos ícones */
+.author-photo img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.author-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.author-details strong {
+  font-size: 16px;
+  color: #333;
+}
+
+.author-details p {
+  font-size: 14px;
+  color: #777;
+}
+
+.post-actions {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 0;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #007bff;
+  padding: 0;
+}
+
+.action-button:hover {
+  color: #007bff;
+}
+
+.error-message {
+  color: red;
+  text-align: center;
+}
+
+/* Divisor */
+.divider-post {
+  border: 0;
+  height: 0.1px;
+  background-color: #e0e0e0;
+  color: #666;
+  margin: 15px 0;
+  box-shadow: inset 0 1px 4px 0 rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
 }

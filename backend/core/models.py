@@ -32,6 +32,10 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # Novos campos
+    photo = models.ImageField(upload_to="posts/photos/", null=True, blank=True)
+    video = models.FileField(upload_to="posts/videos/", null=True, blank=True)
+
     def save(self, *args, **kwargs):
         # Extrair hashtags
         self.hashtags = re.findall(r"#(\w+)", self.text)

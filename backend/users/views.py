@@ -230,6 +230,12 @@ class CustomJWTAuthentication(JWTAuthentication):
             raise
 
 
+class UserDetailByIdView(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    lookup_field = 'id'  # Campo usado para buscar o usuário
+
+
 """ AREA DA PAGINA PERFIL DO USUARIO E EDIT PROFILE USERS"""
 
 
