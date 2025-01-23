@@ -21,7 +21,7 @@ class Post(models.Model):
         related_query_name="reposted",
     )
     additional_text = models.TextField(blank=True)
-    text = models.TextField(max_length=500)
+    text = models.TextField(max_length=500, blank=True, null=True)
     hashtags = models.JSONField(default=list, blank=True)
     mentions = models.ManyToManyField(
         User, related_name="mentioned_in_posts", blank=True

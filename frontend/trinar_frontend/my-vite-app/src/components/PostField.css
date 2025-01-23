@@ -270,10 +270,10 @@ svg.svg-inline--fa.fa-video.media-icon-video {
 
 .post-button {
   padding: 10px 28px;
-  background-color: var(--color-tertiary);
-  color: #fff;
+  background-color: var(--button-media-color);
+  color: #333;
   border: none;
-  border-radius: 25px;
+  border-radius: 4px;
   font-size: 0.875rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -281,7 +281,12 @@ svg.svg-inline--fa.fa-video.media-icon-video {
 }
 
 .post-button:hover {
-  background-color: #3700b3;
+  background-color: var(--button-media-hover-color);
+}
+
+.post-button:disabled {
+  background-color: #9ac9f5; /* Cor mais clara quando desabilitado */
+  cursor: not-allowed;
 }
 
 /* Acessibilidade: Foco visível nos botões */

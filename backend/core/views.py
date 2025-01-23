@@ -10,7 +10,6 @@ from django.http import JsonResponse
 from .serializers import PostSerializer, RepostSerializer, CommentSerializer
 from users.serializers import UserSerializer
 from rest_framework.permissions import IsAuthenticated
-from drf_yasg.utils import swagger_auto_schema
 from django.contrib.auth import get_user_model
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -18,6 +17,9 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import CustomTokenObtainPairSerializer
 from rest_framework import generics
+from drf_yasg.utils import swagger_auto_schema
+
+# from rest_framework.parsers import MultiPartParser, FormParser
 
 
 logger = logging.getLogger(__name__)
@@ -36,7 +38,7 @@ def get_current_user(request):
 class UserDetailByIdView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    lookup_field = 'id'  # Campo usado para buscar o usuário
+    lookup_field = "id"  # Campo usado para buscar o usuário
 
 
 class CustomJWTAuthentication(JWTAuthentication):
@@ -67,7 +69,9 @@ class PostListCreateView(APIView):
             )
         else:
             posts = Post.objects.filter(visibility="public")
-        serializer = PostSerializer(posts, many=True)
+
+        # Passa o contexto {'request': request} ao instanciar o serializer
+        serializer = PostSerializer(posts, many=True, context={"request": request})
         return Response(serializer.data)
 
     @swagger_auto_schema(
@@ -80,10 +84,24 @@ class PostListCreateView(APIView):
         },
     )
     def post(self, request):
-        serializer = PostSerializer(data=request.data, context={'request': request})
+        # Cria uma cópia dos dados recebidos
+        data = request.data.copy()
+
+        # Adiciona os arquivos de mídia ao payload, se existirem
+        if "photo" in request.FILES:
+            data["photo"] = request.FILES["photo"]
+        if "video" in request.FILES:
+            data["video"] = request.FILES["video"]
+
+        # Passa o contexto {'request': request} ao instanciar o serializer
+        serializer = PostSerializer(data=data, context={"request": request})
         if serializer.is_valid():
+            # Garante que o autor seja o usuário autenticado
             serializer.save(author=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        # Log dos erros de validação
+        print("Erros de validação:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

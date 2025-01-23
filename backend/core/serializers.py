@@ -11,7 +11,7 @@ from users.models import User  # Importe o modelo User
 class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'profile_picture']  # Campos do autor
+        fields = ["id", "first_name", "last_name", "profile_picture"]  # Campos do autor
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -19,6 +19,8 @@ class PostSerializer(serializers.ModelSerializer):
     likes_count = serializers.SerializerMethodField()
     reposted_from = serializers.SerializerMethodField()
     author = AuthorSerializer(read_only=True)  # Inclui os dados do autor
+    photo_url = serializers.SerializerMethodField()
+    video_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -35,7 +37,34 @@ class PostSerializer(serializers.ModelSerializer):
             "additional_text",  # Incluir texto adicional no serializer
             "likes_count",
             "comments_count",
+            "photo",  # Campo de foto
+            "video",  # Campo de vídeo
+            "photo_url",
+            "video_url",
         ]
+        extra_kwargs = {
+            "text": {"required": False, "allow_blank": True},  # Permite texto em branco
+        }
+
+    def get_photo_url(self, obj):
+        if obj.photo:
+            # Verifica se o contexto contém o objeto 'request'
+            if "request" in self.context:
+                return self.context["request"].build_absolute_uri(obj.photo.url)
+            else:
+                # Se o contexto não contiver 'request', retorna a URL relativa
+                return obj.photo.url
+        return None
+
+    def get_video_url(self, obj):
+        if obj.video:
+            # Verifica se o contexto contém o objeto 'request'
+            if "request" in self.context:
+                return self.context["request"].build_absolute_uri(obj.video.url)
+            else:
+                # Se o contexto não contiver 'request', retorna a URL relativa
+                return obj.video.url
+        return None
 
     def get_likes_count(self, obj):
         return obj.likes.count()

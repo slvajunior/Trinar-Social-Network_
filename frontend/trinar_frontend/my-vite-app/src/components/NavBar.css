@@ -195,7 +195,7 @@
   margin-right: 10px; /* Espaçamento entre o círculo e o texto */
 }
 
-div.user-profile {
+.user-profile {
   position: relative; /* Garante o posicionamento correto */
   z-index: 10;
   width: 320px;
@@ -259,6 +259,11 @@ hr.modal-divider {
   font-weight: bold;
   align-items: center;
   margin-top: 3.4px;
+}
+
+.card-profile {
+  width: 200px;
+  height: 600px;
 }
 
 .edit-profile-btn:hover {
