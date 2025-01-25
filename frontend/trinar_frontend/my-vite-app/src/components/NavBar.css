@@ -33,12 +33,11 @@
   position: fixed;
   background-color: #333;
   padding: 6px 30px;
-  color: #ffff;
+  color: var(--color-secondary);
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: 55px;
-  background-color: var(--color-secondary);
   box-shadow: 0 1px 3px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
 }
 
@@ -147,15 +146,15 @@
   width: 351px;
   height: 522px;
   padding: 15px;
-  border-radius: 8px;
+  border-radius: 10px;
   color: #333;
   display: flex;
   flex-direction: column;
   gap: 15px;
   justify-content: center;
-  box-shadow: -2px 22px 42px -1px rgba(0, 0, 0, 0.2),
-    0 2px 4px -1px rgba(0, 0, 0, 0.1), 
-    inset 0 -1px 4px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: -2px 12px 52px -1px rgba(0, 0, 0, 0.1),
+    0 2px 24px -1px rgba(0, 0, 0, 0.2), 
+    inset 0 -1px 4px 0 rgba(0, 0, 0, 0.2);
   transform: translateX(100%);  
   opacity: 0;
   transition: transform 0.4s ease, opacity 0.1s ease;
@@ -259,11 +258,6 @@ hr.modal-divider {
   font-weight: bold;
   align-items: center;
   margin-top: 3.4px;
-}
-
-.card-profile {
-  width: 200px;
-  height: 600px;
 }
 
 .edit-profile-btn:hover {

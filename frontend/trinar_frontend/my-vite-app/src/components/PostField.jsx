@@ -1,3 +1,5 @@
+// src/components/PostField.jsx
+
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage, faVideo, faTimes } from "@fortawesome/free-solid-svg-icons";
@@ -10,7 +12,7 @@ import "./PostField.css";
 const PostField = () => {
   const [content, setContent] = useState("");
   const [media, setMedia] = useState([]);
-  const [user, setUser] = useState({ profile_picture: "", id: null }); // Certifique-se de que o estado do usuário inclui o ID
+  const [user, setUser] = useState({ profile_picture: "", id: null });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isPosting, setIsPosting] = useState(false);
@@ -33,7 +35,7 @@ const PostField = () => {
       });
 
       if (response.data) {
-        setUser(response.data); // Atualiza o estado do usuário com os dados recebidos
+        setUser(response.data);
       }
     } catch (error) {
       setError("Erro ao buscar os dados do usuário.");
@@ -92,9 +94,9 @@ const PostField = () => {
       // Adiciona cada arquivo de mídia ao FormData
       media.forEach((file, index) => {
         if (file.type.startsWith("image")) {
-          formData.append("photo", file); // Campo 'photo' para fotos
+          formData.append("photo", file);
         } else if (file.type.startsWith("video")) {
-          formData.append("video", file); // Campo 'video' para vídeos
+          formData.append("video", file);
         }
       });
 
@@ -103,8 +105,8 @@ const PostField = () => {
         formData,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Envia o token no cabeçalho
-            "Content-Type": "multipart/form-data", // Importante para upload de arquivos
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -113,7 +115,7 @@ const PostField = () => {
         alert("Post criado com sucesso!");
         setContent("");
         setMedia([]);
-        window.location.reload(); // Recarrega a página para atualizar a lista de posts
+        window.location.reload();
       }
     } catch (error) {
       console.error("Erro ao criar o post:", error);
@@ -122,6 +124,7 @@ const PostField = () => {
       setIsPosting(false);
     }
   };
+
   // Redireciona para o perfil do usuário ao clicar na foto
   const handleProfileClick = () => {
     navigate("/profile");
@@ -161,14 +164,14 @@ const PostField = () => {
       {/* Divisor */}
       <hr className="divider" />
 
-      {/* Botões de Upload */}
+      {/* Botões de Upload e Postar */}
       <div className="media-upload-container">
         <label htmlFor="image-upload" className="media-upload-button">
-          <FontAwesomeIcon className="media-icon-img" icon={faImage} />
+          <FontAwesomeIcon className="icon-img" icon={faImage} style={{color: "var(--green-color)"}} />
           <span>Imagem</span>
         </label>
         <label htmlFor="video-upload" className="media-upload-button">
-          <FontAwesomeIcon className="media-icon-video" icon={faVideo} />
+          <FontAwesomeIcon className="media-icon-video" icon={faVideo} style={{color: "var(--red-color)"}} />
           <span>Vídeo</span>
         </label>
         <input
@@ -187,57 +190,9 @@ const PostField = () => {
           onChange={handleMediaUpload}
           style={{ display: "none" }}
         />
-      </div>
 
-      {/* Pré-visualização de Mídia */}
-      {media.length > 0 && (
-        <div className="media-preview">
-          {media.slice(0, 6).map(
-            (
-              file,
-              index // Limita a 6 mídias
-            ) => (
-              <div key={index} className="media-item">
-                {file.type.startsWith("image") ? (
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt={`Mídia ${index}`}
-                    style={{
-                      width: "100%", // Ocupa 100% da largura do contêiner
-                      height: "100%", // Ocupa 100% da altura do contêiner
-                      objectFit: "cover", // Garante que a imagem cubra o espaço sem distorcer
-                      borderRadius: "8px", // Borda arredondada
-                    }}
-                  />
-                ) : (
-                  <video
-                    controls
-                    style={{
-                      width: "100%", // Ocupa 100% da largura do contêiner
-                      height: "100%", // Ocupa 100% da altura do contêiner
-                      objectFit: "cover", // Garante que o vídeo cubra o espaço sem distorcer
-                      borderRadius: "8px", // Borda arredondada
-                    }}
-                  >
-                    <source src={URL.createObjectURL(file)} type={file.type} />
-                    Seu navegador não suporta o elemento de vídeo.
-                  </video>
-                )}
-                <button
-                  onClick={() => removeMedia(index)}
-                  className="remove-media"
-                >
-                  <FontAwesomeIcon icon={faTimes} />
-                </button>
-              </div>
-            )
-          )}
-        </div>
-      )}
-
-      {/* Botão "Postar" */}
-      {(content.trim() !== "" || media.length > 0) && (
-        <div className="post-actions">
+        {/* Botão "Postar" */}
+        {(content.trim() !== "" || media.length > 0) && (
           <button
             onClick={handlePost}
             className="post-button"
@@ -247,12 +202,39 @@ const PostField = () => {
               "Postando..."
             ) : (
               <>
-                <FaPaperPlane className="post-icon" />{" "}
-                {/* Ícone de avião de papel */}
-                <span>Postar</span> {/* Texto ao lado do ícone */}
+                <FaPaperPlane className="post-icon" style={{color: "var(--color-blue)"}}/>
+                <span style={{padding: "10px"}}>Postar</span>
               </>
             )}
           </button>
+        )}
+      </div>
+
+      {/* Pré-visualização de Mídia */}
+      {media.length > 0 && (
+        <div className="media-preview">
+          {media.slice(0, 6).map((file, index) => (
+            <div key={index} className="media-item">
+              {file.type.startsWith("image") ? (
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt={`Mídia ${index}`}
+                  className="media-preview-item"
+                />
+              ) : (
+                <video controls className="media-preview-item">
+                  <source src={URL.createObjectURL(file)} type={file.type} />
+                  Seu navegador não suporta o elemento de vídeo.
+                </video>
+              )}
+              <button
+                onClick={() => removeMedia(index)}
+                className="remove-media"
+              >
+                <FontAwesomeIcon icon={faTimes} />
+              </button>
+            </div>
+          ))}
         </div>
       )}
     </div>

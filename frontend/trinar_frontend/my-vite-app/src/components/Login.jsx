@@ -36,6 +36,7 @@ const Login = () => {
     setSuccess("");
 
     try {
+      // 1. Faz o login para obter o token
       const response = await axios.post("http://127.0.0.1:8000/api/token/", {
         username: formData.email, // Usar o email como username
         password: formData.password,
@@ -45,6 +46,22 @@ const Login = () => {
       localStorage.setItem("token", response.data.access); // Token de acesso
       localStorage.setItem("refreshToken", response.data.refresh); // Refresh token
 
+      // 2. Obtém os dados do usuário logado
+      const userResponse = await axios.get("http://127.0.0.1:8000/api/api/auth/user/", {
+        headers: {
+          Authorization: `Bearer ${response.data.access}`,
+        },
+      });
+
+      // Verifica se o ID do usuário foi retornado
+      if (!userResponse.data.id) {
+        throw new Error("ID do usuário não encontrado na resposta.");
+      }
+
+      // Armazena o user_id no localStorage
+      console.log("ID do usuário logado:", userResponse.data.id); // Debug
+      localStorage.setItem("userId", userResponse.data.id); // Corrigido para "userId"
+
       setSuccess("Login realizado com sucesso! Redirecionando...");
 
       // Redireciona para a página inicial após 2 segundos
@@ -53,6 +70,7 @@ const Login = () => {
       }, 2000);
     } catch (err) {
       setError("Credenciais inválidas. Tente novamente.");
+      console.error("Erro durante o login:", err);
     } finally {
       setLoading(false);
     }
@@ -129,7 +147,16 @@ const Login = () => {
             variant="contained"
             type="submit"
             disabled={loading}
-            sx={{ mt: 3, mb: 2 }}
+            sx={{ mt: 3,
+                  mb: 2,
+                  "&:hover": {
+                    backgroundColor: "#ff5722",
+                  },
+                  "&.Mui-disabled": {
+                    backgroundColor: "#bdbdbd",
+                    color: "#111",
+                  }
+               }}
           >
             {loading ? "Entrando..." : "Entrar"}
           </Button>

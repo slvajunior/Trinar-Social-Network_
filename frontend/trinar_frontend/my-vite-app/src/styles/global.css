@@ -5,15 +5,21 @@
    ===================================== */
 
    :root {
+
+    /* Tipografia */
      --font-family-base: 'Helvetica', Arial, sans-serif;
      --font-family-logo: 'Poppins', sans-serif;
      --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+     /* Defaults color */
      --primary-color: #6200ee; /* Adicionado */
      --green-color: #4CAF50;
      --red-color: #f02849;
      --blue-color: #2364a4;
      --accent-color: #e5e9e9;
 
+     /* Trinar colors */
+     --color-blue: #0866ff;
      --button-media-color: #f2f4f7;
      --button-media-hover-color: #e5e9e9;
      --background-color: #f2f4f7;
@@ -22,8 +28,9 @@
      --transition-time: 0.3s;
      --black-color: #111;
      --color-primary: #f2f4f7;
-     --color-secondary: #ffffff;
-     --border-color-gray: rgb(185, 185, 185);
+     --color-secondary: #FFF;
+     --border-color-blue: var(--color-blue);
+     --border-color-blue-hover: #0872ff; 
    }
    
    /* =====================================

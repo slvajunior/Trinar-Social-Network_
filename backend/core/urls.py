@@ -13,6 +13,9 @@ from .views import (
     UserFollowingView,
     TimelineView,
     UserSearchView,
+    IsFollowingView,
+    FollowUserView,
+    UserProfileView,
 )
 
 app_name = "core"
@@ -57,4 +60,8 @@ urlpatterns = [
     ),
     path("timeline/", TimelineView.as_view(), name="timeline"),
     path("search/", UserSearchView.as_view(), name="user-search"),
+    path("users/<int:user_id>/is-following/", IsFollowingView.as_view(), name="is-following"),
+    path("users/<int:user_id>/follow/", FollowUserView.as_view(), name="follow-user"),
+    path("api/users/profile/", UserProfileView.as_view(), name="user-profile"),
+    path("api/auth/user/", UserProfileView.as_view(), name="user-profile"),
 ]

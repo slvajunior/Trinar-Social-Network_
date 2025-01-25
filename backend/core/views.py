@@ -15,9 +15,10 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import CustomTokenObtainPairSerializer
+from .serializers import CustomTokenObtainPairSerializer, UserSearchSerializer
 from rest_framework import generics
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.exceptions import NotFound
 
 # from rest_framework.parsers import MultiPartParser, FormParser
 
@@ -39,6 +40,13 @@ class UserDetailByIdView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     lookup_field = "id"  # Campo usado para buscar o usuário
+
+
+def get_user_by_id(user_id):
+    try:
+        return User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        raise NotFound({"error": "User not found."})
 
 
 class CustomJWTAuthentication(JWTAuthentication):
@@ -238,7 +246,7 @@ class FollowUserView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, user_id):
-        user_to_follow = User.objects.get(id=user_id)
+        user_to_follow = get_user_by_id(user_id)
         user = request.user
 
         if user == user_to_follow:
@@ -252,68 +260,104 @@ class FollowUserView(APIView):
             return Response(
                 {"message": "Unfollowed successfully."}, status=status.HTTP_200_OK
             )
-        else:
-            user.following.add(user_to_follow)
-            return Response(
-                {"message": "Followed successfully."}, status=status.HTTP_200_OK
-            )
+
+        user.following.add(user_to_follow)
+        return Response(
+            {"message": "Followed successfully."}, status=status.HTTP_200_OK
+        )
 
 
 class UserFollowersView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, user_id):
-        user = User.objects.get(id=user_id)
-        followers = user.followers.all()
-        followers_data = [
-            {"id": follower.id, "username": follower.username} for follower in followers
-        ]
-        return Response({"followers": followers_data})
+        user = get_user_by_id(user_id)
+        followers = user.followers.all().values("id", "username")
+        return Response({"followers": list(followers)})
 
 
 class UserFollowingView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, user_id):
-        user = User.objects.get(id=user_id)
-        following = user.following.all()
-        following_data = [
-            {"id": following_user.id, "username": following_user.username}
-            for following_user in following
-        ]
-        return Response({"following": following_data})
+        user = get_user_by_id(user_id)
+        following = user.following.all().values("id", "username")
+        return Response({"following": list(following)})
+
+
+class IsFollowingView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, user_id):
+        try:
+            user_to_check = User.objects.get(id=user_id)
+            is_following = user_to_check.followers.filter(id=request.user.id).exists()
+            return Response({"is_following": is_following}, status=200)
+        except User.DoesNotExist:
+            return Response({"error": "Usuário não encontrado."}, status=404)
 
 
 class TimelineView(APIView):
     def get(self, request):
         if request.user.is_authenticated:
-            # Filtra os posts com base na visibilidade e no autor (quem o usuário está seguindo)
+            # Usuários que o usuário atual está seguindo
             following_users = request.user.following.all()
+
+            # Filtrar posts públicos e posts de usuários seguidos com visibilidade "followers"
             posts = Post.objects.filter(
-                models.Q(visibility="public") | models.Q(author__in=following_users)
+                models.Q(visibility="public")
+                | models.Q(visibility="followers", author__in=following_users)
             ).order_by(
                 "-created_at"
-            )  # Ordem por data (mais recentes primeiro)
+            )  # Ordena por data de criação, mais recentes primeiro
         else:
-            # Se não estiver autenticado, mostra apenas posts públicos
+            # Usuários não autenticados visualizam apenas posts públicos
             posts = Post.objects.filter(visibility="public").order_by("-created_at")
 
+        # Serializa os posts para enviar como resposta
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
 
 
 class UserSearchView(APIView):
     def get(self, request):
-        query = request.GET.get("q", "")  # Parâmetro de consulta
-        if query:
-            # Filtra usuários pelo nome de usuário ou email
-            users = User.objects.filter(
-                Q(username__icontains=query) | Q(email__icontains=query)
+        query = request.GET.get("q", "").strip()
+        if not query:
+            return Response(
+                {"detail": "No query provided. Add ?q=term to the URL."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
-            serializer = UserSerializer(users, many=True)
-            return Response(serializer.data)
-        return Response(
-            {"detail": "No query provided"}, status=status.HTTP_400_BAD_REQUEST
-        )
+
+        # Busca pelo termo
+        users = User.objects.filter(
+            Q(username__icontains=query) | Q(email__icontains=query)
+        )[:50]
+
+        # Usa o serializer otimizado para buscas
+        serializer = UserSearchSerializer(users, many=True)
+        return Response(serializer.data)
+
+
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        profile_data = {
+            "id": user.id,
+            "username": user.username,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "profile_picture": user.profile_picture.url if user.profile_picture else None,
+            "cover_photo": user.cover_photo.url if user.cover_photo else None,
+            "bio": user.bio,
+            "location": user.location,
+            "birth_date": user.birth_date,
+            "date_joined": user.date_joined,
+            "followers_count": user.followers.count(),
+            "following_count": user.following.count(),
+        }
+        return Response(profile_data)
 
 
 # View simples para a URL raiz

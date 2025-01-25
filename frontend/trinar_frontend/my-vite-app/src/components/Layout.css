@@ -28,7 +28,6 @@
   width: 100%;
   height: 57px; /* Altura da NavBar */
   background-color: var(--color-secondary); /* Cor de fundo da NavBar */
-  color: white; /* Cor do texto da NavBar */
   position: fixed; /* Fixa a NavBar no topo */
   top: 0;
   left: 0;

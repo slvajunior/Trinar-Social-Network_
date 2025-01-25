@@ -15,6 +15,7 @@ app_name = 'users'
 
 urlpatterns = [
     path("user/<int:id>/", UserDetailByIdView.as_view(), name="user-detail-by-id"),
+
     path(
         "upload_profile_picture/",
         views.UploadProfilePictureView.as_view(),

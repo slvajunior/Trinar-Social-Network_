@@ -97,7 +97,7 @@
 }
 
 /* Media Queries */
-@media (max-width: 1443px) {
+@media (max-width: 768px) {
   .cover-photo-container {
     height: auto;
   }
@@ -107,7 +107,7 @@
   }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 350px) {
   .cover-photo {
     height: 50vh; /* Diminui altura até 50% da viewport */
   }
