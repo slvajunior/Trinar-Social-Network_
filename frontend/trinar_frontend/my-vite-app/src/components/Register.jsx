@@ -64,6 +64,7 @@ const Register = () => {
         last_name: formData.lastName,
         birth_date: `${formData.birthYear}-${formData.birthMonth}-${formData.birthDay}`,
       });
+      
       console.log("Usuário registrado:", response.data);
       setSuccess(
         "Registro realizado com sucesso! Redirecionando para o login..."

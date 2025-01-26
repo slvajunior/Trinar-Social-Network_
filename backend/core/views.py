@@ -19,6 +19,8 @@ from .serializers import CustomTokenObtainPairSerializer, UserSearchSerializer
 from rest_framework import generics
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.exceptions import NotFound
+from django.db.models import Count
+
 
 # from rest_framework.parsers import MultiPartParser, FormParser
 
@@ -342,22 +344,35 @@ class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        user = request.user
-        profile_data = {
-            "id": user.id,
-            "username": user.username,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "profile_picture": user.profile_picture.url if user.profile_picture else None,
-            "cover_photo": user.cover_photo.url if user.cover_photo else None,
-            "bio": user.bio,
-            "location": user.location,
-            "birth_date": user.birth_date,
-            "date_joined": user.date_joined,
-            "followers_count": user.followers.count(),
-            "following_count": user.following.count(),
-        }
-        return Response(profile_data)
+        try:
+            user = request.user
+            logger.info(f"Processing profile for user: {user.username if hasattr(user, 'username') else 'Anonymous'}")
+
+            profile_data = {
+                "id": user.id,
+                "username": user.username,
+                "first_name": user.first_name or "",
+                "last_name": user.last_name or "",
+                "profile_picture": user.profile_picture.url if user.profile_picture else None,
+                "cover_photo": user.cover_photo.url if user.cover_photo else None,
+                "bio": user.bio or "",
+                "location": user.location or "",
+                "birth_date": user.birth_date,
+                "date_joined": user.date_joined,
+                "followers_count": getattr(user, 'followers', []).count() if hasattr(user, 'followers') else 0,
+                "following_count": getattr(user, 'following', []).count() if hasattr(user, 'following') else 0,
+            }
+
+            logger.info("Profile data generated successfully.")
+            return Response(profile_data)
+
+        except AttributeError as e:
+            logger.error(f"Atributo ausente no usuário: {str(e)}")
+            return Response({"error": "Dados do perfil incompletos. Contate o suporte."}, status=400)
+
+        except Exception as e:
+            logger.error(f"Erro inesperado ao processar o perfil: {str(e)}")
+            return Response({"error": "Erro interno do servidor."}, status=500)
 
 
 # View simples para a URL raiz

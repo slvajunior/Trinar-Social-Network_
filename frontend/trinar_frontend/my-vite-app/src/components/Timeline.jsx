@@ -1,3 +1,4 @@
+// src/components/Timeline.jsx
 import React, { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,6 +15,7 @@ function Timeline() {
   const navigate = useNavigate();
 
   // Verifica se o usuário está logado
+  const token = localStorage.getItem("token");
   const loggedInUserId = localStorage.getItem("userId");
 
   // Se o usuário não estiver logado, redirecione para a página de login

@@ -25,6 +25,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.permissions import AllowAny
+
 
 # from .serializers import PhotoSerializer
 # from .models import Photo
@@ -44,6 +46,7 @@ def get_current_user(request):
 
 
 class RegisterUserView(APIView):
+    permission_classes = [AllowAny]
     """
     API View para registrar um novo usuário.
     """

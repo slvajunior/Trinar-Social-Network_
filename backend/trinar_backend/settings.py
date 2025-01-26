@@ -49,7 +49,7 @@ CSRF_TRUSTED_ORIGINS = ['http://localhost:5173']
 CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"
 
 # CORS (para permitir que o frontend acesse a API)
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = ["http://localhost:5173"]
 
 # Para permitir que cookies sejam enviados entre frontend e backend
@@ -86,11 +86,14 @@ AUTH_USER_MODEL = 'users.User'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.TokenAuthentication'
+        'rest_framework.authentication.TokenAuthentication',
     ],
+
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',],
 }
 
 SIMPLE_JWT = {

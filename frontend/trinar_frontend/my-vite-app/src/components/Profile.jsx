@@ -1,21 +1,23 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import { FaMapMarkerAlt, FaBirthdayCake, FaCalendarAlt } from "react-icons/fa"; // Ícones
+import { FaMapMarkerAlt, FaBirthdayCake, FaCalendarAlt } from "react-icons/fa";
 import "./Profile.css";
 
 const Profile = () => {
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [isFollowing, setIsFollowing] = useState(false); // Estado para seguir/deixar de seguir
+  const [isFollowing, setIsFollowing] = useState(false);
   const navigate = useNavigate();
-  const { id } = useParams(); // Captura o ID do perfil da URL (se existir)
+  const { id } = useParams();
+
+  const userId = parseInt(localStorage.getItem("userId")); // ID do usuário logado
+  const isOwnProfile = id ? parseInt(id) === userId : true; // Verifica se o perfil é do próprio usuário
 
   useEffect(() => {
     const fetchProfile = async () => {
       const token = localStorage.getItem("token");
-      const userId = localStorage.getItem("user_id"); // Recupera o user_id do localStorage
 
       if (!token || !userId) {
         navigate("/login");
@@ -23,32 +25,22 @@ const Profile = () => {
       }
 
       try {
-        let profileResponse;
-        if (id) {
-          // Se houver um ID na URL, busca o perfil do usuário com esse ID
-          profileResponse = await axios.get(`/api/users/profile/${id}/`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-        } else {
-          // Se não houver ID, busca o perfil do usuário logado
-          profileResponse = await axios.get(`/api/users/profile/`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-        }
+        // Fetch dos dados do perfil
+        const profileResponse = await axios.get(
+          id ? `/api/users/profile/${id}/` : `/api/users/profile/`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
         setProfileData(profileResponse.data);
 
-        // Verifica se o usuário logado já segue o perfil (apenas se não for o próprio perfil)
-        if (id && profileResponse.data.id !== parseInt(userId)) {
+        // Verifica se o usuário atual segue o perfil visitado (caso não seja o próprio)
+        if (!isOwnProfile) {
           const followStatusResponse = await axios.get(
             `/api/users/${id}/is-following/`,
             {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
+              headers: { Authorization: `Bearer ${token}` },
             }
           );
           setIsFollowing(followStatusResponse.data.is_following);
@@ -56,16 +48,18 @@ const Profile = () => {
 
         setLoading(false);
       } catch (error) {
+        console.error("Erro ao carregar o perfil:", error);
         setError("Erro ao carregar o perfil. Tente novamente.");
         setLoading(false);
       }
     };
 
     fetchProfile();
-  }, [navigate, id]);
+  }, [id, navigate, isOwnProfile, userId]);
 
   const handleFollow = async () => {
     const token = localStorage.getItem("token");
+
     if (!token) {
       navigate("/login");
       return;
@@ -76,17 +70,14 @@ const Profile = () => {
         `/api/users/${id}/follow/`,
         {},
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      // Atualiza o estado de seguir/deixar de seguir
-      setIsFollowing(!isFollowing);
-      console.log(response.data.message); // Exibe a mensagem de sucesso
+      setIsFollowing(!isFollowing); // Inverte o estado
+      console.log(response.data.message);
     } catch (error) {
-      console.error("Erro ao seguir/deixar de seguir:", error);
+      console.error("Erro ao seguir/desseguir:", error);
     }
   };
 
@@ -98,12 +89,8 @@ const Profile = () => {
     return <div>{error}</div>;
   }
 
-  const userId = localStorage.getItem("user_id"); // Recupera o user_id do localStorage
-  const isOwnProfile = !id || profileData.id === parseInt(userId); // Verifica se é o próprio perfil
-
   return (
     <div className="profile-container">
-      {/* Foto de capa */}
       <div className="cover-photo-container">
         {profileData.cover_photo && (
           <img
@@ -114,7 +101,6 @@ const Profile = () => {
         )}
       </div>
 
-      {/* Foto de perfil */}
       <div className="profile-picture-wrapper">
         <div className="profile-picture-container">
           {profileData.profile_picture && (
@@ -127,31 +113,30 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* Conteúdo do perfil */}
       <div className="profile-content">
         <h1>
           {profileData.first_name} {profileData.last_name}
         </h1>
 
-        {/* Contadores de seguidores */}
         <div className="profile-stats">
           <span>{profileData.following_count} Seguindo</span>{" "}
           <span>{profileData.followers_count} Seguidores</span>
         </div>
 
-        {/* Botão Seguir/Deixar de seguir */}
+        {/* Botão de seguir, renderizado se não for o próprio perfil */}
         {!isOwnProfile && (
-          <button onClick={handleFollow} className="follow-button">
+          <button
+            onClick={handleFollow}
+            className={`follow-button ${isFollowing ? "following" : ""}`}
+          >
             {isFollowing ? "Seguindo" : "Seguir"}
           </button>
         )}
 
-        {/* Biografia */}
         <div className="profile-bio">
           <p>{profileData.bio || "Nenhuma biografia fornecida."}</p>
         </div>
 
-        {/* Detalhes (Localidade, Nascimento e Ingresso) */}
         <div className="profile-details">
           {profileData.location && (
             <span>

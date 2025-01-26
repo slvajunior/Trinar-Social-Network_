@@ -1,3 +1,4 @@
+// src/App.py
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Register from "./components/Register";
@@ -42,9 +43,11 @@ function App() {
           <Route path="/timeline" element={<Timeline />} />
 
           {/* Perfil do usuário */}
-          <Route path="/profile/edit" element={<EditProfile />} />
           <Route path="/profile/:userId" element={<UserProfile />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/edit" element={<EditProfile />} />
+          <Route path="/profile/" element={<Profile />} />
+          <Route path="*" element={<h1>Página não encontrada</h1>} />
+
         </Routes>
       </Layout>
     </Router>
