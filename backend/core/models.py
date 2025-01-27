@@ -1,4 +1,4 @@
-# backend/core/models.pY
+"""  backend/core/models.pY """
 
 from django.db import models
 import re

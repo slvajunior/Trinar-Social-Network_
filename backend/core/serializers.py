@@ -21,6 +21,7 @@ class PostSerializer(serializers.ModelSerializer):
     author = AuthorSerializer(read_only=True)  # Inclui os dados do autor
     photo_url = serializers.SerializerMethodField()
     video_url = serializers.SerializerMethodField()
+    is_followed = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -41,6 +42,7 @@ class PostSerializer(serializers.ModelSerializer):
             "video",  # Campo de vídeo
             "photo_url",
             "video_url",
+            "is_followed",
         ]
         extra_kwargs = {
             "text": {"required": False, "allow_blank": True},  # Permite texto em branco
@@ -65,6 +67,13 @@ class PostSerializer(serializers.ModelSerializer):
                 # Se o contexto não contiver 'request', retorna a URL relativa
                 return obj.video.url
         return None
+
+    def get_is_followed(self, obj):
+        # Certifique-se de que o usuário está autenticado
+        user = self.context["request"].user
+        if user.is_authenticated:
+            return obj.author.followers.filter(id=user.id).exists()
+        return False
 
     def get_likes_count(self, obj):
         return obj.likes.count()

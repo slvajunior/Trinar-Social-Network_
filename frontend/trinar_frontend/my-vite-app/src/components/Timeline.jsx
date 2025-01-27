@@ -14,6 +14,7 @@ import "./Timeline.css";
 
 function Timeline() {
   const [posts, setPosts] = useState([]);
+  const [followingStatus, setFollowingStatus] = useState({});
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -48,6 +49,31 @@ function Timeline() {
 
       if (data && Array.isArray(data.results) && data.results.length > 0) {
         setPosts((prevPosts) => [...prevPosts, ...data.results]);
+
+        // Verificar status de "seguindo" para cada usuário no lote de posts
+        const followStatuses = await Promise.all(
+          data.results.map((post) =>
+            axios
+              .get(`/api/users/${post.author.id}/is-following/`, {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+              })
+              .then((res) => ({
+                userId: post.author.id,
+                isFollowing: res.data.is_following,
+              }))
+              .catch(() => ({ userId: post.author.id, isFollowing: false }))
+          )
+        );
+
+        // Atualizar o estado com os status de "seguindo"
+        const statusMap = followStatuses.reduce((acc, item) => {
+          acc[item.userId] = item.isFollowing;
+          return acc;
+        }, {});
+        setFollowingStatus((prevState) => ({ ...prevState, ...statusMap }));
+
         setHasMore(data.next !== null);
         if (data.next) {
           setPage((prevPage) => prevPage + 1);
@@ -58,14 +84,10 @@ function Timeline() {
     } catch (err) {
       setError(err.message);
       console.error("Erro ao carregar posts:", err);
-      if (err.response && err.response.status === 401) {
-        localStorage.removeItem("token");
-        navigate("/login");
-      }
     } finally {
       setIsLoading(false);
     }
-  }, [page, hasMore, isLoading, error, token, navigate]);
+  }, [page, hasMore, isLoading, error, token]);
 
   // Carregar posts iniciais
   useEffect(() => {
@@ -74,69 +96,29 @@ function Timeline() {
     }
   }, [loggedInUserId, token, fetchPosts]);
 
-  // Detectar scroll para carregar mais posts
-  useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop >=
-        document.documentElement.offsetHeight - 100
-      ) {
-        fetchPosts();
+  // Função para seguir um usuário
+  const handleFollow = async (userId) => {
+    try {
+      const response = await axios.post(
+        `/api/users/${userId}/follow/`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.status === 200) {
+        setFollowingStatus((prevState) => ({ ...prevState, [userId]: true }));
       }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [fetchPosts]);
-
-  // Renderizar a foto do usuário
-  // Renderizar a foto do usuário
-  const renderUserPhoto = (profile_picture) => {
-    if (profile_picture) {
-      // Adicionar uma verificação de URL relativa aqui também
-      const fullUrl = profile_picture.startsWith("http")
-        ? profile_picture
-        : `http://localhost:8000${profile_picture}?${Date.now()}`;
-      return (
-        <img
-          src={fullUrl}
-          alt="Profile"
-          className="profile-photo"
-          loading="lazy"
-        />
-      );
-    } else {
-      return <FaUserCircle className="user-photo-timeline" size={55} />;
+    } catch (err) {
+      console.error("Erro ao seguir usuário:", err);
+      alert("Erro ao seguir usuário. Verifique o console para mais detalhes.");
     }
   };
 
-  // Renderizar a mídia do post (imagem ou vídeo)
-  // Renderizar a mídia do post (imagem ou vídeo)
-  const renderMedia = (url, type) => {
-    // Se a URL for um caminho relativo, combine-o corretamente com a URL base.
-    const fullUrl = url.startsWith("http")
-      ? url
-      : `http://localhost:8000${url}`;
-
-    if (type === "image") {
-      return (
-        <div className="media-container">
-          <img className="img-post" src={fullUrl} alt="Post" loading="lazy" />
-        </div>
-      );
-    } else if (type === "video") {
-      return (
-        <div className="media-container">
-          <video className="video-post" controls loading="lazy">
-            <source src={fullUrl} type="video/mp4" />
-            Seu navegador não suporta o elemento de vídeo.
-          </video>
-        </div>
-      );
-    }
-  };
-
-  // Função para formatar a data
+  // Função para formatar a data do post
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -145,7 +127,7 @@ function Timeline() {
     const diffInHours = Math.floor(diffInMilliseconds / (1000 * 60 * 60));
 
     if (diffInMinutes < 60) {
-      return `${diffInMinutes}min`;
+      return `Há ${diffInMinutes}min`;
     } else if (diffInHours < 24) {
       return `Há ${diffInHours}h`;
     } else {
@@ -173,7 +155,6 @@ function Timeline() {
   return (
     <div>
       {posts.map((post, index) => {
-        // Usando post.id e post.author?.id como parte da chave única
         const uniqueKey = `${post.id}-${post.author?.id}-${index}`;
 
         return (
@@ -181,7 +162,16 @@ function Timeline() {
             <div className="author-info">
               <div className="author-photo">
                 <Link to={`/profile/${post.author?.id}`}>
-                  {renderUserPhoto(post.author?.profile_picture)}
+                  {post.author?.profile_picture ? (
+                    <img
+                      src={post.author.profile_picture}
+                      alt="Profile"
+                      className="profile-photo"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <FaUserCircle className="user-photo-timeline" size={55} />
+                  )}
                 </Link>
               </div>
               <div className="author-details">
@@ -189,11 +179,21 @@ function Timeline() {
                   <strong>
                     {post.author?.first_name} {post.author?.last_name}
                   </strong>
+                  {post.author?.id !== loggedInUserId &&
+                    !followingStatus[post.author?.id] && (
+                      <span
+                        className="follow-text"
+                        onClick={() => handleFollow(post.author?.id)}
+                      >
+                        Seguir
+                      </span>
+                    )}
                 </div>
                 <div className="post-time-container">
                   <p className="post-time" title={getFullDate(post.created_at)}>
                     {formatDate(post.created_at)}
                   </p>
+                  {/* Ícone de visibilidade ao lado do tempo do post */}
                   {post.visibility === "public" ? (
                     <FontAwesomeIcon
                       icon={faGlobe}
@@ -211,28 +211,29 @@ function Timeline() {
               </div>
             </div>
             <p className="text-post">{post.text}</p>
-            {post.photo_url && renderMedia(post.photo_url, "image")}
-            {post.video_url && renderMedia(post.video_url, "video")}
-            {post.hashtags && post.hashtags.length > 0 && (
-              <div className="post-hashtags">
-                {post.hashtags.map((hashtag, index) => (
-                  <span key={`${hashtag}-${index}`} className="hashtag">
-                    #{hashtag}
-                  </span>
-                ))}
-              </div>
+            {post.photo_url && (
+              <img
+                className="img-post"
+                src={post.photo_url}
+                alt="Post"
+                loading="lazy"
+              />
             )}
-
-            <hr className="divider-post" />
+            {post.video_url && (
+              <video className="video-post" controls loading="lazy">
+                <source src={post.video_url} type="video/mp4" />
+                Seu navegador não suporta vídeo.
+              </video>
+            )}
             <div className="post-actions">
               <button className="action-button">
-                <FontAwesomeIcon icon={faHeart} size="lg" /> Curtir
+                <FontAwesomeIcon icon={faHeart} /> Curtir
               </button>
               <button className="action-button">
-                <FontAwesomeIcon icon={faComment} size="lg" /> Comentar
+                <FontAwesomeIcon icon={faComment} /> Comentar
               </button>
               <button className="action-button">
-                <FontAwesomeIcon icon={faRetweet} size="lg" /> Repostar
+                <FontAwesomeIcon icon={faRetweet} /> Repostar
               </button>
             </div>
           </div>

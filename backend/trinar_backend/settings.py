@@ -262,3 +262,6 @@ EMAIL_MAIL_TOKEN_LIFE = int(os.getenv('EMAIL_MAIL_TOKEN_LIFE', 3600))
 EMAIL_MAIL_PAGE_TEMPLATE = os.getenv('EMAIL_MAIL_PAGE_TEMPLATE', 'email_confirmation.html')
 
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'Trinar <juniorazevedosilva43@gmail.com>')
+
+# Django settings (exemplo)
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
