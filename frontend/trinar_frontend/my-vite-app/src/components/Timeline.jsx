@@ -1,8 +1,13 @@
-// src/components/Timeline.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart, faComment, faRetweet, faGlobe, faUsers } from "@fortawesome/free-solid-svg-icons";
+import {
+  faHeart,
+  faComment,
+  faRetweet,
+  faGlobe,
+  faUsers,
+} from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Timeline.css";
@@ -10,101 +15,128 @@ import "./Timeline.css";
 function Timeline() {
   const [posts, setPosts] = useState([]);
   const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [followingStatus, setFollowingStatus] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const navigate = useNavigate();
-
-  // Verifica se o usuário está logado
   const token = localStorage.getItem("token");
   const loggedInUserId = localStorage.getItem("userId");
 
-  // Se o usuário não estiver logado, redirecione para a página de login
+  // Verifica se o usuário está logado
   useEffect(() => {
-    if (!loggedInUserId) {
+    if (!token) {
       navigate("/login");
     }
-  }, [loggedInUserId, navigate]);
+  }, [token, navigate]);
 
-  // Função para buscar os posts da timeline
-  const fetchPosts = async () => {
+  // Buscar os posts da timeline
+  const fetchPosts = useCallback(async () => {
+    if (!hasMore || isLoading || error || !token) return;
+
     setIsLoading(true);
     try {
-      const response = await fetch("/api/timeline/", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Não foi possível carregar os posts");
-      }
-      const data = await response.json();
-      setPosts(data);
-
-      // Verificar quem o usuário logado já segue
-      const followStatuses = await Promise.all(
-        data.map((post) =>
-          axios
-            .get(`/api/users/${post.author.id}/is-following/`, {
-              headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-            })
-            .then((res) => ({ userId: post.author.id, isFollowing: res.data.is_following }))
-            .catch(() => ({ userId: post.author.id, isFollowing: false }))
-        )
-      );
-
-      // Mapear o status de seguindo para cada usuário
-      const statusMap = followStatuses.reduce((acc, item) => {
-        acc[item.userId] = item.isFollowing;
-        return acc;
-      }, {});
-
-      setFollowingStatus(statusMap);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Função para seguir um usuário
-  const handleFollow = async (userId) => {
-    try {
-      const response = await axios.post(
-        `/api/users/${userId}/follow/`,
-        {},
+      const response = await axios.get(
+        `/api/timeline/?page=${page}&page_size=10`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-      if (response.status === 200) {
-        setFollowingStatus((prevState) => ({ ...prevState, [userId]: true }));
+
+      const data = response.data;
+
+      if (data && Array.isArray(data.results) && data.results.length > 0) {
+        setPosts((prevPosts) => [...prevPosts, ...data.results]);
+        setHasMore(data.next !== null);
+        if (data.next) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      } else {
+        setHasMore(false);
       }
     } catch (err) {
-      console.error("Erro ao seguir usuário:", err);
-      alert("Erro ao seguir usuário. Verifique o console para mais detalhes.");
+      setError(err.message);
+      console.error("Erro ao carregar posts:", err);
+      if (err.response && err.response.status === 401) {
+        localStorage.removeItem("token");
+        navigate("/login");
+      }
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }, [page, hasMore, isLoading, error, token, navigate]);
 
-  // Buscar os posts ao carregar o componente
+  // Carregar posts iniciais
   useEffect(() => {
-    if (loggedInUserId) {
+    if (loggedInUserId && token) {
       fetchPosts();
     }
-  }, [loggedInUserId]);
+  }, [loggedInUserId, token, fetchPosts]);
 
-  // Função para renderizar a foto do usuário
+  // Detectar scroll para carregar mais posts
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.offsetHeight - 100
+      ) {
+        fetchPosts();
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [fetchPosts]);
+
+  // Renderizar a foto do usuário
+  // Renderizar a foto do usuário
   const renderUserPhoto = (profile_picture) => {
     if (profile_picture) {
-      return <img src={`http://localhost:8000${profile_picture}`} alt="Profile" className="profile-photo" />;
+      // Adicionar uma verificação de URL relativa aqui também
+      const fullUrl = profile_picture.startsWith("http")
+        ? profile_picture
+        : `http://localhost:8000${profile_picture}?${Date.now()}`;
+      return (
+        <img
+          src={fullUrl}
+          alt="Profile"
+          className="profile-photo"
+          loading="lazy"
+        />
+      );
     } else {
       return <FaUserCircle className="user-photo-timeline" size={55} />;
     }
   };
 
-  // Função para formatar a data do post
+  // Renderizar a mídia do post (imagem ou vídeo)
+  // Renderizar a mídia do post (imagem ou vídeo)
+  const renderMedia = (url, type) => {
+    // Se a URL for um caminho relativo, combine-o corretamente com a URL base.
+    const fullUrl = url.startsWith("http")
+      ? url
+      : `http://localhost:8000${url}`;
+
+    if (type === "image") {
+      return (
+        <div className="media-container">
+          <img className="img-post" src={fullUrl} alt="Post" loading="lazy" />
+        </div>
+      );
+    } else if (type === "video") {
+      return (
+        <div className="media-container">
+          <video className="video-post" controls loading="lazy">
+            <source src={fullUrl} type="video/mp4" />
+            Seu navegador não suporta o elemento de vídeo.
+          </video>
+        </div>
+      );
+    }
+  };
+
+  // Função para formatar a data
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -139,106 +171,73 @@ function Timeline() {
   };
 
   return (
-    <div className="timeline">
-      {isLoading ? (
-        <p>Carregando...</p>
-      ) : error ? (
-        <p className="error-message">{error}</p>
-      ) : (
-        <>
-          {posts.length > 0 ? (
-            posts.map((post) => {
-              const isFollowing = followingStatus[post.author.id];
-              const isCurrentUser = post.author.id.toString() === loggedInUserId;
+    <div>
+      {posts.map((post, index) => {
+        // Usando post.id e post.author?.id como parte da chave única
+        const uniqueKey = `${post.id}-${post.author?.id}-${index}`;
 
-              return (
-                <div key={post.id} className="post">
-                  <div className="author-info">
-                    <div className="author-photo">
-                      <Link to={`/profile/${post.author?.id}`}>
-                        {renderUserPhoto(post.author?.profile_picture)}
-                      </Link>
-                    </div>
-                    <div className="author-details">
-                      <div className="author-name">
-                        <strong>
-                          {post.author?.first_name} {post.author?.last_name} 
-                        </strong>
-                        {/* Exibe o texto "Seguir" apenas se o usuário não estiver sendo seguido e não for o próprio usuário */}
-                        {!isCurrentUser && !isFollowing && (
-                          <span
-                            className="follow-text"
-                            onClick={() => handleFollow(post.author.id)}
-                          >
-                           · Seguir
-                          </span>
-                        )}
-                      </div>
-                      <div className="post-time-container">
-                        <p className="post-time" title={getFullDate(post.created_at)}>
-                          {formatDate(post.created_at)}
-                        </p>
-                        {/* Ícone de visibilidade ao lado do tempo do post */}
-                        {post.visibility === "public" ? (
-                          <FontAwesomeIcon icon={faGlobe} className="visibility-icon" title="Público" />
-                        ) : (
-                          <FontAwesomeIcon icon={faUsers} className="visibility-icon" title="Somente seguidores" />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-post">{post.text}</p>
-
-                  {/* Renderização de Mídia */}
-                  {post.photo_url && (
-                    <div className="media-container">
-                      <img
-                        className="img-post"
-                        src={`http://localhost:8000${post.photo_url}`}
-                        alt="Post"
-                      />
-                    </div>
-                  )}
-                  {post.video_url && (
-                    <div className="media-container">
-                      <video className="video-post" controls>
-                        <source src={`http://localhost:8000${post.video_url}`} type="video/mp4" />
-                        Seu navegador não suporta o elemento de vídeo.
-                      </video>
-                    </div>
-                  )}
-
-                  {/* Exibir as hashtags do post */}
-                  {post.hashtags && post.hashtags.length > 0 && (
-                    <div className="post-hashtags">
-                      {post.hashtags.map((hashtag, index) => (
-                        <span key={index} className="hashtag">
-                          #{hashtag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  <hr className="divider-post" />
-                  <div className="post-actions">
-                    <button className="action-button">
-                      <FontAwesomeIcon icon={faHeart} size="lg" /> Curtir
-                    </button>
-                    <button className="action-button">
-                      <FontAwesomeIcon icon={faComment} size="lg" /> Comentar
-                    </button>
-                    <button className="action-button">
-                      <FontAwesomeIcon icon={faRetweet} size="lg" /> Repostar
-                    </button>
-                  </div>
+        return (
+          <div key={uniqueKey} className="post">
+            <div className="author-info">
+              <div className="author-photo">
+                <Link to={`/profile/${post.author?.id}`}>
+                  {renderUserPhoto(post.author?.profile_picture)}
+                </Link>
+              </div>
+              <div className="author-details">
+                <div className="author-name">
+                  <strong>
+                    {post.author?.first_name} {post.author?.last_name}
+                  </strong>
                 </div>
-              );
-            })
-          ) : (
-            <p>Sem posts para exibir.</p>
-          )}
-        </>
-      )}
+                <div className="post-time-container">
+                  <p className="post-time" title={getFullDate(post.created_at)}>
+                    {formatDate(post.created_at)}
+                  </p>
+                  {post.visibility === "public" ? (
+                    <FontAwesomeIcon
+                      icon={faGlobe}
+                      className="visibility-icon"
+                      title="Público"
+                    />
+                  ) : (
+                    <FontAwesomeIcon
+                      icon={faUsers}
+                      className="visibility-icon"
+                      title="Somente seguidores"
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+            <p className="text-post">{post.text}</p>
+            {post.photo_url && renderMedia(post.photo_url, "image")}
+            {post.video_url && renderMedia(post.video_url, "video")}
+            {post.hashtags && post.hashtags.length > 0 && (
+              <div className="post-hashtags">
+                {post.hashtags.map((hashtag, index) => (
+                  <span key={`${hashtag}-${index}`} className="hashtag">
+                    #{hashtag}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            <hr className="divider-post" />
+            <div className="post-actions">
+              <button className="action-button">
+                <FontAwesomeIcon icon={faHeart} size="lg" /> Curtir
+              </button>
+              <button className="action-button">
+                <FontAwesomeIcon icon={faComment} size="lg" /> Comentar
+              </button>
+              <button className="action-button">
+                <FontAwesomeIcon icon={faRetweet} size="lg" /> Repostar
+              </button>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

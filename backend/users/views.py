@@ -72,6 +72,7 @@ class RegisterUserView(APIView):
 
 
 class LoginUserView(APIView):
+    permission_classes = [AllowAny]
     """
     API View para fazer login do usuário com JWT.
     """

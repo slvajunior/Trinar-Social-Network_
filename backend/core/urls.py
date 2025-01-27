@@ -46,7 +46,8 @@ urlpatterns = [
         "posts/<int:post_id>/comments/",
         CommentListCreateView.as_view(),
         name="comment-list-create",
-    ),
+    ),    
+
     path("posts/<int:post_id>/repost/", RepostPostView.as_view(), name="repost-post"),
     path(
         "users/<int:user_id>/followers/",
@@ -58,7 +59,7 @@ urlpatterns = [
         UserFollowingView.as_view(),
         name="user-following",
     ),
-    path("timeline/", TimelineView.as_view(), name="timeline"),
+    path('timeline/', TimelineView.as_view(), name='timeline'),
     path("search/", UserSearchView.as_view(), name="user-search"),
     path("users/<int:user_id>/is-following/", IsFollowingView.as_view(), name="is-following"),
     path("users/<int:user_id>/follow/", FollowUserView.as_view(), name="follow-user"),

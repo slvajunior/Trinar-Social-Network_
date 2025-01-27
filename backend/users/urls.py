@@ -2,12 +2,13 @@
 
 from django.urls import path
 from .views import UserDetailView
-from .views import RegisterUserView, LoginUserView
+# from .views import RegisterUserView, LoginUserView
 from . import views
 from .views import email_verification, reset_password_confirm
 from django.contrib.auth import views as auth_views
 # from .views import UserProfileView, UserProfileEditView, UserPhotosView, UserProfilePhotoView
 from .views import ProfileView, EditProfileView, UserDetailByIdView
+from core.views import TimelineView
 
 
 app_name = 'users'
@@ -24,9 +25,9 @@ urlpatterns = [
     # path("api/users/me/", get_current_user, name="get_current_user"),
     # path("auth/user/", UserDetailView.as_view(), name="user_detail"),
     path("user/", UserDetailView.as_view(), name="user-detail"),
-    path("register/", RegisterUserView.as_view(), name="register"),
+    # path("register/", RegisterUserView.as_view(), name="register"),
     # path("login/", LoginUserView.as_view(), name="login"),
-    path('api/auth/login/', LoginUserView.as_view(), name='login'),
+    # path('login/', LoginUserView.as_view(), name='login'),
     path("confirm-email/<str:token>/", email_verification, name="confirm-email"),
     path(
         "reset/<uidb64>/<token>/",
@@ -56,7 +57,7 @@ urlpatterns = [
     # path('api/users/profile/edit/', UserProfileEditView.as_view(), name='user-profile-edit'),
     # path("profile/photos/", UserPhotosView.as_view(), name="user-photos"),
     # path('api/users/profile/photos/', UserProfilePhotoView.as_view(), name="profile-photo"),
-
+    path('timeline/', TimelineView.as_view(), name='timeline'),
     path('profile/', ProfileView.as_view(), name='profile'),
     path('profile/edit/', EditProfileView.as_view(), name='edit-profile'),
 ]

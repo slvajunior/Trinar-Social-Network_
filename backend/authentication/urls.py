@@ -16,7 +16,7 @@ urlpatterns = [
     path("auth/user/", UserDetailView.as_view(), name="user_detail"),
     path("user/", UserDetailView.as_view(), name="user-detail"),
     path("register/", RegisterUserView.as_view(), name="register"),
-    path("api/auth/login/", LoginUserView.as_view(), name="login"),
+    path("login/", LoginUserView.as_view(), name="login"),
     path("confirm-email/<str:token>/", email_verification, name="confirm-email"),
     path(
         "reset/<uidb64>/<token>/",

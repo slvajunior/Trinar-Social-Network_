@@ -20,6 +20,8 @@ from rest_framework import generics
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.exceptions import NotFound
 from django.db.models import Count
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.authentication import TokenAuthentication
 
 
 # from rest_framework.parsers import MultiPartParser, FormParser
@@ -300,25 +302,26 @@ class IsFollowingView(APIView):
 
 
 class TimelineView(APIView):
-    def get(self, request):
-        if request.user.is_authenticated:
-            # Usuários que o usuário atual está seguindo
-            following_users = request.user.following.all()
+    permission_classes = [IsAuthenticated]  # Exige autenticação
 
-            # Filtrar posts públicos e posts de usuários seguidos com visibilidade "followers"
-            posts = Post.objects.filter(
-                models.Q(visibility="public")
-                | models.Q(visibility="followers", author__in=following_users)
-            ).order_by(
-                "-created_at"
-            )  # Ordena por data de criação, mais recentes primeiro
-        else:
-            # Usuários não autenticados visualizam apenas posts públicos
-            posts = Post.objects.filter(visibility="public").order_by("-created_at")
+    def get(self, request):
+        # Usuários que o usuário atual está seguindo
+        following_users = request.user.following.all()
+
+        # Filtrar posts públicos e posts de usuários seguidos com visibilidade "followers"
+        posts = Post.objects.filter(
+            models.Q(visibility="public")
+            | models.Q(visibility="followers", author__in=following_users)
+        ).order_by("-created_at")  # Ordena por data de criação, mais recentes primeiro
+
+        # Paginar os posts
+        paginator = PageNumberPagination()
+        paginator.page_size = 10  # Número de posts por página
+        paginated_posts = paginator.paginate_queryset(posts, request)
 
         # Serializa os posts para enviar como resposta
-        serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data)
+        serializer = PostSerializer(paginated_posts, many=True, context={"request": request})
+        return paginator.get_paginated_response(serializer.data)
 
 
 class UserSearchView(APIView):

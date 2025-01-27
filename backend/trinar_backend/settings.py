@@ -86,20 +86,29 @@ AUTH_USER_MODEL = 'users.User'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ],
 
+    # Pagination
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
+
+    # Schema
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+
+    # Permission
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',],
+        'rest_framework.permissions.IsAuthenticated',
+    ],
 }
 
 SIMPLE_JWT = {
-    # 'AUTH_HEADER_TYPES': ('Bearer',),
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),  # Validade do token de acesso
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),    # Validade do token de refresh
+    'ROTATE_REFRESH_TOKENS': True,                 # Gera novo refresh token ao usar o atual
+    'BLACKLIST_AFTER_ROTATION': True,              # Torna inválido o refresh usado
+    'ALGORITHM': 'HS256',                          # Algoritmo para assinar tokens
+    'SIGNING_KEY': os.getenv("SECRET_KEY")                    # Chave de assinatura
 }
 
 MIDDLEWARE = [
@@ -150,7 +159,7 @@ WSGI_APPLICATION = "trinar_backend.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 SECRET_KEY = os.getenv("SECRET_KEY")
-DEBUG = os.getenv("DEBUG") == "True"
+DEBUG = os.getenv("DEBUG") == "False"
 
 DATABASE_NAME = os.getenv("DATABASE_NAME")
 DATABASE_USER = os.getenv("DATABASE_USER")
