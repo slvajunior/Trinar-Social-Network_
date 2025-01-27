@@ -98,6 +98,10 @@ function Timeline() {
 
   // Função para seguir um usuário
   const handleFollow = async (userId) => {
+    if (userId === loggedInUserId) {
+      console.warn("Você não pode seguir a si mesmo.");
+      return; // Se for o mesmo usuário, nada acontece
+    }
     try {
       const response = await axios.post(
         `/api/users/${userId}/follow/`,
@@ -179,7 +183,8 @@ function Timeline() {
                   <strong>
                     {post.author?.first_name} {post.author?.last_name}
                   </strong>
-                  {post.author?.id !== loggedInUserId &&
+                  {/* Verifica se o autor não é o usuário logado antes de renderizar o botão "Seguir" */}
+                  {post.author?.id !== parseInt(loggedInUserId) &&
                     !followingStatus[post.author?.id] && (
                       <span
                         className="follow-text"
@@ -189,6 +194,7 @@ function Timeline() {
                       </span>
                     )}
                 </div>
+
                 <div className="post-time-container">
                   <p className="post-time" title={getFullDate(post.created_at)}>
                     {formatDate(post.created_at)}
@@ -225,6 +231,17 @@ function Timeline() {
                 Seu navegador não suporta vídeo.
               </video>
             )}
+            {/* Exibir as hashtags do post */}
+            {post.hashtags && post.hashtags.length > 0 && (
+                    <div className="post-hashtags">
+                      {post.hashtags.map((hashtag, index) => (
+                        <span key={index} className="hashtag">
+                          #{hashtag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+            <hr className="divider-post" />
             <div className="post-actions">
               <button className="action-button">
                 <FontAwesomeIcon icon={faHeart} /> Curtir

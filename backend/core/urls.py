@@ -3,6 +3,7 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
 
+
 from .views import (
     PostListCreateView,
     PostDetailView,
@@ -16,6 +17,7 @@ from .views import (
     IsFollowingView,
     FollowUserView,
     UserProfileView,
+    bulk_follow_status
 )
 
 app_name = "core"
@@ -46,7 +48,7 @@ urlpatterns = [
         "posts/<int:post_id>/comments/",
         CommentListCreateView.as_view(),
         name="comment-list-create",
-    ),    
+    ),
 
     path("posts/<int:post_id>/repost/", RepostPostView.as_view(), name="repost-post"),
     path(
@@ -65,4 +67,5 @@ urlpatterns = [
     path("users/<int:user_id>/follow/", FollowUserView.as_view(), name="follow-user"),
     path("api/users/profile/", UserProfileView.as_view(), name="user-profile"),
     path("api/auth/user/", UserProfileView.as_view(), name="user-profile"),
+    path("bulk-follow-status/", bulk_follow_status, name="bulk-follow-status"),
 ]

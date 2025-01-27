@@ -37,6 +37,22 @@ from rest_framework import generics, permissions
 logger = logging.getLogger(__name__)
 
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def follow_user(request, user_id):
+    user_to_follow = get_object_or_404(User, id=user_id)
+    request.user.following.add(user_to_follow)
+    return Response({'status': 'following'})
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def unfollow_user(request, user_id):
+    user_to_unfollow = get_object_or_404(User, id=user_id)
+    request.user.following.remove(user_to_unfollow)
+    return Response({'status': 'unfollowed'})
+
+
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_current_user(request):

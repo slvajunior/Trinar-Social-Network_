@@ -22,7 +22,7 @@ from rest_framework.exceptions import NotFound
 from django.db.models import Count
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.authentication import TokenAuthentication
-
+from django.contrib.auth.decorators import login_required
 
 # from rest_framework.parsers import MultiPartParser, FormParser
 
@@ -38,6 +38,16 @@ def get_current_user(request):
     user = request.user
     serializer = UserSerializer(user)
     return Response(serializer.data)
+
+
+@login_required
+def bulk_follow_status(request):
+    user_ids = request.GET.getlist('user_ids')
+    follow_statuses = {
+        user_id: request.user.followers.filter(id=user_id).exists()
+        for user_id in user_ids
+    }
+    return JsonResponse(follow_statuses)
 
 
 class UserDetailByIdView(generics.RetrieveAPIView):

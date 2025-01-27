@@ -1,162 +1,147 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
-import { FaMapMarkerAlt, FaBirthdayCake, FaCalendarAlt } from "react-icons/fa";
+import { useParams, useNavigate } from "react-router-dom";
+import { FaUserCircle } from "react-icons/fa";
 import "./Profile.css";
 
-const Profile = () => {
-  const [profileData, setProfileData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [isFollowing, setIsFollowing] = useState(false);
+function Profile() {
+  const { userId } = useParams(); // Recupera o userId da URL
   const navigate = useNavigate();
-  const { id } = useParams();
+  const [user, setUser] = useState(null);
+  const [isFollowing, setIsFollowing] = useState(false); // Estado para seguir/deixar de seguir
+  const [isLoading, setIsLoading] = useState(true);
+  const token = localStorage.getItem("token");
+  const loggedInUserId = localStorage.getItem("userId"); // ID do usuário logado
 
-  const userId = parseInt(localStorage.getItem("userId")); // ID do usuário logado
-  const isOwnProfile = id ? parseInt(id) === userId : true; // Verifica se o perfil é do próprio usuário
-
+  // Redireciona para a URL com o userId se o usuário estiver acessando o próprio perfil
   useEffect(() => {
-    const fetchProfile = async () => {
-      const token = localStorage.getItem("token");
+    if (!userId && loggedInUserId) {
+      navigate(`/profile/${loggedInUserId}`); // Redireciona para a URL com o userId
+    }
+  }, [userId, loggedInUserId, navigate]);
 
-      if (!token || !userId) {
-        navigate("/login");
-        return;
-      }
+  // Carregar os dados do perfil e verificar se o usuário logado já segue o perfil visitado
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      if (!userId) return; // Não faz a requisição se o userId não estiver definido
 
       try {
-        // Fetch dos dados do perfil
-        const profileResponse = await axios.get(
-          id ? `/api/users/profile/${id}/` : `/api/users/profile/`,
+        // Busca os dados do perfil
+        const userResponse = await axios.get(`/api/users/${userId}/`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUser(userResponse.data);
+
+        // Verifica se o usuário logado já segue o perfil visitado
+        const followStatusResponse = await axios.get(
+          `/api/users/${userId}/is-following/`,
           {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
         );
-
-        setProfileData(profileResponse.data);
-
-        // Verifica se o usuário atual segue o perfil visitado (caso não seja o próprio)
-        if (!isOwnProfile) {
-          const followStatusResponse = await axios.get(
-            `/api/users/${id}/is-following/`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
-          setIsFollowing(followStatusResponse.data.is_following);
-        }
-
-        setLoading(false);
+        setIsFollowing(followStatusResponse.data.is_following);
       } catch (error) {
-        console.error("Erro ao carregar o perfil:", error);
-        setError("Erro ao carregar o perfil. Tente novamente.");
-        setLoading(false);
+        console.error("Erro ao carregar perfil:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchProfile();
-  }, [id, navigate, isOwnProfile, userId]);
+    fetchProfileData();
+  }, [userId, token]);
 
+  // Função para seguir um usuário
   const handleFollow = async () => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      navigate("/login");
+    if (userId === loggedInUserId) {
+      console.warn("Você não pode seguir a si mesmo.");
       return;
     }
 
     try {
-      const response = await axios.post(
-        `/api/users/${id}/follow/`,
+      await axios.post(
+        `/api/users/${userId}/follow/`,
         {},
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
-
-      setIsFollowing(!isFollowing); // Inverte o estado
-      console.log(response.data.message);
+      setIsFollowing(true); // Atualiza o estado para "seguindo"
     } catch (error) {
-      console.error("Erro ao seguir/desseguir:", error);
+      console.error("Erro ao seguir usuário:", error);
     }
   };
 
-  if (loading) {
+  // Função para deixar de seguir um usuário
+  const handleUnfollow = async () => {
+    try {
+      await axios.post(
+        `/api/users/${userId}/unfollow/`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setIsFollowing(false); // Atualiza o estado para "não seguindo"
+    } catch (error) {
+      console.error("Erro ao deixar de seguir usuário:", error);
+    }
+  };
+
+  if (isLoading) {
     return <div>Carregando...</div>;
   }
 
-  if (error) {
-    return <div>{error}</div>;
+  if (!user) {
+    return <div>Usuário não encontrado.</div>;
   }
 
   return (
     <div className="profile-container">
-      <div className="cover-photo-container">
-        {profileData.cover_photo && (
+      <div className="profile-header">
+        {user.profile_picture ? (
           <img
-            className="cover-photo"
-            src={`http://localhost:8000${profileData.cover_photo}`}
-            alt="Foto de capa"
+            src={user.profile_picture}
+            alt="Profile"
+            className="profile-photo"
           />
+        ) : (
+          <FaUserCircle className="user-photo-profile" size={100} />
         )}
-      </div>
-
-      <div className="profile-picture-wrapper">
-        <div className="profile-picture-container">
-          {profileData.profile_picture && (
-            <img
-              className="profile-picture"
-              src={`http://localhost:8000${profileData.profile_picture}`}
-              alt="Foto de perfil"
-            />
-          )}
-        </div>
-      </div>
-
-      <div className="profile-content">
         <h1>
-          {profileData.first_name} {profileData.last_name}
+          {user.first_name} {user.last_name}
         </h1>
+        <p>{user.bio}</p>
 
-        <div className="profile-stats">
-          <span>{profileData.following_count} Seguindo</span>{" "}
-          <span>{profileData.followers_count} Seguidores</span>
-        </div>
-
-        {/* Botão de seguir, renderizado se não for o próprio perfil */}
-        {!isOwnProfile && (
-          <button
-            onClick={handleFollow}
-            className={`follow-button ${isFollowing ? "following" : ""}`}
-          >
-            {isFollowing ? "Seguindo" : "Seguir"}
-          </button>
+        {/* Botão de "Seguir" ou "Deixar de Seguir" */}
+        {userId !== loggedInUserId && (
+          isFollowing ? (
+            <button onClick={handleUnfollow} className="unfollow-button">
+              Deixar de seguir
+            </button>
+          ) : (
+            <button onClick={handleFollow} className="follow-button">
+              Seguir
+            </button>
+          )
         )}
+      </div>
 
-        <div className="profile-bio">
-          <p>{profileData.bio || "Nenhuma biografia fornecida."}</p>
-        </div>
-
-        <div className="profile-details">
-          {profileData.location && (
-            <span>
-              <FaMapMarkerAlt /> {profileData.location}
-            </span>
-          )}
-          {profileData.birth_date && (
-            <span>
-              <FaBirthdayCake /> Nascido(a) em{" "}
-              {new Date(profileData.birth_date).toLocaleDateString()}
-            </span>
-          )}
-          <span>
-            <FaCalendarAlt /> Ingressou em{" "}
-            {new Date(profileData.date_joined).toLocaleDateString()}
-          </span>
-        </div>
+      {/* Restante do conteúdo do perfil */}
+      <div className="profile-content">
+        <p>Seguidores: {user.followers_count}</p>
+        <p>Seguindo: {user.following_count}</p>
+        {/* Adicione mais informações do perfil aqui */}
       </div>
     </div>
   );
-};
+}
 
 export default Profile;

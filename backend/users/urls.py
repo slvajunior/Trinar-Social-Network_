@@ -9,6 +9,7 @@ from django.contrib.auth import views as auth_views
 # from .views import UserProfileView, UserProfileEditView, UserPhotosView, UserProfilePhotoView
 from .views import ProfileView, EditProfileView, UserDetailByIdView
 from core.views import TimelineView
+from .views import follow_user, unfollow_user
 
 
 app_name = 'users'
@@ -60,4 +61,6 @@ urlpatterns = [
     path('timeline/', TimelineView.as_view(), name='timeline'),
     path('profile/', ProfileView.as_view(), name='profile'),
     path('profile/edit/', EditProfileView.as_view(), name='edit-profile'),
+    path('<int:user_id>/follow/', follow_user, name='follow_user'),
+    path('<int:user_id>/unfollow/', unfollow_user, name='unfollow_user'),
 ]
