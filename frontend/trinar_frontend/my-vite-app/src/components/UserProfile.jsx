@@ -1,8 +1,12 @@
+// src/components/UserProfile.jsx
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { FaMapMarkerAlt, FaBirthdayCake, FaCalendarAlt } from "react-icons/fa"; // Ícones
 import "./Profile.css";
+import Post from "./Post";
+import Profile from "./Profile"
 
 const UserProfile = () => {
   const [profileData, setProfileData] = useState(null);

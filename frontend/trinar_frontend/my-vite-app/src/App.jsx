@@ -1,6 +1,5 @@
-// src/App.py
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Register from "./components/Register";
 import Login from "./components/Login";
 import Logout from "./components/Logout";
@@ -9,18 +8,14 @@ import EmailConfirmed from "./components/EmailConfirmed";
 import RequestPasswordReset from "./components/RequestPasswordReset";
 import ResetPassword from "./components/ResetPassword";
 import RequestPasswordResetDone from "./components/RequestPasswordResetDone";
-import UserProfile from "./components/UserProfile";
-import Timeline from "./components/Timeline"; // Importe o componente Timeline
+import Timeline from "./components/Timeline";
 import Layout from "./components/Layout";
-import Profile from "./components/Profile";
+import Profile from "./components/Profile"; // Usar apenas o Profile
 import EditProfile from "./components/EditProfile";
 
-import "@fontsource/poppins/500.css"; // Peso 500 (medium)
-import "@fontsource/poppins/700.css"; // Peso 700 (bold)
-import "@fontsource/roboto/700.css"; // Peso 700 (bold)
-import "@fontsource/roboto/500.css"; // Peso 500 (medium)
-
 function App() {
+  const loggedInUserId = localStorage.getItem("userId"); // ID do usuário logado
+
   return (
     <Router>
       <Layout>
@@ -43,11 +38,11 @@ function App() {
           <Route path="/timeline" element={<Timeline />} />
 
           {/* Perfil do usuário */}
-          <Route path="/profile/:userId" element={<UserProfile />} />
-          <Route path="/profile/edit" element={<EditProfile />} />
-          <Route path="/profile/" element={<Profile />} />
-          <Route path="*" element={<h1>Página não encontrada</h1>} />
 
+          <Route path="/profile/:userId" element={<Profile />} /> {/* Usar Profile */}
+          <Route path="/profile/edit" element={<EditProfile />} />
+          <Route path="/profile/" element={<Navigate to={`/profile/${loggedInUserId}`} replace />}/>
+          <Route path="*" element={<h1>Página não encontrada</h1>} />
         </Routes>
       </Layout>
     </Router>

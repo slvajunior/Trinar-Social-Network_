@@ -34,7 +34,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("core.urls")),
     path("api/users/", include("users.urls", namespace="users")),
-    path("api/auth/", include("authentication.urls")),
+    path("api/", include("authentication.urls")),
     # path("api/auth/user/", UserProfileView.as_view(), name="user-profile"),
     # path("api/users/me/", views.get_current_user, name="get_current_user"),
     # path("api/auth/user/", UserDetailView.as_view(), name="user_detail"),

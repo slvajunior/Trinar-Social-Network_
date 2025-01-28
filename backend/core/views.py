@@ -303,6 +303,11 @@ class IsFollowingView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, user_id):
+        if not request.user.is_authenticated:
+            return Response(
+                {"error": "Usuário não autenticado."}, 
+                status=401
+            )
         try:
             user_to_check = User.objects.get(id=user_id)
             is_following = user_to_check.followers.filter(id=request.user.id).exists()

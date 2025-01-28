@@ -1,7 +1,7 @@
 """ backend/users/urls.py """
 
 from django.urls import path
-from .views import UserDetailView
+from .views import UserDetailView, UserPostsView
 # from .views import RegisterUserView, LoginUserView
 from . import views
 from .views import email_verification, reset_password_confirm
@@ -25,7 +25,7 @@ urlpatterns = [
     ),
     # path("api/users/me/", get_current_user, name="get_current_user"),
     # path("auth/user/", UserDetailView.as_view(), name="user_detail"),
-    path("user/", UserDetailView.as_view(), name="user-detail"),
+    # path("user/", UserDetailView.as_view(), name="user-detail"),
     # path("register/", RegisterUserView.as_view(), name="register"),
     # path("login/", LoginUserView.as_view(), name="login"),
     # path('login/', LoginUserView.as_view(), name='login'),
@@ -63,4 +63,6 @@ urlpatterns = [
     path('profile/edit/', EditProfileView.as_view(), name='edit-profile'),
     path('<int:user_id>/follow/', follow_user, name='follow_user'),
     path('<int:user_id>/unfollow/', unfollow_user, name='unfollow_user'),
+    path('<int:pk>/', UserDetailView.as_view(), name='user-detail'),
+    path('<int:pk>/posts/', UserPostsView.as_view(), name='user-posts'),
 ]

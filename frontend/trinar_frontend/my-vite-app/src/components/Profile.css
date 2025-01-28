@@ -1,129 +1,197 @@
-/* Estilos gerais */
-
-.profile-container {
-  position: relative;
+.profile-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
   margin: 0 auto;
-  height: 850px;
   background-color: var(--color-secondary);
-  box-shadow: 0 3px 3px -2px rgba(0, 0, 0, 0.2), 0 2px 4px 1px rgba(0, 0, 0, 0.01);
-}
-
-.content.with-navbar {
-  width: 100%;
-  height: 500px;
-}
-
-/* Responsividade para Foto de Capa */
-.cover-photo-container {
-  width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  max-height: 500px; /* Limita a altura máxima */
-  height: auto;
+  position: relative; /* Adicionado para posicionamento absoluto da foto de perfil */
 }
 
-.cover-photo {
+.profile-page-cover {
+  max-width: 1500px;
   width: 100%;
-  height: auto; /* Ajusta a altura automaticamente */
+  height: 400px;
+  overflow: hidden;
+  position: relative; /* Adicionado para posicionamento absoluto da foto de perfil */
+}
+
+.profile-page-cover-photo {
+  width: 100%;
+  height: 100%;
+  max-height: 600px;
   object-fit: cover;
   object-position: top;
   transition: height 0.3s ease, width 0.3s ease; /* Suaviza mudanças */
-  padding: 0 200px;
+  padding: 0 400px;
 }
 
-/* Foto de perfil */
-.profile-picture-wrapper {
+.profile-page-default-cover {
   display: flex;
   justify-content: center;
-  position: relative;
-  top: -130px;
-  margin-bottom: -150px;
-  width: 100%;
+  align-items: center;
+  height: 450px;
+  background: linear-gradient(135deg, #6c757d, #343a40);
+  color: white;
+  font-size: 1.5rem;
 }
 
-/* Responsividade para Foto de Perfil */
-.profile-picture-container {
-  width: 250px;
-  height: 250px;
+.profile-page-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--color-background);
+  text-align: center;
+  margin-top: 100px; /* Ajuste para sobrepor a foto de perfil */
+}
+
+.profile-page-photo {
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
-  overflow: hidden;
-  border: 5px solid var(--background-color);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  transition: width 0.3s ease, height 0.3s ease; /* Suaviza mudanças */
-}
-
-.profile-picture {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
+  border: 5px solid var(--color-secondary);
+  position: absolute; /* Posicionamento absoluto para sobrepor a foto de capa */
+  top: 60%; /* Posiciona a metade superior da foto de perfil na metade da foto de capa */
+  left: 50%;
+  transform: translate(-50%, -50%); /* Centraliza a foto de perfil */
 }
 
-/* Conteúdo */
-.profile-content {
-  padding: 0px;
-  margin-top: 0px; /* Compensa a altura da foto de perfil */
-  text-align: center;
+.profile-page-default-photo {
+  color: #6c757d;
 }
 
-/* Contadores de seguidores */
-.profile-stats {  margin-bottom: 500px;
-
-  margin: 0.5rem 0;
-  font-size: 1.2rem;
+.profile-page-name {
+  margin: 10px 0;
+  font-size: 1.8rem;
+  color: #343a40;
   font-weight: bold;
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
 }
 
-/* Biografia */
-.profile-bio {
-  margin: 0.5rem 0;
-  text-align: center;
+.profile-page-bio {
+  margin: 0px 0 0px;
   font-size: 1rem;
-  color: #555;
+  color: #080809;
 }
 
-/* Detalhes do perfil */
-.profile-details {
-  margin-top: 0.5rem;
-  text-align: center;
-  font-size: 0.9rem;
-  color: gray;
+
+.profile-page-unfollow-button,
+.profile-page-follow-button {
+  /* Estilos do botão (ajuste conforme necessário) */
+  padding: 6px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative; /* Garante que o botão fique acima do conteúdo */
+  z-index: 1; /* Coloca o botão acima do conteúdo centralizado */
   display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  flex-wrap: wrap;
+  left: 25%;
 }
+
+.profile-page-unfollow-button {
+  background-color: #ff4d4d;
+  color: white;
+}
+
+.profile-page-follow-button {
+  background-color: var(--color-blue);
+  color: white;
+}
+
+.profile-page-follow-button:hover {
+  background-color: var(--blue-color);
+  color: white;
+}
+
+.profile-page-unfollow-button:hover {
+  background-color: #f32b2b;
+  color: white;
+}
+
+
+.profile-page-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 5px;
+  height: 40px;
+  background-color: white;
+  position: relative;
+  gap: 15px;
+}
+
+.profile-page-divider {
+  border: 0;
+  height: 1px;
+  background-color: #e3e6e6;
+  width: 100%;
+}
+
+.profile-page-info {
+  display: flex; /* Faz com que os elementos fiquem lado a lado */
+  gap: 20px; /* Espaçamento entre os elementos */
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.profile-page-stats {
+  font-size: 1rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.number-follow {
+  font-size: 1rem;
+  color: #080809;
+}
+
+.profile-page-details {
+  display: flex; /* Adicionando display flex aqui */
+  gap: 10px; /* Mantendo o espaçamento entre os itens */
+}
+
+.profile-page-detail {
+  display: flex; 
+  align-items: center;
+  font-size: 12px;
+  color: #6b7280;
+  margin: 10px 0 0;
+  gap: 6px;
+}
+
+
 
 /* Media Queries */
 @media (max-width: 768px) {
-  .cover-photo-container {
+  .profile-page-cover {
     height: auto;
   }
 
-  .cover-photo {
+  .profile-page-cover-photo {
     height: 60vh; /* Reduz proporcionalmente a altura da foto de capa */
   }
 }
 
 @media (max-width: 350px) {
-  .cover-photo {
+  .profile-page-cover-photo {
     height: 50vh; /* Diminui altura até 50% da viewport */
   }
 
-  .profile-picture-container {
+  .profile-page-header {
     width: 200px; /* Reduz tamanho da foto de perfil */
     height: 200px;
   }
 }
 
 @media (max-width: 400px) {
-  .cover-photo {
+  .profile-page-cover-photo {
     height: 40vh; /* Mantém a capa visível em telas muito pequenas */
   }
 
-  .profile-picture-container {
+  .profile-page-header, .profile-page-content {
     width: 150px; /* Reduz ainda mais a foto de perfil */
     height: 150px;
   }
@@ -133,14 +201,14 @@
 
 /* Estilo específico para telas grandes (desktop) */
 @media (min-width: 1024px) {
-  .cover-photo {
+  .profile-page-cover-photo {
     padding: 0 200px;
   }
 }
 
 /* Para telas menores (mobile) */
 @media (max-width: 1023px) {
-  .cover-photo {
+  .profile-page-cover-photo {
     padding: 0; /* Remove padding em telas pequenas */
   }
 }
