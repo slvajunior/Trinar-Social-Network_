@@ -18,10 +18,7 @@
   background-color: var(--color-secondary);
 }
 
-.hPost {
-  text-align: justify;
-  margin: 14px 0 0;
-}
+
 
 .profile-page-cover {
   width: 100%;
@@ -133,8 +130,7 @@
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 5px;
-  height: 40px;
+  height: 55px;
   background-color: white;
   position: relative;
   gap: 15px;
@@ -180,15 +176,87 @@
   gap: 6px;
 }
 
-.profile-page-posts {
-  width: 100%;
-  max-width: 675px; /* Largura máxima para telas grandes */
-  margin: 17px auto 0;
-  padding: 6px 0 0px;
-  background-color: var(--color-secondary);
-  border-radius: 8px;
-  box-shadow: 0 3px 3px -2px rgba(0, 0, 0, 0.2), 0 2px 100px 1px rgba(0, 0, 0, 0.01);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.profile-page-container {
+  padding: 20px;
 }
+
+.profile-page-posts {
+  margin-top: 20px;
+}
+
+.post-controls {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.posts-container.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.posts-container.list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.post-history {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.post-actions {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 15px;
+}
+
+.post-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+}
+
+.post-actions button:hover {
+  color: #007bff;
+}
+
+
+
+
+
 
 /* Media Queries */
 @media (max-width: 768px) {

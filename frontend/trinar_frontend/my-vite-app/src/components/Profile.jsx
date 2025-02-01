@@ -2,7 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaUserCircle, FaMapMarkerAlt, FaBirthdayCake, FaCalendarAlt } from "react-icons/fa";
-import PostHistory from "./PostHistory"; // Importe o novo componente
+import PostHistory from "./PostHistory";
+import PostControls from "./PostControls";
 import { toast } from "react-toastify";
 import "./Profile.css";
 
@@ -15,7 +16,15 @@ function Profile() {
   const [isLoading, setIsLoading] = useState(true);
   const token = localStorage.getItem("token");
   const loggedInUserId = localStorage.getItem("userId");
-  const [followingStatus, setFollowingStatus] = useState({});
+
+  // Estados para filtros e visualização
+  const [filters, setFilters] = useState({
+    date: "recent",
+    publishedBy: "all",
+    privacy: "all",
+    mentions: "all",
+  });
+  const [viewMode, setViewMode] = useState("list");
 
   // Redirecionar se o userId não estiver definido
   useEffect(() => {
@@ -71,7 +80,7 @@ function Profile() {
           last_name: user?.last_name || "",
           profile_picture: user?.profile_picture || "caminho/para/imagem-padrao.jpg",
         },
-        hashtags: post.hashtags || [], // Fallback para array vazio
+        hashtags: post.hashtags || [],
       }));
 
       // Ordenar os posts por data (do mais recente para o mais antigo)
@@ -102,14 +111,14 @@ function Profile() {
       console.warn("Você não pode seguir a si mesmo.");
       return;
     }
-  
+
     try {
       const response = await axios.post(
         `/api/users/${userId}/follow/`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      console.log("Resposta da API ao seguir:", response.data); // Depuração
+      console.log("Resposta da API ao seguir:", response.data);
       setIsFollowing(true);
       toast.success("Agora você está seguindo este usuário!");
     } catch (error) {
@@ -117,7 +126,7 @@ function Profile() {
       toast.error("Erro ao seguir usuário. Tente novamente.");
     }
   };
-  
+
   const handleUnfollow = async () => {
     try {
       const response = await axios.post(
@@ -125,7 +134,7 @@ function Profile() {
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      console.log("Resposta da API ao desseguir:", response.data); // Depuração
+      console.log("Resposta da API ao desseguir:", response.data);
       setIsFollowing(false);
       toast.success("Você deixou de seguir este usuário.");
     } catch (error) {
@@ -133,6 +142,30 @@ function Profile() {
       toast.error("Erro ao deixar de seguir usuário. Tente novamente.");
     }
   };
+
+  // Função para filtrar os posts
+  const filteredPosts = userPosts.filter((post) => {
+    if (filters.publishedBy === "user" && post.author.id !== loggedInUserId) {
+      return false;
+    }
+    if (filters.publishedBy === "others" && post.author.id === loggedInUserId) {
+      return false;
+    }
+    if (filters.privacy !== "all" && post.visibility !== filters.privacy) {
+      return false;
+    }
+    if (filters.mentions === "mentioned" && !post.text.includes(`@${user.username}`)) {
+      return false;
+    }
+    return true;
+  });
+
+  // Ordenar por data
+  if (filters.date === "recent") {
+    filteredPosts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  } else {
+    filteredPosts.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+  }
 
   if (isLoading) {
     return <div>Carregando...</div>;
@@ -210,15 +243,15 @@ function Profile() {
       <div className="profile-page-content">
         {userId !== loggedInUserId && (
           <button
-          onClick={isFollowing ? handleUnfollow : handleFollow}
-          className={
-            isFollowing
-              ? "profile-page-unfollow-button"
-              : "profile-page-follow-button"
-          }
-        >
-          {isFollowing ? "Desseguir" : "Seguir"}
-        </button>
+            onClick={isFollowing ? handleUnfollow : handleFollow}
+            className={
+              isFollowing
+                ? "profile-page-unfollow-button"
+                : "profile-page-follow-button"
+            }
+          >
+            {isFollowing ? "Desseguir" : "Seguir"}
+          </button>
         )}
 
         <div className="profile-page-info">
@@ -232,21 +265,32 @@ function Profile() {
       </div>
 
       {/* Seção de posts do usuário */}
-      <div className="cabeçalho">
-          <h2 className="hPost">Posts</h2>
-        </div>
       <div className="profile-page-posts">
-        {Array.isArray(userPosts) && userPosts.length > 0 ? (
-          userPosts.map((post, index) => (
-            <PostHistory
-              key={`${post.id}-${index}`}
-              post={post}
-              loggedInUserId={loggedInUserId}
-            />
-          ))
-        ) : (
-          <p>Nenhum post encontrado.</p>
-        )}
+        {/* Componente PostControls */}
+        <div className="post-controls">
+          <PostControls
+            filters={filters}
+            setFilters={setFilters}
+            viewMode={viewMode}
+            setViewMode={setViewMode}
+          />
+        </div>
+
+        {/* Renderização dos posts */}
+        <div className={`posts-container ${viewMode}`}>
+          {filteredPosts.length > 0 ? (
+            filteredPosts.map((post, index) => (
+              <div key={`${post.id}-${index}`} className="post-history">
+                <PostHistory
+                  post={post}
+                  loggedInUserId={loggedInUserId}
+                />
+              </div>
+            ))
+          ) : (
+            <p>Nenhum post encontrado.</p>
+          )}
+        </div>
       </div>
     </div>
   );
