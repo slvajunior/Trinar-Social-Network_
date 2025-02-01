@@ -68,7 +68,7 @@ function Profile() {
         author: {
           id: userId,
           first_name: user?.first_name || "Nome",
-          last_name: user?.last_name || "Sobrenome",
+          last_name: user?.last_name || "",
           profile_picture: user?.profile_picture || "caminho/para/imagem-padrao.jpg",
         },
         hashtags: post.hashtags || [], // Fallback para array vazio
@@ -97,36 +97,35 @@ function Profile() {
   }, [fetchUserPosts]);
 
   // Função para seguir/desseguir
-  const handleFollow = async (userId) => {
+  const handleFollow = async () => {
     if (userId === loggedInUserId) {
       console.warn("Você não pode seguir a si mesmo.");
       return;
     }
-
+  
     try {
-      await axios.post(
+      const response = await axios.post(
         `/api/users/${userId}/follow/`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setFollowingStatus((prevStatus) => ({
-        ...prevStatus,
-        [userId]: true,
-      }));
+      console.log("Resposta da API ao seguir:", response.data); // Depuração
+      setIsFollowing(true);
       toast.success("Agora você está seguindo este usuário!");
     } catch (error) {
       console.error("Erro ao seguir usuário:", error);
       toast.error("Erro ao seguir usuário. Tente novamente.");
     }
   };
-
+  
   const handleUnfollow = async () => {
     try {
-      await axios.post(
+      const response = await axios.post(
         `/api/users/${userId}/unfollow/`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      console.log("Resposta da API ao desseguir:", response.data); // Depuração
       setIsFollowing(false);
       toast.success("Você deixou de seguir este usuário.");
     } catch (error) {
@@ -211,15 +210,15 @@ function Profile() {
       <div className="profile-page-content">
         {userId !== loggedInUserId && (
           <button
-            onClick={isFollowing ? handleUnfollow : handleFollow}
-            className={
-              isFollowing
-                ? "profile-page-unfollow-button"
-                : "profile-page-follow-button"
-            }
-          >
-            {isFollowing ? "Desseguir" : "Seguir"}
-          </button>
+          onClick={isFollowing ? handleUnfollow : handleFollow}
+          className={
+            isFollowing
+              ? "profile-page-unfollow-button"
+              : "profile-page-follow-button"
+          }
+        >
+          {isFollowing ? "Desseguir" : "Seguir"}
+        </button>
         )}
 
         <div className="profile-page-info">
@@ -233,8 +232,10 @@ function Profile() {
       </div>
 
       {/* Seção de posts do usuário */}
+      <div className="cabeçalho">
+          <h2 className="hPost">Posts</h2>
+        </div>
       <div className="profile-page-posts">
-        <h2>Posts</h2>
         {Array.isArray(userPosts) && userPosts.length > 0 ? (
           userPosts.map((post, index) => (
             <PostHistory

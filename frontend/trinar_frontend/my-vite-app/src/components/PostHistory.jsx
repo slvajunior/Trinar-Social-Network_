@@ -88,8 +88,8 @@ const PostHistory = ({ post, loggedInUserId }) => {
         </div>
         <div className="author-details">
           <div className="author-name">
-            <strong>
-              {post.author?.first_name} {post.author?.last_name}
+          <strong>
+              {post.author.first_name} {post.author?.last_name}
             </strong>
           </div>
           <div className="post-time-container">

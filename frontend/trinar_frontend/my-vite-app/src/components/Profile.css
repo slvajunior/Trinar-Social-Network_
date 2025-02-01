@@ -4,16 +4,29 @@
   align-items: center;
   width: 100%;
   margin: 0 auto;
-  background-color: var(--color-secondary);
+  background-color: var(--color-background);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   position: relative; /* Adicionado para posicionamento absoluto da foto de perfil */
 }
 
+.cabeçalho {
+  width: 675px;
+  height: 70px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-color: var(--color-secondary);
+}
+
+.hPost {
+  text-align: justify;
+  margin: 14px 0 0;
+}
+
 .profile-page-cover {
-  max-width: 1500px;
   width: 100%;
-  height: 400px;
+  max-width: 1660px;
+  height: 460px;
   overflow: hidden;
   position: relative; /* Adicionado para posicionamento absoluto da foto de perfil */
 }
@@ -23,9 +36,7 @@
   height: 100%;
   max-height: 600px;
   object-fit: cover;
-  object-position: top;
-  transition: height 0.3s ease, width 0.3s ease; /* Suaviza mudanças */
-  padding: 0 400px;
+  border-radius: 0 0 10px 10px;
 }
 
 .profile-page-default-cover {
@@ -39,7 +50,7 @@
 }
 
 .profile-page-header {
-  padding: 20px;
+  padding: 10px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -47,18 +58,17 @@
   background-color: var(--color-background);
   text-align: center;
   margin-top: 100px; /* Ajuste para sobrepor a foto de perfil */
-  border-bottom: 1px solid #ddd;
+  border-radius: 8px;
 }
 
 .profile-page-photo {
-  margin-bottom: 10px;
   width: 200px;
   height: 200px;
   border-radius: 50%;
   object-fit: cover;
   border: 5px solid var(--color-secondary);
   position: absolute; /* Posicionamento absoluto para sobrepor a foto de capa */
-  top: -60%; /* Posiciona a metade superior da foto de perfil na metade da foto de capa */
+  top: -69%; /* Posiciona a metade superior da foto de perfil na metade da foto de capa */
   left: 50%;
   transform: translate(-50%, -50%); /* Centraliza a foto de perfil */
 }
@@ -67,7 +77,7 @@
   width: 200px;
   height: 200px;
   border-radius: 50%;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   color: #6c757d;
 }
 
