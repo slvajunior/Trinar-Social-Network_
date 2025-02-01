@@ -23,6 +23,8 @@ from django.db.models import Count
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.authentication import TokenAuthentication
 from django.contrib.auth.decorators import login_required
+from rest_framework.permissions import AllowAny
+
 
 # from rest_framework.parsers import MultiPartParser, FormParser
 
@@ -50,10 +52,12 @@ def bulk_follow_status(request):
     return JsonResponse(follow_statuses)
 
 
-class UserDetailByIdView(generics.RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    lookup_field = "id"  # Campo usado para buscar o usuário
+class UserPostsView(generics.ListAPIView):
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        return Post.objects.filter(author_id=user_id).select_related('author')
 
 
 def get_user_by_id(user_id):
@@ -154,6 +158,30 @@ class PostDetailView(APIView):
         return Response(status=status.HTTP_403_FORBIDDEN)
 
 
+class UserPostsView(APIView):
+    permission_classes = [IsAuthenticated]  # Apenas usuários autenticados podem acessar
+
+    def get(self, request, user_id):
+        posts = Post.objects.filter(author_id=user_id)
+        if posts.exists():
+            data = [
+                {
+                    "id": post.id,
+                    "text": post.text,
+                    "created_at": post.created_at,
+                    "author": {
+                        "id": post.author.id,
+                        "name": post.author.username,
+                        "profile_picture": post.author.profile_picture.url if post.author.profile_picture else None,
+                    },
+                }
+                for post in posts
+            ]
+            return Response(data, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": "Nenhum post encontrado."}, status=status.HTTP_404_NOT_FOUND)
+        
+        
 class LikePostView(APIView):
     permission_classes = [IsAuthenticated]
 

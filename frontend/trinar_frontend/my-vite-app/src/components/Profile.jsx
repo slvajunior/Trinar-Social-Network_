@@ -1,47 +1,44 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  FaUserCircle,
-  FaMapMarkerAlt,
-  FaBirthdayCake,
-  FaCalendarAlt,
-} from "react-icons/fa";
+import { FaUserCircle, FaMapMarkerAlt, FaBirthdayCake, FaCalendarAlt } from "react-icons/fa";
+import PostHistory from "./PostHistory"; // Importe o novo componente
+import { toast } from "react-toastify";
 import "./Profile.css";
 
 function Profile() {
   const { userId } = useParams();
   const navigate = useNavigate();
+  const [userPosts, setUserPosts] = useState([]);
   const [user, setUser] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const token = localStorage.getItem("token");
   const loggedInUserId = localStorage.getItem("userId");
+  const [followingStatus, setFollowingStatus] = useState({});
 
+  // Redirecionar se o userId não estiver definido
   useEffect(() => {
     if (!userId && loggedInUserId) {
       navigate(`/profile/${loggedInUserId}`);
     }
   }, [userId, loggedInUserId, navigate]);
 
+  // Buscar dados do perfil
   useEffect(() => {
     const fetchProfileData = async () => {
       if (!userId) return;
 
       try {
         const userResponse = await axios.get(`/api/users/user/${userId}/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         setUser(userResponse.data);
 
         const followStatusResponse = await axios.get(
           `/api/users/${userId}/is-following/`,
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
         setIsFollowing(followStatusResponse.data.is_following);
@@ -55,7 +52,52 @@ function Profile() {
     fetchProfileData();
   }, [userId, token]);
 
-  const handleFollow = async () => {
+  // Buscar posts do usuário
+  const fetchUserPosts = useCallback(async () => {
+    if (!userId || !token) return;
+
+    try {
+      const response = await axios.get(`/api/users/${userId}/posts/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log("Resposta da API:", response.data);
+
+      // Transformar os posts
+      const transformedPosts = response.data.map((post) => ({
+        ...post,
+        author: {
+          id: userId,
+          first_name: user?.first_name || "Nome",
+          last_name: user?.last_name || "Sobrenome",
+          profile_picture: user?.profile_picture || "caminho/para/imagem-padrao.jpg",
+        },
+        hashtags: post.hashtags || [], // Fallback para array vazio
+      }));
+
+      // Ordenar os posts por data (do mais recente para o mais antigo)
+      const sortedPosts = transformedPosts.sort((a, b) => {
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
+
+      setUserPosts(sortedPosts);
+    } catch (error) {
+      console.error("Erro ao carregar posts do usuário:", error);
+      if (error.response) {
+        console.error("Resposta do erro:", error.response.data);
+        toast.error(`Erro: ${error.response.data.message || "Erro ao carregar posts."}`);
+      } else {
+        toast.error("Erro ao conectar com o servidor.");
+      }
+      setUserPosts([]);
+    }
+  }, [userId, token, user]);
+
+  useEffect(() => {
+    fetchUserPosts();
+  }, [fetchUserPosts]);
+
+  // Função para seguir/desseguir
+  const handleFollow = async (userId) => {
     if (userId === loggedInUserId) {
       console.warn("Você não pode seguir a si mesmo.");
       return;
@@ -65,15 +107,16 @@ function Profile() {
       await axios.post(
         `/api/users/${userId}/follow/`,
         {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      setIsFollowing(true);
+      setFollowingStatus((prevStatus) => ({
+        ...prevStatus,
+        [userId]: true,
+      }));
+      toast.success("Agora você está seguindo este usuário!");
     } catch (error) {
       console.error("Erro ao seguir usuário:", error);
+      toast.error("Erro ao seguir usuário. Tente novamente.");
     }
   };
 
@@ -82,15 +125,13 @@ function Profile() {
       await axios.post(
         `/api/users/${userId}/unfollow/`,
         {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       setIsFollowing(false);
+      toast.success("Você deixou de seguir este usuário.");
     } catch (error) {
       console.error("Erro ao deixar de seguir usuário:", error);
+      toast.error("Erro ao deixar de seguir usuário. Tente novamente.");
     }
   };
 
@@ -105,25 +146,13 @@ function Profile() {
   // Função para formatar a data
   const formatarData = (data) => {
     const meses = [
-      "janeiro",
-      "fevereiro",
-      "março",
-      "abril",
-      "maio",
-      "junho",
-      "julho",
-      "agosto",
-      "setembro",
-      "outubro",
-      "novembro",
-      "dezembro",
+      "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+      "julho", "agosto", "setembro", "outubro", "novembro", "dezembro",
     ];
-
     const dataObj = new Date(data);
     const dia = dataObj.getDate();
     const mes = meses[dataObj.getMonth()];
     const ano = dataObj.getFullYear();
-
     return `Nascido(a) em ${dia} de ${mes} de ${ano}`;
   };
 
@@ -158,7 +187,6 @@ function Profile() {
         </h1>
         <p className="profile-page-bio">{user.bio}</p>
 
-        {/* Informações adicionais */}
         <div className="profile-page-details">
           {user.location && (
             <p className="profile-page-detail">
@@ -176,13 +204,12 @@ function Profile() {
               {new Date(user.date_joined).toLocaleDateString()}
             </p>
           )}
-          
         </div>
       </div>
-      <hr className="profile-page-divider" /> {/* Linha divisória */}
+      <hr className="profile-page-divider" />
 
       <div className="profile-page-content">
-      {userId !== loggedInUserId && (
+        {userId !== loggedInUserId && (
           <button
             onClick={isFollowing ? handleUnfollow : handleFollow}
             className={
@@ -196,9 +223,29 @@ function Profile() {
         )}
 
         <div className="profile-page-info">
-          <p className="profile-page-stats"><strong className="number-follow">{user.following_count}</strong> Seguindo</p>
-          <p className="profile-page-stats"><strong className="number-follow">{user.followers_count}</strong> Seguidores</p>
-          </div>
+          <p className="profile-page-stats">
+            <strong className="number-follow">{user.following_count}</strong> Seguindo
+          </p>
+          <p className="profile-page-stats">
+            <strong className="number-follow">{user.followers_count}</strong> Seguidores
+          </p>
+        </div>
+      </div>
+
+      {/* Seção de posts do usuário */}
+      <div className="profile-page-posts">
+        <h2>Posts</h2>
+        {Array.isArray(userPosts) && userPosts.length > 0 ? (
+          userPosts.map((post, index) => (
+            <PostHistory
+              key={`${post.id}-${index}`}
+              post={post}
+              loggedInUserId={loggedInUserId}
+            />
+          ))
+        ) : (
+          <p>Nenhum post encontrado.</p>
+        )}
       </div>
     </div>
   );

@@ -12,7 +12,7 @@
      --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
      /* Defaults color */
-     --primary-color: #6200ee; /* Adicionado */
+     --primary-color: #6200ee;
      --green-color: #4CAF50;
      --red-color: #f02849;
      --blue-color: #2364a4;
@@ -30,7 +30,8 @@
      --color-primary: #f2f4f7;
      --color-secondary: #FFF;
      --border-color-blue: var(--color-blue);
-     --border-color-blue-hover: #0872ff; 
+     --border-color-blue-hover: #0872ff;
+     --blue-hover: #023b86; 
    }
    
    /* =====================================

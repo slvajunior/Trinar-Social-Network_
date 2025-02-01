@@ -1,0 +1,90 @@
+/* src/components/AuthorInfo.css */
+
+  .author-photo {
+    margin-right: 0px;
+  }
+  
+  .profile-photo {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: border-color 0.6s ease;
+    margin-right: 6px;
+  }
+  
+  .profile-photo:hover {
+    border-color: var(--color-blue);
+  }
+  
+  .user-photo-timeline {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    margin: 0;
+  }
+  
+  .follow-text {
+    color: #1da1f2;
+    cursor: pointer;
+    margin-left: 5px;
+  }
+  
+  .post-time-container {
+    display: flex;
+    align-items: center;
+    color: #657786;
+    font-size: 13px;
+    margin-top: -3px;
+  }
+  
+  /* Estilo para o nome do autor e o texto "Seguir" */
+  .author-name {
+    font-family: "Helvetica", Arial, sans-serif;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Espaçamento entre o nome e o texto "Seguir" */
+    margin-top: -6px;
+    letter-spacing: 0.01px;
+    word-spacing: 0.1px;
+  }
+  
+  /* Estilo para o texto "Seguir" */ 
+  .follow-text {
+    color: #0064d1; /* Cor azul do Twitter */
+    cursor: pointer;
+    text-decoration: none; /* Remove o sublinhado padrão */
+    font-weight: 600;
+    font-size: 14px;
+    margin-top: 0;
+  }
+  
+  .follow-text:hover {
+    text-decoration: underline; /* Adiciona sublinhado no hover */
+  }
+
+  .author-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+    padding: 0 6px 0;
+  }
+  
+  .author-details {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .author-details strong {
+    font-size: 15px;
+    color: #333;
+    margin-right: -5px;
+  }
+  
+  .author-details p {
+    font-size: 14px;
+    color: #777;
+  }

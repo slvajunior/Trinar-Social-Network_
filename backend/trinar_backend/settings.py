@@ -144,7 +144,7 @@ WSGI_APPLICATION = "trinar_backend.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 SECRET_KEY = os.getenv("SECRET_KEY")
-DEBUG = os.getenv("DEBUG") == "False"
+DEBUG = os.getenv("DEBUG") == "True"
 
 DATABASE_NAME = os.getenv("DATABASE_NAME")
 DATABASE_USER = os.getenv("DATABASE_USER")

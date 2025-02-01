@@ -143,7 +143,7 @@ const PostField = () => {
             <img
               src={`http://localhost:8000${user.profile_picture}`}
               alt="Profile"
-              className="profile-photo"
+              className="profile-photo-postfield"
             />
           ) : (
             <FaUserCircle className="user-photo" size={55} />

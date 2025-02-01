@@ -28,8 +28,6 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.permissions import AllowAny
 from core.models import Post
 
-# from .serializers import PhotoSerializer
-# from .models import Photo
 from rest_framework import generics, permissions
 
 
@@ -270,7 +268,14 @@ class CustomJWTAuthentication(JWTAuthentication):
 class UserDetailByIdView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    lookup_field = 'id'  # Campo usado para buscar o usuário
+    lookup_field = 'id'
+
+    def get_object(self):
+        try:
+            return super().get_object()
+        except Exception as e:
+            logger.error(f"Error fetching user: {e}")
+            raise
 
 
 """ AREA DA PAGINA PERFIL DO USUARIO E EDIT PROFILE USERS"""

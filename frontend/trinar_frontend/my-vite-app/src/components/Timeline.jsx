@@ -1,6 +1,5 @@
 // src/components/Timeline.jsx
-
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import axios from "axios";
 import Post from "./Post";
 import { toast } from "react-toastify";
@@ -16,6 +15,7 @@ function Timeline() {
   const token = localStorage.getItem("token");
   const loggedInUserId = localStorage.getItem("userId");
   const navigate = useNavigate();
+  const sentinelRef = useRef(null); // Referência para o elemento sentinela
 
   // Verifica se o usuário está logado
   useEffect(() => {
@@ -77,6 +77,29 @@ function Timeline() {
     if (loggedInUserId && token) fetchPosts();
   }, [loggedInUserId, token, fetchPosts]);
 
+  // Configurar o IntersectionObserver
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !isLoading) {
+          fetchPosts(); // Carrega mais posts quando o sentinela é visível
+        }
+      },
+      { threshold: 1.0 } // Dispara quando 100% do sentinela está visível
+    );
+
+    if (sentinelRef.current) {
+      observer.observe(sentinelRef.current); // Observa o elemento sentinela
+    }
+
+    // Limpa o observer ao desmontar o componente
+    return () => {
+      if (sentinelRef.current) {
+        observer.unobserve(sentinelRef.current);
+      }
+    };
+  }, [hasMore, isLoading, fetchPosts]);
+
   // Função para seguir um usuário
   const handleFollow = async (userId) => {
     if (userId === loggedInUserId) {
@@ -107,7 +130,9 @@ function Timeline() {
           loggedInUserId={loggedInUserId}
         />
       ))}
-      <div id="sentinel" style={{ height: "10px" }}></div>
+      <div ref={sentinelRef} id="sentinel" style={{ height: "10px" }}></div>
+      {isLoading && <p>Carregando mais posts...</p>}
+      {!hasMore && <p>Não há mais posts para carregar.</p>}
     </div>
   );
 }

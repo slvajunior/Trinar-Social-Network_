@@ -39,27 +39,35 @@
 }
 
 .profile-page-header {
+  padding: 20px;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: var(--color-background);
   text-align: center;
   margin-top: 100px; /* Ajuste para sobrepor a foto de perfil */
+  border-bottom: 1px solid #ddd;
 }
 
 .profile-page-photo {
+  margin-bottom: 10px;
   width: 200px;
   height: 200px;
   border-radius: 50%;
   object-fit: cover;
   border: 5px solid var(--color-secondary);
   position: absolute; /* Posicionamento absoluto para sobrepor a foto de capa */
-  top: 60%; /* Posiciona a metade superior da foto de perfil na metade da foto de capa */
+  top: -60%; /* Posiciona a metade superior da foto de perfil na metade da foto de capa */
   left: 50%;
   transform: translate(-50%, -50%); /* Centraliza a foto de perfil */
 }
 
 .profile-page-default-photo {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  margin-bottom: 10px;
   color: #6c757d;
 }
 
@@ -162,7 +170,15 @@
   gap: 6px;
 }
 
-
+.profile-page-posts {
+  width: 100%;
+  max-width: 675px; /* Largura máxima para telas grandes */
+  margin: 17px auto 0;
+  padding: 6px 0 0px;
+  background-color: var(--color-secondary);
+  border-radius: 8px;
+  box-shadow: 0 3px 3px -2px rgba(0, 0, 0, 0.2), 0 2px 100px 1px rgba(0, 0, 0, 0.01);
+}
 
 /* Media Queries */
 @media (max-width: 768px) {
@@ -196,8 +212,6 @@
     height: 150px;
   }
 }
-
-
 
 /* Estilo específico para telas grandes (desktop) */
 @media (min-width: 1024px) {
