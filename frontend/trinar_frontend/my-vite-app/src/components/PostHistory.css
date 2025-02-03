@@ -1,10 +1,18 @@
 /* src/components/PostHistory.css */
+
 .user-photo-timeline {
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
-    margin-right: 10px;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  background-color: #d4d6d8;
+  border-radius: 50%;
+  margin-right: 10px; /* Espaçamento entre o círculo e o texto */
+  margin-bottom: 10px;
+}
 
-
-
+.divider-post {
+  background-color: #d4d6d8;
+  height: 0.1px;
+}

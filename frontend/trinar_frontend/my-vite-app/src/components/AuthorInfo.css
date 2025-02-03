@@ -36,7 +36,7 @@
     display: flex;
     align-items: center;
     color: #657786;
-    font-size: 13px;
+    font-size: 11px;
     margin-top: -3px;
   }
   
@@ -70,7 +70,7 @@
     display: flex;
     align-items: center;
     margin-bottom: 0;
-    padding: 0 6px 0;
+    padding: 6px 6px 0;
   }
   
   .author-details {

@@ -69,10 +69,6 @@ const AuthorInfo = ({ author = {}, followingStatus = {}, handleFollow, loggedInU
               src={getAuthorPhoto()}  // Usa a função para garantir a URL correta
               alt="Profile"
               className="profile-photo"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = "caminho/para/imagem/padrao.png"; // Imagem padrão em caso de erro
-              }}
             />
           ) : (
             <FaUserCircle className="user-photo-timeline" size={55} />

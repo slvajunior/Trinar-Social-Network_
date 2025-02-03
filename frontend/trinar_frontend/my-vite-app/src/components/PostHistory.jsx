@@ -1,3 +1,4 @@
+// src/components/PostHistory.jsx
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
@@ -48,15 +49,17 @@ const PostHistory = ({ post, loggedInUserId }) => {
     });
   };
 
-  // Verificar se a foto do autor existe e é válida
+  // Função para obter a foto do autor ou o fallback
   const getAuthorPhoto = () => {
     if (post.author?.profile_picture) {
       return post.author.profile_picture.startsWith("http")
         ? post.author.profile_picture
         : `http://localhost:8000${post.author.profile_picture}`;
     }
-    return "caminho/para/imagem/padrao.png"; // Caminho de imagem padrão
+    return null; // Retorna null se não houver foto
   };
+
+  const authorPhoto = getAuthorPhoto();
 
   // Função para extrair hashtags do texto, incluindo caracteres acentuados
   const extractHashtags = (text) => {
@@ -71,14 +74,14 @@ const PostHistory = ({ post, loggedInUserId }) => {
       <div className="author-info">
         <div className="author-photo">
           <Link to={`/profile/${post.author?.id || 0}`}>
-            {post.author?.profile_picture ? (
+            {authorPhoto ? (
               <img
-                src={getAuthorPhoto()}
+                src={authorPhoto}
                 alt="Profile"
                 className="profile-photo"
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = "caminho/para/imagem/padrao.png"; // Fallback
+                  e.target.src = "caminho/para/imagem-padrao.jpg"; // Fallback para imagem quebrada
                 }}
               />
             ) : (
@@ -88,7 +91,7 @@ const PostHistory = ({ post, loggedInUserId }) => {
         </div>
         <div className="author-details">
           <div className="author-name">
-          <strong>
+            <strong>
               {post.author.first_name} {post.author?.last_name}
             </strong>
           </div>

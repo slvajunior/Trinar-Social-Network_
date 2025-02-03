@@ -1,7 +1,13 @@
+// src/components/Profile.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import { FaUserCircle, FaMapMarkerAlt, FaBirthdayCake, FaCalendarAlt } from "react-icons/fa";
+import {
+  FaUserCircle,
+  FaMapMarkerAlt,
+  FaBirthdayCake,
+  FaCalendarAlt,
+} from "react-icons/fa";
 import PostHistory from "./PostHistory";
 import PostControls from "./PostControls";
 import { toast } from "react-toastify";
@@ -78,7 +84,7 @@ function Profile() {
           id: userId,
           first_name: user?.first_name || "Nome",
           last_name: user?.last_name || "",
-          profile_picture: user?.profile_picture || "caminho/para/imagem-padrao.jpg",
+          profile_picture: user?.profile_picture || undefined, // Não definir um valor padrão aqui
         },
         hashtags: post.hashtags || [],
       }));
@@ -93,7 +99,9 @@ function Profile() {
       console.error("Erro ao carregar posts do usuário:", error);
       if (error.response) {
         console.error("Resposta do erro:", error.response.data);
-        toast.error(`Erro: ${error.response.data.message || "Erro ao carregar posts."}`);
+        toast.error(
+          `Erro: ${error.response.data.message || "Erro ao carregar posts."}`
+        );
       } else {
         toast.error("Erro ao conectar com o servidor.");
       }
@@ -154,7 +162,10 @@ function Profile() {
     if (filters.privacy !== "all" && post.visibility !== filters.privacy) {
       return false;
     }
-    if (filters.mentions === "mentioned" && !post.text.includes(`@${user.username}`)) {
+    if (
+      filters.mentions === "mentioned" &&
+      !post.text.includes(`@${user.username}`)
+    ) {
       return false;
     }
     return true;
@@ -162,9 +173,13 @@ function Profile() {
 
   // Ordenar por data
   if (filters.date === "recent") {
-    filteredPosts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    filteredPosts.sort(
+      (a, b) => new Date(b.created_at) - new Date(a.created_at)
+    );
   } else {
-    filteredPosts.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    filteredPosts.sort(
+      (a, b) => new Date(a.created_at) - new Date(b.created_at)
+    );
   }
 
   if (isLoading) {
@@ -178,8 +193,18 @@ function Profile() {
   // Função para formatar a data
   const formatarData = (data) => {
     const meses = [
-      "janeiro", "fevereiro", "março", "abril", "maio", "junho",
-      "julho", "agosto", "setembro", "outubro", "novembro", "dezembro",
+      "janeiro",
+      "fevereiro",
+      "março",
+      "abril",
+      "maio",
+      "junho",
+      "julho",
+      "agosto",
+      "setembro",
+      "outubro",
+      "novembro",
+      "dezembro",
     ];
     const dataObj = new Date(data);
     const dia = dataObj.getDate();
@@ -197,13 +222,13 @@ function Profile() {
             alt="Cover"
             className="profile-page-cover-photo"
           />
+          <div className="cover-overlay"></div>
         </div>
       ) : (
         <div className="profile-page-default-cover">
           <p>Bem-vindo ao perfil!</p>
         </div>
       )}
-
       <div className="profile-page-header">
         {user.profile_picture ? (
           <img
@@ -239,7 +264,6 @@ function Profile() {
         </div>
       </div>
       <hr className="profile-page-divider" />
-
       <div className="profile-page-content">
         {userId !== loggedInUserId && (
           <button
@@ -256,14 +280,15 @@ function Profile() {
 
         <div className="profile-page-info">
           <p className="profile-page-stats">
-            <strong className="number-follow">{user.following_count}</strong> Seguindo
+            <strong className="number-follow">{user.following_count}</strong>{" "}
+            Seguindo
           </p>
           <p className="profile-page-stats">
-            <strong className="number-follow">{user.followers_count}</strong> Seguidores
+            <strong className="number-follow">{user.followers_count}</strong>{" "}
+            Seguidores
           </p>
         </div>
       </div>
-
       {/* Seção de posts do usuário */}
       <div className="profile-page-posts">
         {/* Componente PostControls */}
@@ -281,10 +306,7 @@ function Profile() {
           {filteredPosts.length > 0 ? (
             filteredPosts.map((post, index) => (
               <div key={`${post.id}-${index}`} className="post-history">
-                <PostHistory
-                  post={post}
-                  loggedInUserId={loggedInUserId}
-                />
+                <PostHistory post={post} loggedInUserId={loggedInUserId} />
               </div>
             ))
           ) : (

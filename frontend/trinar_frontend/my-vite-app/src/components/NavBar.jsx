@@ -1,5 +1,4 @@
 // src/components/NavBar.jsx
-
 import React, { useState, useEffect, useRef } from "react";
 import {
   FaUserCircle,

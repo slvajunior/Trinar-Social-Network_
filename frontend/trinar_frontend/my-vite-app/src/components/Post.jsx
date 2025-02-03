@@ -8,7 +8,7 @@ import "./Post.css";
 const Post = ({ post, followingStatus, handleFollow, loggedInUserId }) => {
 
   return (
-    <div className="post">
+    <div className="post-tl">
       <AuthorInfo
         author={post.author}
         followingStatus={followingStatus}
@@ -43,15 +43,15 @@ const Post = ({ post, followingStatus, handleFollow, loggedInUserId }) => {
           ))}
         </div>
       )}
-      <hr className="divider-post" />
-      <div className="post-actions">
-        <button className="action-button">
+      <hr className="divider-post-tl" />
+      <div className="post-actions-tl">
+        <button className="action-button-tl">
           <FontAwesomeIcon icon={faHeart} /> Curtir
         </button>
-        <button className="action-button">
+        <button className="action-button-tl">
           <FontAwesomeIcon icon={faComment} /> Comentar
         </button>
-        <button className="action-button">
+        <button className="action-button-tl">
           <FontAwesomeIcon icon={faRetweet} /> Repostar
         </button>
       </div>
