@@ -1,3 +1,4 @@
+# test de envio de email para recuperação de senhas
 from django.core.mail import send_mail
 
 send_mail(

@@ -70,6 +70,5 @@ urlpatterns = [
     path("api/auth/user/", UserProfileView.as_view(), name="user-profile"),
     path("bulk-follow-status/", bulk_follow_status, name="bulk-follow-status"),
 
-    # path('post/user/<int:user_id>/', UserPostsView.as_view(), name='user-posts'),
     path('posts/user/<int:user_id>/', UserPostsView.as_view(), name='user-posts'),
 ]
