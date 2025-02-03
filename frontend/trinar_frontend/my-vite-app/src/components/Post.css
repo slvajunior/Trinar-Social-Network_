@@ -54,7 +54,7 @@
     align-items: center;
     text-align: center;
     gap: 15px;
-    padding: 17px 16px;
+    padding: 16px 16px;
     background-color: var(--color-secondary);
     color: #68696c;
     border: none;
@@ -64,7 +64,7 @@
     transition: background-color 0.2s ease;
     font-family: "Helvetica", Arial, sans-serif;
     font-weight: 600;
-    margin-top: 1.5px;
+    margin-top: 2.8px;
   }
 
   .action-button-tl:hover {
