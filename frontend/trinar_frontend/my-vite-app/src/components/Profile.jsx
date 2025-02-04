@@ -246,17 +246,17 @@ function Profile() {
 
         <div className="profile-page-details">
           {user.location && (
-            <p className="profile-page-detail">
+            <p className="profile-page-detail-location">
               <FaMapMarkerAlt /> {user.location}
             </p>
           )}
           {user.birth_date && (
-            <p className="profile-page-detail">
+            <p className="profile-page-detail-birth">
               <FaBirthdayCake /> {formatarData(user.birth_date)}
             </p>
           )}
           {user.date_joined && (
-            <p className="profile-page-detail">
+            <p className="profile-page-detail-joined">
               <FaCalendarAlt /> Ingressou em{" "}
               {new Date(user.date_joined).toLocaleDateString()}
             </p>
@@ -305,9 +305,11 @@ function Profile() {
         <div className={`posts-container ${viewMode}`}>
           {filteredPosts.length > 0 ? (
             filteredPosts.map((post, index) => (
-              <div key={`${post.id}-${index}`} className="post-history">
-                <PostHistory post={post} loggedInUserId={loggedInUserId} />
-              </div>
+              <PostHistory
+                key={`${post.id}-${index}`}
+                post={post}
+                loggedInUserId={loggedInUserId}
+              />
             ))
           ) : (
             <p>Nenhum post encontrado.</p>

@@ -1,21 +1,31 @@
 // src/components/Timeline.jsx
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useCallback, useRef, useState } from "react";
 import axios from "axios";
-import Post from "./Post";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { usePosts } from "../contexts/PostsContext"; // Importe o hook do contexto
+import Post from "./Post";
 import "./Timeline.css";
 
 function Timeline() {
-  const [posts, setPosts] = useState([]);
-  const [followingStatus, setFollowingStatus] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const {
+    posts,
+    setPosts,
+    followingStatus,
+    setFollowingStatus,
+    isLoading,
+    setIsLoading,
+    page,
+    setPage,
+    hasMore,
+    setHasMore,
+  } = usePosts(); // Use os valores do contexto
+
   const token = localStorage.getItem("token");
   const loggedInUserId = localStorage.getItem("userId");
   const navigate = useNavigate();
-  const sentinelRef = useRef(null); // Referência para o elemento sentinela
+  const sentinelRef = useRef(null);
+  const [socket, setSocket] = useState(null); // Estado para armazenar o WebSocket
 
   // Verifica se o usuário está logado
   useEffect(() => {
@@ -27,39 +37,49 @@ function Timeline() {
   // Buscar os posts da timeline
   const fetchPosts = useCallback(async () => {
     if (!hasMore || isLoading || !token) return;
-
+  
     setIsLoading(true);
     try {
       const response = await axios.get(`/api/timeline/?page=${page}&page_size=10`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
+  
       const data = response.data;
       if (data.results.length > 0) {
         setPosts((prevPosts) => [...prevPosts, ...data.results]);
-
+  
         // Verificar o status de "seguir" para cada autor dos posts
+        const uniqueAuthors = [...new Set(data.results.map(post => post.author.id))];
+  
         const followStatuses = await Promise.all(
-          data.results.map((post) =>
-            axios
-              .get(`/api/users/${post.author.id}/is-following/`, {
+          uniqueAuthors.map((authorId) => {
+            // Verificar se já fizemos uma requisição para esse autor
+            if (followingStatus[authorId] !== undefined) {
+              return Promise.resolve({
+                userId: authorId,
+                isFollowing: followingStatus[authorId],
+              });
+            }
+  
+            return axios
+              .get(`/api/users/${authorId}/is-following/`, {
                 headers: { Authorization: `Bearer ${token}` },
               })
               .then((res) => ({
-                userId: post.author.id,
+                userId: authorId,
                 isFollowing: res.data.is_following,
               }))
-              .catch(() => ({ userId: post.author.id, isFollowing: false }))
-          )
+              .catch(() => ({ userId: authorId, isFollowing: false }));
+          })
         );
-
+  
         // Atualizar o estado followingStatus
         const statusMap = followStatuses.reduce((acc, item) => {
           acc[item.userId] = item.isFollowing;
           return acc;
         }, {});
         setFollowingStatus((prevState) => ({ ...prevState, ...statusMap }));
-
+  
         setHasMore(data.next !== null);
         setPage((prevPage) => prevPage + 1);
       } else {
@@ -70,29 +90,30 @@ function Timeline() {
     } finally {
       setIsLoading(false);
     }
-  }, [page, hasMore, isLoading, token]);
-
+  }, [page, hasMore, isLoading, token, followingStatus, setPosts, setFollowingStatus, setHasMore, setPage, setIsLoading]);
+  
   // Carregar posts iniciais
   useEffect(() => {
-    if (loggedInUserId && token) fetchPosts();
-  }, [loggedInUserId, token, fetchPosts]);
+    if (loggedInUserId && token && posts.length === 0) {
+      fetchPosts();
+    }
+  }, [loggedInUserId, token, fetchPosts, posts.length]);
 
   // Configurar o IntersectionObserver
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasMore && !isLoading) {
-          fetchPosts(); // Carrega mais posts quando o sentinela é visível
+          fetchPosts();
         }
       },
-      { threshold: 1.0 } // Dispara quando 100% do sentinela está visível
+      { threshold: 1.0 }
     );
 
     if (sentinelRef.current) {
-      observer.observe(sentinelRef.current); // Observa o elemento sentinela
+      observer.observe(sentinelRef.current);
     }
 
-    // Limpa o observer ao desmontar o componente
     return () => {
       if (sentinelRef.current) {
         observer.unobserve(sentinelRef.current);
@@ -107,9 +128,13 @@ function Timeline() {
       return;
     }
     try {
-      const response = await axios.post(`/api/users/${userId}/follow/`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.post(
+        `/api/users/${userId}/follow/`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       if (response.status === 200) {
         setFollowingStatus((prevState) => ({ ...prevState, [userId]: true }));
         toast.success("Agora você está seguindo este usuário!");
@@ -118,6 +143,37 @@ function Timeline() {
       toast.error("Erro ao seguir usuário. Tente novamente.");
     }
   };
+
+  // Conectar ao WebSocket
+  useEffect(() => {
+    if (token) {
+      const socketConnection = new WebSocket(`ws://localhost:8000/ws/timeline/`);
+
+      socketConnection.onopen = () => {
+        console.log("Conexão WebSocket estabelecida!");
+      };
+
+      socketConnection.onmessage = (event) => {
+        const newPost = JSON.parse(event.data);
+        setPosts((prevPosts) => [newPost, ...prevPosts]); // Adicionar novo post na timeline
+      };
+
+      socketConnection.onclose = () => {
+        console.log("Conexão WebSocket fechada.");
+      };
+
+      socketConnection.onerror = (error) => {
+        console.error("Erro no WebSocket:", error);
+      };
+
+      setSocket(socketConnection); // Armazenar a conexão no estado
+
+      // Limpeza ao desmontar o componente
+      return () => {
+        socketConnection.close();
+      };
+    }
+  }, [token]);
 
   return (
     <div>

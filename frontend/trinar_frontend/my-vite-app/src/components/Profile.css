@@ -4,7 +4,7 @@
   margin: 15px auto;
   max-width: 741px;
   padding: 10px;
-  background-color: var(--color-secondary);
+  background-color: #f2f4f7;
   border-radius: 9px; box-shadow: 0 1px 2px rgba(0, 0, 1, 0.2);
   z-index: 2;
   width: 100%;
@@ -62,9 +62,9 @@
   height: 150px;
   object-fit: cover;
   border-radius: 50%;
-  border: 5px solid #fff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 4px solid #fff;
   z-index: 1;
+  box-shadow: 0 1px 2px rgba(0, 0, 1, 0.2);
 }
 
 .profile-page-default-photo {
@@ -80,35 +80,34 @@
 
 .profile-page-name {
   font-size: 24px;
-  margin: 10px 0;
+  margin: 0 0 0px;
 }
 
 .profile-page-bio {
   font-size: 14px;
-  color: #222222;
+  color: #080809;
 }
 
-.profile-page-details {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 10px;
-  font-size: 10px;
+.profile-page-detail-joined {
+  color: var(--color-blue);
+  font-size: 13px;
 }
 
-.profile-page-detail {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: #666;
+.profile-page-detail-birth {
+  color: var(--color-blue);
+  font-size: 13px;
+}
+
+.profile-page-detail-location {
+  color: var(--color-blue);
+  font-size: 13px;
 }
 
 .profile-page-divider {
   border: 0;
   height: 1px;
   background: #ddd;
-  margin: 20px 0;
+  margin: 10px 0 10px;
 }
 
 .profile-page-content {
@@ -163,6 +162,10 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px 0;
+  background-color: var(--color-secondary);
+  margin-bottom: 17px;
+  padding: 10px;
+  border-radius: 9px; box-shadow: 0 1px 2px rgba(0, 0, 1, 0.2);
 }
 
 .posts-container {
@@ -182,32 +185,33 @@
 .post-history video {
   max-width: 100%; /* Garantir que não ultrapassem a largura do contêiner */
   height: auto; /* Manter a proporção */
-  border-radius: 10px;
-}
-
-hr.divider-post {
-  background-color: #a09f9f;
-  height: 0.3px;
+  border-radius: 6px;
 }
 
 .post-history {
   background-color: #fff;
-  padding: 10px;
+  padding: 6px;
   width: 100%; /* Garantir que ocupe a largura total da coluna */
   max-width: 675px;
-  border-radius: 9px; box-shadow: 0px 0px 1px rgba(0, 0, 0, 1);
+  border-radius: 6px; box-shadow: 0 1px 2px rgba(0, 0, 1, 0.2);
+}
 
+.post-hashtags-profile {
+  margin: 0;
+  padding: 0;
+  font-size: 15px;
 }
 /* Estilo para o contêiner de ações (like, comentar, repostar) */
 .post-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px; /* Padding reduzido */
+  padding: 0px 10px; /* Padding reduzido */
   background-color: var(--color-secondary);
   width: 100%; /* Ocupa 100% da largura do post-history */
   box-sizing: border-box; /* Inclui padding na largura total */
-  gap: 4px; /* Espaço entre os botões */
+  gap: 15px; /* Espaço entre os botões */
+  height: 30px;
 }
 
 /* Estilo para os botões de ação */
@@ -216,49 +220,61 @@ hr.divider-post {
   border: none;
   cursor: pointer;
   font-size: 13px; /* Tamanho menor para caber no modo grade */
-  color: #333;
+  color: #68696c;
   display: flex;
-  align-items: center;
+  align-items: center; /* Centraliza verticalmente */
+  justify-content: center; /* Centraliza horizontalmente */
+  padding: 6px 10px;
   gap: 9px; /* Espaço entre ícone e texto */
-  padding: 15px; /* Padding reduzido */
   flex: 1; /* Distribui o espaço igualmente entre os botões */
   min-width: 0; /* Permite que o texto seja truncado se necessário */
+  border-radius: 2px;
+  margin-top: 6px;
+}
+
+.action-button:hover {
+  background-color: #f2f2f2;
 }
 
 /* Ajustes para o modo grade */
 .posts-container.grid .post-actions {
-  padding: 4px; /* Padding menor no modo grade */
-  gap: 2px; /* Espaço menor entre os botões */
+  padding:0px; /* Padding menor no modo grade */
+  gap: 6px; /* Espaço menor entre os botões */
 }
 
 .posts-container.grid .post-actions button {
-  font-size: 11px; /* Tamanho menor no modo grade */
-  padding: 2px; /* Padding menor no modo grade */
+  font-size: 13px; /* Tamanho menor no modo grade */
+  padding: 6px; /* Padding menor no modo grade */
+  gap: 6px;
 }
 
 /* Ajuste do tamanho dos ícones */
 .post-actions button i {
   font-size: 12px; /* Tamanho do ícone */
+  gap: 6px;
 }
 
 .posts-container.grid .post-actions button i {
-  font-size: 10px; /* Tamanho menor no modo grade */
+  font-size: 12px; /* Tamanho menor no modo grade */
+  gap: 6px;
 }
 
 /* Responsividade para telas menores */
 @media (max-width: 768px) {
   .posts-container.grid .post-actions {
-    padding: 2px; /* Padding ainda menor em telas menores */
-    gap: 2px; /* Espaço menor entre os botões */
+    padding: 6px; /* Padding ainda menor em telas menores */
+    gap: 6px; /* Espaço menor entre os botões */
   }
 
   .posts-container.grid .post-actions button {
-    font-size: 10px; /* Tamanho menor em telas menores */
-    padding: 2px; /* Padding menor em telas menores */
+    font-size: 14px; /* Tamanho menor em telas menores */
+    padding: 6px 10apx; /* Padding menor em telas menores */
+    gap: 5px;
   }
 
   .posts-container.grid .post-actions button i {
     font-size: 10px; /* Tamanho menor em telas menores */
+    gap: 0px;
   }
 }
 
@@ -302,9 +318,31 @@ hr.divider-post {
     font-size: 12px;
   }
 
-  .profile-page-detail svg path {
-    margin: 1px;
-    gap: 1px;
-    padding: 0;
+  .profile-page-detail-joined {
+    color: var(--color-blue);
+    font-size: 10px;
+  }
+
+  .profile-page-detail-birth {
+    color: var(--color-blue);
+    font-size: 10px;
+  }
+
+  .profile-page-detail-location {
+    color: var(--color-blue);
+    font-size: 10px;
+  }
+
+  .cover-overlay {
+    height: 115px;
+  }
+
+  .profile-page-photo {
+    margin-top: 50px;
+    border: 2px solid #fff;
+  }
+
+  .text-post-profile {
+    font-size: 14px;
   }
 }

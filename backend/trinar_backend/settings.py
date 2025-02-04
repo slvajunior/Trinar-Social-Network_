@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "drf_yasg",
     'authentication',
     "two_factor",
+    'channels',
     "users",
     "core",
 ]
@@ -67,6 +68,18 @@ INSTALLED_APPS = [
 # AUTH_USER_MODEL = 'core.User'
 AUTH_USER_MODEL = 'users.User'
 
+ASGI_APPLICATION = 'trinar_backend.asgi.application'
+
+# trinar_backend/settings.py
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [('127.0.0.1', 6379)],  # Aqui você indica a configuração do Redis
+        },
+    },
+}
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -88,12 +101,12 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # Validade do token de acesso
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),    # Validade do token de refresh
-    'ROTATE_REFRESH_TOKENS': True,                 # Gera novo refresh token ao usar o atual
-    'BLACKLIST_AFTER_ROTATION': True,              # Torna inválido o refresh usado
-    'ALGORITHM': 'HS256',                          # Algoritmo para assinar tokens
-    'SIGNING_KEY': os.getenv("SECRET_KEY")                    # Chave de assinatura
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=7),  # O usuário fica logado por 7 dias
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),  # Pode continuar logado por 30 dias
+    'ROTATE_REFRESH_TOKENS': True,  # Gera novo refresh token a cada uso
+    'BLACKLIST_AFTER_ROTATION': True,  # Invalida o refresh antigo para segurança
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': os.getenv("SECRET_KEY"),
 }
 
 MIDDLEWARE = [

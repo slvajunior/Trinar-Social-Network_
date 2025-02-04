@@ -82,17 +82,17 @@
     box-shadow: inset 0 1px 4px 0 rgba(0, 0, 0, 0.15);
     display: block;
     max-width: 100%;
-    margin: 0 10px 3px;
+    margin: 0 10px 2.5px;
     padding: 0.5px;
   }
   
   p.post-time {
     font-family: "Helvetica", sans-serif;
-    font-size: 13px;
+    font-size: 12px;
     cursor: pointer;
     transition: text-decoration 0.2s ease;
     color: #65686C;
-    font-weight: 600;
+    font-weight: 700;
   }
   
   /* Estilo para o container do tempo do post e ícone de visibilidade */

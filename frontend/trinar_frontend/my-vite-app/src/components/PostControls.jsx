@@ -21,6 +21,17 @@ const PostControls = ({
     setFilters({ ...filters, [name]: value });
   };
 
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleOverlayClick = (e) => {
+    // Fechar o modal se o clique for fora do conteúdo
+    if (e.target.classList.contains("modal-overlay")) {
+      closeModal();
+    }
+  };
+
   return (
     <div className="post-controls">
       {/* Botão de Filtro */}
@@ -33,11 +44,11 @@ const PostControls = ({
 
       {/* Modal de Filtros */}
       {isModalOpen && (
-        <div className="modal-overlay">
+        <div className="modal-overlay" onClick={handleOverlayClick}>
           <div className="modal-content">
             <button
               className="close-modal"
-              onClick={() => setIsModalOpen(false)}
+              onClick={closeModal} // Usando a função de fechar
             >
               <FontAwesomeIcon icon={faTimes} />
             </button>

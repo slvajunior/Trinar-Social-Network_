@@ -115,7 +115,7 @@ const PostHistory = ({ post, loggedInUserId }) => {
           </div>
         </div>
       </div>
-      <p className="text-post">{post.text}</p>
+      <p className="text-post-profile">{post.text}</p>
       {post.photo && (
         <img
           className="img-post"
@@ -146,16 +146,16 @@ const PostHistory = ({ post, loggedInUserId }) => {
           ))}
         </div>
       )}
-      <hr className="divider-post" />
+      <hr className="divider-post-history" />
       <div className="post-actions">
         <button className="action-button">
-          <FontAwesomeIcon icon={faHeart} /> Curtir
+          <FontAwesomeIcon className="curtir" icon={faHeart} /> Curtir
         </button>
         <button className="action-button">
-          <FontAwesomeIcon icon={faComment} /> Comentar
+          <FontAwesomeIcon className="comentar" icon={faComment} /> Comentar
         </button>
         <button className="action-button">
-          <FontAwesomeIcon icon={faRetweet} /> Repostar
+          <FontAwesomeIcon className="repostar" icon={faRetweet} /> Repostar
         </button>
       </div>
     </div>
