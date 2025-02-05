@@ -34,23 +34,23 @@ function Timeline() {
     }
   }, [token, navigate]);
 
-  // Buscar os posts da timeline
+  // Função para buscar os posts da timeline
   const fetchPosts = useCallback(async () => {
     if (!hasMore || isLoading || !token) return;
-  
+
     setIsLoading(true);
     try {
       const response = await axios.get(`/api/timeline/?page=${page}&page_size=10`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-  
+
       const data = response.data;
       if (data.results.length > 0) {
         setPosts((prevPosts) => [...prevPosts, ...data.results]);
-  
+
         // Verificar o status de "seguir" para cada autor dos posts
-        const uniqueAuthors = [...new Set(data.results.map(post => post.author.id))];
-  
+        const uniqueAuthors = [...new Set(data.results.map((post) => post.author.id))];
+
         const followStatuses = await Promise.all(
           uniqueAuthors.map((authorId) => {
             // Verificar se já fizemos uma requisição para esse autor
@@ -60,7 +60,7 @@ function Timeline() {
                 isFollowing: followingStatus[authorId],
               });
             }
-  
+
             return axios
               .get(`/api/users/${authorId}/is-following/`, {
                 headers: { Authorization: `Bearer ${token}` },
@@ -72,14 +72,14 @@ function Timeline() {
               .catch(() => ({ userId: authorId, isFollowing: false }));
           })
         );
-  
+
         // Atualizar o estado followingStatus
         const statusMap = followStatuses.reduce((acc, item) => {
           acc[item.userId] = item.isFollowing;
           return acc;
         }, {});
         setFollowingStatus((prevState) => ({ ...prevState, ...statusMap }));
-  
+
         setHasMore(data.next !== null);
         setPage((prevPage) => prevPage + 1);
       } else {
@@ -91,7 +91,7 @@ function Timeline() {
       setIsLoading(false);
     }
   }, [page, hasMore, isLoading, token, followingStatus, setPosts, setFollowingStatus, setHasMore, setPage, setIsLoading]);
-  
+
   // Carregar posts iniciais
   useEffect(() => {
     if (loggedInUserId && token && posts.length === 0) {
@@ -99,7 +99,7 @@ function Timeline() {
     }
   }, [loggedInUserId, token, fetchPosts, posts.length]);
 
-  // Configurar o IntersectionObserver
+  // Configurar o IntersectionObserver para carregar mais posts ao rolar
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -144,10 +144,21 @@ function Timeline() {
     }
   };
 
-  // Conectar ao WebSocket
+  // Configurar o Polling para buscar novos posts periodicamente
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!isLoading) {
+        fetchPosts(); // Busca novos posts a cada 10 segundos
+      }
+    }, 10000); // Intervalo de 10 segundos
+
+    return () => clearInterval(interval); // Limpa o intervalo ao desmontar o componente
+  }, [isLoading, fetchPosts]);
+
+  // Conectar ao WebSocket para atualizações em tempo real
   useEffect(() => {
     if (token) {
-      const socketConnection = new WebSocket(`ws://localhost:8000/ws/timeline/`);
+      const socketConnection = new WebSocket(`ws://localhost:8001/ws/timeline/`);
 
       socketConnection.onopen = () => {
         console.log("Conexão WebSocket estabelecida!");
@@ -155,7 +166,7 @@ function Timeline() {
 
       socketConnection.onmessage = (event) => {
         const newPost = JSON.parse(event.data);
-        setPosts((prevPosts) => [newPost, ...prevPosts]); // Adicionar novo post na timeline
+        setPosts((prevPosts) => [newPost, ...prevPosts]); // Adiciona o novo post ao topo da timeline
       };
 
       socketConnection.onclose = () => {
@@ -166,7 +177,7 @@ function Timeline() {
         console.error("Erro no WebSocket:", error);
       };
 
-      setSocket(socketConnection); // Armazenar a conexão no estado
+      setSocket(socketConnection); // Armazena a conexão no estado
 
       // Limpeza ao desmontar o componente
       return () => {
