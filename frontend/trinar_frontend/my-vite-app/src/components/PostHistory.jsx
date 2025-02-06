@@ -1,4 +1,3 @@
-// src/components/PostHistory.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
@@ -17,16 +16,62 @@ const PostHistory = ({ post, loggedInUserId }) => {
   const [isTruncated, setIsTruncated] = useState(false);
   const textRef = useRef(null);
 
-  useEffect(() => {
-      if (textRef.current) {
-        const lineHeight = parseInt(getComputedStyle(textRef.current).lineHeight, 10);
-        const maxLines = 2;
-        const maxHeight = lineHeight * maxLines;
-  
-        setIsTruncated(textRef.current.scrollHeight > maxHeight);
+  const maxLength = 100; // Defina o número máximo de caracteres
+
+  // Função para calcular o comprimento do texto com quebras de linha
+  const calculateTextLength = (text) => {
+    const lines = text.split("\n");
+    let totalChars = 0;
+
+    lines.forEach((line, index) => {
+      totalChars += line.length;
+      if (index < lines.length - 1) {
+        totalChars += 58; // Adiciona 58 caracteres para cada quebra de linha
       }
-    }, [post.text]); // Executa quando o texto muda
-  
+    });
+
+    return totalChars;
+  };
+
+  // Verifica se o texto deve ser truncado
+  useEffect(() => {
+    if (textRef.current) {
+      const totalChars = calculateTextLength(post.text);
+      setIsTruncated(totalChars > maxLength);
+    }
+  }, [post.text]);
+
+  // Texto truncado
+  const truncateText = (text, maxLength) => {
+    const lines = text.split("\n");
+    let totalChars = 0;
+    let truncatedText = "";
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const lineLength = line.length;
+
+      if (totalChars + lineLength + (i < lines.length - 1 ? 58 : 0) > maxLength) {
+        // Adiciona parte da linha até atingir o limite
+        const remainingChars = maxLength - totalChars;
+        truncatedText += line.slice(0, remainingChars) + "...";
+        break;
+      } else {
+        // Adiciona a linha completa
+        truncatedText += line;
+        totalChars += lineLength;
+
+        // Adiciona 58 caracteres para a quebra de linha (exceto na última linha)
+        if (i < lines.length - 1) {
+          truncatedText += "\n";
+          totalChars += 58;
+        }
+      }
+    }
+
+    return truncatedText;
+  };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -123,8 +168,8 @@ const PostHistory = ({ post, loggedInUserId }) => {
           </div>
         </div>
       </div>
-      <p ref={textRef} className={`text-post ${expanded ? "expanded" : ""}`}>
-        {post.text}
+      <p ref={textRef} className={`text-post ${expanded ? "" : ""}`}>
+        {expanded ? post.text : truncateText(post.text, maxLength)}
       </p>
       {isTruncated && !expanded && (
         <span className="read-more" onClick={() => setExpanded(true)}>
