@@ -24,23 +24,5 @@
   font-size: 15px;
   color: #080809;
   margin: 10px 0 10px;
-}
-
-.profile-page-details {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  font-size: 10px;
-}
-
-.profile-page-detail {
-  display: flex;
-  align-items: center;
-  gap: 0px;
-  font-size: 12px;
-  color: #686869;
-}
-
-.profile-page-detail curtir {
-  color: #111;
+  white-space: pre-wrap;
 }

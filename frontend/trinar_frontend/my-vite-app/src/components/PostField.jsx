@@ -130,6 +130,36 @@ const PostField = () => {
     navigate("/profile");
   };
 
+  const handleContentChange = (e) => {
+    const text = e.target.value;
+    const totalChars = calculateCharCount(text);
+
+    // Se o total de caracteres exceder 500, não atualize o estado
+    if (totalChars <= 500) {
+      setContent(text);
+    } else {
+      // Opcional: Exibir um alerta ou mensagem de erro
+      alert("Limite de 500 caracteres atingido!");
+    }
+  };
+
+  const calculateCharCount = (text) => {
+    const lines = text.split("\n"); // Divide o texto em linhas
+    let totalChars = 0;
+
+    lines.forEach((line, index) => {
+      // Adiciona o comprimento da linha
+      totalChars += line.length;
+
+      // Adiciona 58 caracteres apenas se houver uma quebra de linha (exceto na última linha)
+      if (index < lines.length - 1) {
+        totalChars += 58; // Adiciona 58 caracteres para a quebra de linha
+      }
+    });
+
+    return totalChars;
+  };
+
   return (
     <div className="post-field-container">
       {/* Foto do Usuário e Campo de Texto */}
@@ -153,13 +183,12 @@ const PostField = () => {
           className="post-input"
           placeholder="What is happening?"
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={handleContentChange} // Use a nova função
           maxLength={500}
         ></textarea>
       </div>
 
-      {/* Contador de Caracteres */}
-      <div className="char-count">{content.length}/500</div>
+      <div className="char-count">{calculateCharCount(content)}/500</div>
 
       {/* Divisor */}
       <hr className="divider" />
@@ -167,11 +196,19 @@ const PostField = () => {
       {/* Botões de Upload e Postar */}
       <div className="media-upload-container">
         <label htmlFor="image-upload" className="media-upload-button">
-          <FontAwesomeIcon className="icon-img" icon={faImage} style={{color: "var(--green-color)"}} />
+          <FontAwesomeIcon
+            className="icon-img"
+            icon={faImage}
+            style={{ color: "var(--green-color)" }}
+          />
           <span>Imagem</span>
         </label>
         <label htmlFor="video-upload" className="media-upload-button">
-          <FontAwesomeIcon className="media-icon-video" icon={faVideo} style={{color: "var(--red-color)"}} />
+          <FontAwesomeIcon
+            className="media-icon-video"
+            icon={faVideo}
+            style={{ color: "var(--red-color)" }}
+          />
           <span>Vídeo</span>
         </label>
         <input
@@ -202,8 +239,11 @@ const PostField = () => {
               "Postando..."
             ) : (
               <>
-                <FaPaperPlane className="post-icon" style={{color: "var(--color-blue)"}}/>
-                <span style={{padding: "10px"}}>Postar</span>
+                <FaPaperPlane
+                  className="post-icon"
+                  style={{ color: "var(--color-blue)" }}
+                />
+                <span style={{ padding: "10px" }}>Postar</span>
               </>
             )}
           </button>

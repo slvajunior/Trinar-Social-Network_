@@ -9,18 +9,29 @@
     background-color: var(--color-secondary);
     border-radius: 9px; box-shadow: 0 1px 2px rgba(0, 0, 1, 0.2);
   }
-  
+
   .text-post {
-    padding: 0 10px 10px;
+    white-space: pre-wrap;
+    padding: 0 10px;
+    display: inline-block;
+    margin: 0 0 -8px;
+    text-justify: inter-word;
+    word-wrap: break-word;
+    font-family: 'Helvetica', sans-serif;
+    line-height: 1.4;
+  }
+  
+  .read-more {
+    display: inline-block;
     color: #080809;
-    max-width: 100%;
-    margin: 0px auto 0;
-    font-family: "Helvetica", Arial, sans-serif;
-    font-size: 15px;
-    letter-spacing: 0.01px;
-    line-height: 1.3;
-    word-spacing: 0.1px;
-    text-align: justify;
+    cursor: pointer;
+    font-weight: 700;
+    margin-left: 10px;
+    margin-bottom: 5px;
+    display: inline-block;
+    font-family: 'Helvetica', sans-serif;
+    font-variant: small-caps;
+    word-wrap: break-word;
   }
   
   .user-photo-timeline {
@@ -82,7 +93,7 @@
     box-shadow: inset 0 1px 4px 0 rgba(0, 0, 0, 0.15);
     display: block;
     max-width: 100%;
-    margin: 0 10px 2.5px;
+    margin: 0px 10px 2.5px;
     padding: 0.5px;
   }
   
@@ -159,7 +170,13 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.3rem;
-    padding: 0 10px 5px;
+    padding: 0 5px 5px;
+    font-family: 'Helvetica', sans-serif;
+    font-size: 15px;
+    font-variant: small-caps;
+    line-height: 0.7; /* Pode ser uma unidade relativa ou um número */
+
+
   }
   
   .hashtag {

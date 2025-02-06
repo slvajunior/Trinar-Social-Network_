@@ -1,5 +1,5 @@
 // src/components/PostHistory.jsx
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,9 +13,20 @@ import {
 import "./PostHistory.css";
 
 const PostHistory = ({ post, loggedInUserId }) => {
-  console.log("Dados do post:", post); // Verifique a estrutura do post
+  const [expanded, setExpanded] = useState(false);
+  const [isTruncated, setIsTruncated] = useState(false);
+  const textRef = useRef(null);
 
-  // Função para formatar a data do post
+  useEffect(() => {
+      if (textRef.current) {
+        const lineHeight = parseInt(getComputedStyle(textRef.current).lineHeight, 10);
+        const maxLines = 2;
+        const maxHeight = lineHeight * maxLines;
+  
+        setIsTruncated(textRef.current.scrollHeight > maxHeight);
+      }
+    }, [post.text]); // Executa quando o texto muda
+  
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -35,7 +46,6 @@ const PostHistory = ({ post, loggedInUserId }) => {
     }
   };
 
-  // Função para exibir a data completa no tooltip
   const getFullDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleString("pt-BR", {
@@ -49,19 +59,17 @@ const PostHistory = ({ post, loggedInUserId }) => {
     });
   };
 
-  // Função para obter a foto do autor ou o fallback
   const getAuthorPhoto = () => {
     if (post.author?.profile_picture) {
       return post.author.profile_picture.startsWith("http")
         ? post.author.profile_picture
         : `http://localhost:8000${post.author.profile_picture}`;
     }
-    return null; // Retorna null se não houver foto
+    return null;
   };
 
   const authorPhoto = getAuthorPhoto();
 
-  // Função para extrair hashtags do texto, incluindo caracteres acentuados
   const extractHashtags = (text) => {
     const hashtagRegex = /#[\w\u00C0-\u00FF]+/g;
     return text.match(hashtagRegex) || [];
@@ -81,7 +89,7 @@ const PostHistory = ({ post, loggedInUserId }) => {
                 className="profile-photo"
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = "caminho/para/imagem-padrao.jpg"; // Fallback para imagem quebrada
+                  e.target.src = "caminho/para/imagem-padrao.jpg";
                 }}
               />
             ) : (
@@ -115,7 +123,19 @@ const PostHistory = ({ post, loggedInUserId }) => {
           </div>
         </div>
       </div>
-      <p className="text-post-profile">{post.text}</p>
+      <p ref={textRef} className={`text-post ${expanded ? "expanded" : ""}`}>
+        {post.text}
+      </p>
+      {isTruncated && !expanded && (
+        <span className="read-more" onClick={() => setExpanded(true)}>
+          Ler mais
+        </span>
+      )}
+      {expanded && (
+        <span className="read-more" onClick={() => setExpanded(false)}>
+          Mostrar menos
+        </span>
+      )}
       {post.photo && (
         <img
           className="img-post"
@@ -123,7 +143,7 @@ const PostHistory = ({ post, loggedInUserId }) => {
           alt="Post"
           onError={(e) => {
             e.target.onerror = null;
-            e.target.src = "caminho/para/imagem/padrao.png"; // Fallback
+            e.target.src = "caminho/para/imagem/padrao.png";
           }}
         />
       )}
