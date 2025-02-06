@@ -2,7 +2,7 @@ import logging
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Post, Repost, Like
+from .models import Post, Repost, Like, Reaction, Comment
 from django.db.models import Q
 from django.db import models
 from django.shortcuts import get_object_or_404
@@ -24,6 +24,8 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.authentication import TokenAuthentication
 from django.contrib.auth.decorators import login_required
 from rest_framework.permissions import AllowAny
+from django.core.exceptions import ObjectDoesNotExist
+
 
 
 # from rest_framework.parsers import MultiPartParser, FormParser
@@ -52,19 +54,105 @@ def bulk_follow_status(request):
     return JsonResponse(follow_statuses)
 
 
-class UserPostsView(generics.ListAPIView):
-    serializer_class = PostSerializer
-
-    def get_queryset(self):
-        user_id = self.kwargs['user_id']
-        return Post.objects.filter(author_id=user_id).select_related('author')
-
-
 def get_user_by_id(user_id):
     try:
         return User.objects.get(id=user_id)
     except User.DoesNotExist:
         raise NotFound({"error": "User not found."})
+    
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])  # Verifica se o usuário está autenticado
+def add_reaction(request):
+    # Obtenção de dados da requisição
+    post_id = request.data.get('post_id')
+    reaction_type = request.data.get('reaction_type')
+    user = request.user  # O usuário autenticado é automaticamente atribuído aqui
+
+    try:
+        # Buscando o post
+        post = Post.objects.get(id=post_id)
+
+        # Criando ou atualizando a reação do usuário
+        reaction, created = Reaction.objects.get_or_create(
+            post=post, user=user, defaults={'reaction_type': reaction_type}
+        )
+        if not created:
+            reaction.reaction_type = reaction_type
+            reaction.save()
+
+        # Contagem das reações
+        reactions = Reaction.objects.filter(post=post)
+        reaction_counts = reactions.values('reaction_type').annotate(count=models.Count('reaction_type'))
+
+        return Response({'status': 'success', 'reactions': reaction_counts}, status=status.HTTP_200_OK)
+
+    except Post.DoesNotExist:
+        return Response({'status': 'error', 'message': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])  # Adicionando autenticação
+def add_like(request):
+    post_id = request.data.get('post_id')
+    user_id = request.user.id
+
+    try:
+        post = Post.objects.get(id=post_id)
+        user = User.objects.get(id=user_id)
+
+        # Verifica se o like já existe
+        like, created = Like.objects.get_or_create(post=post, user=user)
+        if not created:
+            like.delete()  # Se já curtiu, desfaz o like
+            return Response({'status': 'success', 'message': 'Like removed'}, status=status.HTTP_200_OK)
+
+        return Response({'status': 'success', 'message': 'Post liked'}, status=status.HTTP_200_OK)
+
+    except Post.DoesNotExist:
+        return Response({'status': 'error', 'message': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+    except User.DoesNotExist:
+        return Response({'status': 'error', 'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])  # Adicionando autenticação
+def add_comment(request):
+    post_id = request.data.get('post_id')
+    text = request.data.get('text')
+    user_id = request.user.id
+
+    try:
+        post = Post.objects.get(id=post_id)
+        user = User.objects.get(id=user_id)
+
+        comment = Comment.objects.create(post=post, author=user, text=text)
+        return Response({'status': 'success', 'comment_id': comment.id, 'message': 'Comment added'}, status=status.HTTP_200_OK)
+
+    except Post.DoesNotExist:
+        return Response({'status': 'error', 'message': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+    except User.DoesNotExist:
+        return Response({'status': 'error', 'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])  # Adicionando autenticação
+def add_repost(request):
+    post_id = request.data.get('post_id')
+    text = request.data.get('text', '')  # Texto opcional para o repost
+    user_id = request.user.id
+
+    try:
+        post = Post.objects.get(id=post_id)
+        user = User.objects.get(id=user_id)
+
+        repost = Repost.objects.create(original_post=post, reposted_by=user, text=text)
+        return Response({'status': 'success', 'message': 'Post reposted'}, status=status.HTTP_200_OK)
+
+    except Post.DoesNotExist:
+        return Response({'status': 'error', 'message': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+    except User.DoesNotExist:
+        return Response({'status': 'error', 'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class CustomJWTAuthentication(JWTAuthentication):
@@ -74,6 +162,14 @@ class CustomJWTAuthentication(JWTAuthentication):
         except AuthenticationFailed as e:
             print("Erro de autenticação:", e)
             raise
+        
+
+class UserPostsView(generics.ListAPIView):
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        return Post.objects.filter(author_id=user_id).select_related('author')
 
 
 class PostListCreateView(APIView):

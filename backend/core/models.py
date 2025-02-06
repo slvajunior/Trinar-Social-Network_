@@ -1,5 +1,3 @@
-"""  backend/core/models.pY """
-
 from django.db import models
 import re
 from users.models import User
@@ -65,7 +63,7 @@ class Like(models.Model):
         )  # Garante que o usuário só pode curtir uma vez
 
     def __str__(self):
-        return f"{self.user.username} liked {self.post.title}"
+        return f"{self.user.username} liked {self.post.text[:20]}"
 
 
 class Comment(models.Model):
@@ -95,3 +93,26 @@ class Repost(models.Model):
 
     def __str__(self):
         return f"{self.reposted_by.username} reposted {self.original_post.text[:20]}"
+
+
+class Reaction(models.Model):
+    REACTION_TYPES = [
+        ("❤️", "Heart"),
+        ("😂", "Laugh"),
+        ("😮", "Wow"),
+        ("😢", "Sad"),
+        ("👍", "Thumbs Up"),
+        ("🤬", "Pissed off"),
+        ("🙄", "Eye Roll"),
+    ]
+
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="reactions")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    reaction_type = models.CharField(max_length=2, choices=REACTION_TYPES, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("post", "user")  # Evita que o mesmo usuário reaja várias vezes ao mesmo post
+
+    def __str__(self):
+        return f"{self.user.username} reacted with {self.reaction_type} to {self.post.text[:20]}"
