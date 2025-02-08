@@ -255,6 +255,19 @@
   margin-top: 6px;
 }
 
+.read-more {
+  display: inline-block;
+  color: #080809;
+  cursor: pointer;
+  font-weight: 700;
+  margin-left: 10px;
+  margin-bottom: 5px;
+  display: inline-block;
+  font-family: 'Helvetica', sans-serif;
+  font-variant: small-caps;
+  word-wrap: break-word;
+}
+
 .action-button:hover {
   background-color: #f2f2f2;
 }

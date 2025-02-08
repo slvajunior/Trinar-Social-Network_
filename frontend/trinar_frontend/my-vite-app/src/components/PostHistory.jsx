@@ -168,6 +168,7 @@ const PostHistory = ({ post, loggedInUserId }) => {
           </div>
         </div>
       </div>
+
       <p ref={textRef} className={`text-post ${expanded ? "" : ""}`}>
         {expanded ? post.text : truncateText(post.text, maxLength)}
       </p>
@@ -181,6 +182,7 @@ const PostHistory = ({ post, loggedInUserId }) => {
           Mostrar menos
         </span>
       )}
+      
       {post.photo && (
         <img
           className="img-post"

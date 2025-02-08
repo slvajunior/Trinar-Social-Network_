@@ -63,6 +63,8 @@ urlpatterns = [
         UserFollowingView.as_view(),
         name="user-following",
     ),
+
+    path('posts/<int:post_id>/user_reaction/', views.get_user_reaction, name='get_user_reaction'),
     path('timeline/', TimelineView.as_view(), name='timeline'),
     path("search/", UserSearchView.as_view(), name="user-search"),
     path("users/<int:user_id>/is-following/", IsFollowingView.as_view(), name="is-following"),
@@ -76,4 +78,6 @@ urlpatterns = [
     path('add_like/', views.add_like, name='add_like'),
     path('add_comment/', views.add_comment, name='add_comment'),
     path('add_repost/', views.add_repost, name='add_repost'),
+    path('posts/<int:post_id>/reactions/', views.get_post_reactions, name='get_post_reactions'),
+    path('posts/<int:post_id>/user_reaction/', views.get_user_reaction, name='get_user_reaction'),
 ]

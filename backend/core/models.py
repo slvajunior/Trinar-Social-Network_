@@ -1,3 +1,4 @@
+# backend/core/models.py
 from django.db import models
 import re
 from users.models import User

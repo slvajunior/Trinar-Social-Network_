@@ -175,12 +175,11 @@
     font-size: 15px;
     font-variant: small-caps;
     line-height: 0.7; /* Pode ser uma unidade relativa ou um número */
-
-
+    cursor: pointer;
   }
   
   .hashtag {
-    color: #1da1f2; /* Cor azul do Twitter */
+    color: #1da1f2;
     text-decoration: none;
   }
   
@@ -188,8 +187,91 @@
     text-decoration: underline;
     cursor: pointer;
   }
+
+
+
+
+
+
+
+  .reaction-container {
+    position: relative;
+    display: inline-block;
+    z-index: 1;
+  }
   
+  .reaction-picker {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 24px;
+    padding: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    gap: 4px;
+    transform: translateY(-5px);
+  }
   
+  .reaction-button {
+    position: relative;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  
+  .post-actions-tl {
+    display: flex;
+    gap: 15px;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .reaction-option {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    padding: 4px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  
+  .reaction-option:hover {
+    transform: scale(1.2);
+  }
+  
+  .reaction-preview {
+    margin-right: 8px;
+  }
+  
+  .reaction-count {
+    margin-left: 4px;
+    font-size: 0.9rem;
+    vertical-align: middle;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
   /* Media Queries para Responsividade */
   @media (max-width: 768px) {

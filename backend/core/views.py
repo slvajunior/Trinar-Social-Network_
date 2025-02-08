@@ -61,35 +61,105 @@ def get_user_by_id(user_id):
         raise NotFound({"error": "User not found."})
     
     
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_reaction(request, post_id):
+    try:
+        # Busca o post
+        post = get_object_or_404(Post, id=post_id)
+
+        # Busca a reação do usuário logado para o post
+        reaction = Reaction.objects.filter(post=post, user=request.user).first()
+
+        # Retorna a reação do usuário, se existir
+        return Response({
+            'status': 'success',
+            'reaction_type': reaction.reaction_type if reaction else None
+        }, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({
+            'status': 'error',
+            'message': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_post_reactions(request, post_id):
+    try:
+        post = get_object_or_404(Post, id=post_id)
+        reaction_counts = Reaction.objects.filter(post=post) \
+            .values('reaction_type') \
+            .annotate(count=Count('reaction_type')) \
+            .order_by('-count')
+
+        return Response({
+            'status': 'success',
+            'reactions': list(reaction_counts)
+        }, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({
+            'status': 'error',
+            'message': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    
+    
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])  # Verifica se o usuário está autenticado
+@permission_classes([IsAuthenticated])
 def add_reaction(request):
-    # Obtenção de dados da requisição
     post_id = request.data.get('post_id')
     reaction_type = request.data.get('reaction_type')
-    user = request.user  # O usuário autenticado é automaticamente atribuído aqui
+    user = request.user
+
+    if not post_id or not reaction_type:
+        return Response(
+            {'status': 'error', 'message': 'post_id and reaction_type are required'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
     try:
-        # Buscando o post
-        post = Post.objects.get(id=post_id)
+        post = get_object_or_404(Post, id=post_id)
 
-        # Criando ou atualizando a reação do usuário
-        reaction, created = Reaction.objects.get_or_create(
-            post=post, user=user, defaults={'reaction_type': reaction_type}
+        # Verifica se o usuário já reagiu a este post
+        existing_reaction = Reaction.objects.filter(post=post, user=user).first()
+
+        if existing_reaction:
+            if existing_reaction.reaction_type == reaction_type:
+                # Se a reação for a mesma, remove a reação (desfazer)
+                existing_reaction.delete()
+                message = 'Reaction removed successfully!'
+            else:
+                # Se a reação for diferente, troca a reação
+                existing_reaction.reaction_type = reaction_type
+                existing_reaction.save()
+                message = 'Reaction updated successfully!'
+        else:
+            # Se não houver reação, adiciona uma nova
+            Reaction.objects.create(post=post, user=user, reaction_type=reaction_type)
+            message = 'Reaction added successfully!'
+
+        # Atualiza a contagem de reações corretamente
+        reaction_counts = Reaction.objects.filter(post=post) \
+            .values('reaction_type') \
+            .annotate(count=Count('id')) \
+            .order_by('-count')
+
+        return Response({
+            'status': 'success',
+            'message': message,
+            'reactions': list(reaction_counts)
+        }, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response(
+            {'status': 'error', 'message': str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
-        if not created:
-            reaction.reaction_type = reaction_type
-            reaction.save()
 
-        # Contagem das reações
-        reactions = Reaction.objects.filter(post=post)
-        reaction_counts = reactions.values('reaction_type').annotate(count=models.Count('reaction_type'))
 
-        return Response({'status': 'success', 'reactions': reaction_counts}, status=status.HTTP_200_OK)
-
-    except Post.DoesNotExist:
-        return Response({'status': 'error', 'message': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
-    
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])  # Adicionando autenticação
