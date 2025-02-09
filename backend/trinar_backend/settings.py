@@ -60,9 +60,10 @@ INSTALLED_APPS = [
     "drf_yasg",
     'authentication',
     "two_factor",
-    'channels',
     "users",
     "core",
+    "chat",
+    'channels',
 ]
 
 # AUTH_USER_MODEL = 'core.User'
@@ -73,10 +74,10 @@ ASGI_APPLICATION = 'trinar_backend.asgi.application'
 # trinar_backend/settings.py
 
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [('127.0.0.1', 6379)],  # Aqui você indica a configuração do Redis
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],  # Certifique-se de que o Redis está rodando localmente
         },
     },
 }

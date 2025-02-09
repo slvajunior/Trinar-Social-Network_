@@ -1,13 +1,13 @@
-# trinar_backend/consumers.py
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 
-class TimelineConsumer(AsyncWebsocketConsumer):
+class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.room_group_name = "timeline"
+        self.room_name = self.scope['url_route']['kwargs']['sala_nome']
+        self.room_group_name = f'chat_{self.room_name}'
 
-        # Conectar-se ao grupo de WebSocket
+        # Adiciona o usuário ao grupo de sala
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
@@ -16,7 +16,7 @@ class TimelineConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
-        # Remover do grupo de WebSocket
+        # Remove o usuário do grupo de sala
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
@@ -26,19 +26,19 @@ class TimelineConsumer(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
 
-        # Enviar a mensagem para o grupo
+        # Envia a mensagem para o grupo
         await self.channel_layer.group_send(
             self.room_group_name,
             {
-                'type': 'timeline_message',
+                'type': 'chat_message',
                 'message': message
             }
         )
 
-    async def timeline_message(self, event):
+    async def chat_message(self, event):
         message = event['message']
 
-        # Enviar a mensagem ao WebSocket
+        # Envia a mensagem para o WebSocket
         await self.send(text_data=json.dumps({
             'message': message
         }))

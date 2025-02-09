@@ -12,8 +12,6 @@ from rest_framework import permissions
 from users.views import email_verification, reset_password_confirm
 from rest_framework.authtoken.views import obtain_auth_token
 from users.views import UploadProfilePictureView
-from . import consumers
-
 
 # Configuração do Swagger
 schema_view = get_schema_view(
@@ -28,10 +26,6 @@ schema_view = get_schema_view(
     public=True,
     permission_classes=(permissions.AllowAny,),
 )
-
-websocket_urlpatterns = [
-    path('ws/timeline/', consumers.TimelineConsumer.as_asgi()),
-]
 
 urlpatterns = [
     path("", home),

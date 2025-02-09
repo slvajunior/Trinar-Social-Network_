@@ -143,6 +143,18 @@ const Post = ({ post, followingStatus, handleFollow, loggedInUserId }) => {
     </div>
   );
 
+  const handleMouseEnterReactionPicker = () => {
+    if (reactionTimeout.current) {
+      clearTimeout(reactionTimeout.current);
+    }
+  };
+  
+  const handleMouseLeaveReactionPicker = () => {
+    reactionTimeout.current = setTimeout(() => {
+      setShowReactionPicker(false);
+    }, 500);
+  };
+
   const totalReactions = Object.values(reactionCounts).reduce(
     (acc, count) => acc + count,
     0
@@ -232,19 +244,15 @@ const Post = ({ post, followingStatus, handleFollow, loggedInUserId }) => {
       <div className="post-actions-tl">
         <div
           className="reaction-container"
-          onMouseEnter={() => setShowReactionPicker(true)}
-          onMouseLeave={() => {
-            reactionTimeout.current = setTimeout(() => {
-              setShowReactionPicker(false);
-            }, 500);
-          }}
+          onMouseEnter={handleMouseEnterReactionPicker}
+          onMouseLeave={handleMouseLeaveReactionPicker}
         >
           <button
             className="action-button-tl reaction-button"
             onClick={() => setShowReactionPicker(!showReactionPicker)}
           >
             <span className="reaction-preview">
-              {userReaction ? userReaction : <FontAwesomeIcon icon={faHeart} />}
+             {userReaction ? userReaction :  <FontAwesomeIcon icon={faHeart} />}
             </span>
             <span className="reaction-count">{totalReactions}</span>
           </button>
@@ -253,11 +261,11 @@ const Post = ({ post, followingStatus, handleFollow, loggedInUserId }) => {
         </div>
 
         <button className="action-button-tl">
-          <FontAwesomeIcon icon={faComment} /> Comentar
+          <FontAwesomeIcon icon={faComment} /> Comente
         </button>
 
         <button className="action-button-tl">
-          <FontAwesomeIcon icon={faRetweet} /> Repostar
+          <FontAwesomeIcon icon={faRetweet} /> Reposte
         </button>
       </div>
     </div>

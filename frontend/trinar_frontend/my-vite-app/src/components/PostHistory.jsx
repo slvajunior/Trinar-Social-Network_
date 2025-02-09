@@ -1,3 +1,4 @@
+// src/components/PostHistory.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
