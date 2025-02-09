@@ -7,9 +7,10 @@ import {
   faRetweet,
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+import { toast } from "react-toastify";
 import "./Post.css";
 
-const Post = ({ post, followingStatus, handleFollow, loggedInUserId }) => {
+const Post = ({ post, followingStatus, handleFollow, loggedInUserId, socket }) => {
   const [expanded, setExpanded] = useState(false);
   const [isTruncated, setIsTruncated] = useState(false);
   const textRef = useRef(null);
@@ -39,6 +40,30 @@ const Post = ({ post, followingStatus, handleFollow, loggedInUserId }) => {
       }
     });
     return totalChars;
+  };
+
+  const handleCreatePost = async (postContent) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      // 1. Envia o post para a API REST
+      const response = await axios.post(
+        "/api/posts/",
+        { content: postContent },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      // 2. Envia o post via WebSocket
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({ 
+          message: response.data // Usando "message" para compatibilidade com o backend
+        }));
+      }
+
+      toast.success("Post criado com sucesso!");
+    } catch (err) {
+      toast.error("Erro ao criar post.");
+    }
   };
 
   useEffect(() => {

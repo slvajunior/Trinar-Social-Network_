@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 import 'line-awesome/dist/line-awesome/css/line-awesome.min.css';
 import "./AuthorInfo.css";
 
-
 const AuthorInfo = ({ author = {}, followingStatus = {}, handleFollow, loggedInUserId, post }) => {
   console.log("👤 Autor recebido:", author);  // 🔍 LOG PARA DEBUG
 

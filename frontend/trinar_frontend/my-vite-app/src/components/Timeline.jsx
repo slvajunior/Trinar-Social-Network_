@@ -2,7 +2,7 @@ import React, { useEffect, useCallback, useRef, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { usePosts } from "../contexts/PostsContext"; // Importe o hook do contexto
+import { usePosts } from "../contexts/PostsContext";
 import Post from "./Post";
 import "./Timeline.css";
 
@@ -18,22 +18,21 @@ function Timeline() {
     setPage,
     hasMore,
     setHasMore,
-  } = usePosts(); // Use os valores do contexto
+  } = usePosts();
 
   const token = localStorage.getItem("token");
   const loggedInUserId = localStorage.getItem("userId");
   const navigate = useNavigate();
   const sentinelRef = useRef(null);
-  const [socket, setSocket] = useState(null); // Estado para armazenar o WebSocket
+  const [socket, setSocket] = useState(null);
 
-  // Verifica se o usuário está logado
   useEffect(() => {
     if (!token) {
       navigate("/login");
     }
   }, [token, navigate]);
 
-  // Função para buscar os posts da timeline
+  // Timeline.jsx
   const fetchPosts = useCallback(async () => {
     if (!hasMore || isLoading || !token) return;
 
@@ -48,6 +47,34 @@ function Timeline() {
 
       const data = response.data;
       if (data.results.length > 0) {
+        // Verificar o status de seguimento para cada autor
+        const followStatuses = await Promise.all(
+          data.results.map(async (post) => {
+            try {
+              const res = await axios.get(
+                `/api/users/${post.author.id}/is-following/`,
+                {
+                  headers: { Authorization: `Bearer ${token}` },
+                }
+              );
+              return {
+                userId: post.author.id,
+                isFollowing: res.data.is_following,
+              };
+            } catch (err) {
+              return { userId: post.author.id, isFollowing: false };
+            }
+          })
+        );
+
+        // Atualizar o estado followingStatus
+        const newFollowingStatus = followStatuses.reduce((acc, curr) => {
+          acc[curr.userId] = curr.isFollowing;
+          return acc;
+        }, {});
+        setFollowingStatus((prev) => ({ ...prev, ...newFollowingStatus }));
+
+        // Atualizar posts
         setPosts((prevPosts) => [...prevPosts, ...data.results]);
         setHasMore(data.next !== null);
         setPage((prevPage) => prevPage + 1);
@@ -68,9 +95,9 @@ function Timeline() {
     setHasMore,
     setPage,
     setIsLoading,
+    setFollowingStatus,
   ]);
 
-  // Configurar o IntersectionObserver para carregar mais posts ao rolar
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -92,7 +119,6 @@ function Timeline() {
     };
   }, [hasMore, isLoading, fetchPosts]);
 
-  // Função para seguir um usuário
   const handleFollow = async (userId) => {
     if (userId === loggedInUserId) {
       console.warn("Você não pode seguir a si mesmo.");
@@ -115,41 +141,47 @@ function Timeline() {
     }
   };
 
-  // Conectar ao WebSocket para atualizações em tempo real
   useEffect(() => {
     if (!token) return;
-  
+
     const connectWebSocket = () => {
-      const socketConnection = new WebSocket(`ws://127.0.0.1:8001/ws/chat/sala1/`);
-  
+      const socketConnection = new WebSocket(
+        `ws://127.0.0.1:8001/ws/chat/sala1/`
+      );
+
       socketConnection.onopen = () => {
         console.log("Conexão WebSocket estabelecida!");
       };
-  
+
       socketConnection.onmessage = (event) => {
         const newPost = JSON.parse(event.data);
         if (!posts.some((post) => post.id === newPost.id)) {
           setPosts((prevPosts) => [newPost, ...prevPosts]);
         }
       };
-  
+
       socketConnection.onclose = (event) => {
-        console.log("Conexão WebSocket fechada. Código:", event.code, "Motivo:", event.reason);
+        console.log(
+          "Conexão WebSocket fechada. Código:",
+          event.code,
+          "Motivo:",
+          event.reason
+        );
         if (event.code !== 1000) {
           console.log("Tentando reconectar em 3 segundos...");
           setTimeout(connectWebSocket, 3000);
         }
       };
-  
+
       socketConnection.onerror = (error) => {
         console.error("Erro no WebSocket:", error);
       };
-  
+
       setSocket(socketConnection);
     };
-  
+
     connectWebSocket();
-  
+
     return () => {
       if (socket) {
         socket.close();
