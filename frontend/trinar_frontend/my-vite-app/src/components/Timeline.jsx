@@ -1,9 +1,10 @@
+// src/components/Timeline.jsx
 import React, { useEffect, useCallback, useRef, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { usePosts } from "../contexts/PostsContext";
-import Post from "./Post";
+import Post from "./Post/Post";
 import "./Timeline.css";
 
 function Timeline() {

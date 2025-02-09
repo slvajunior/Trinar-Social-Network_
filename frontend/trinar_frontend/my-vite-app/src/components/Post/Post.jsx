@@ -1,14 +1,11 @@
+
+// src/components/Post/Post.jsx
 import React, { useState, useRef, useEffect } from "react";
-import AuthorInfo from "./AuthorInfo";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faHeart,
-  faComment,
-  faRetweet,
-} from "@fortawesome/free-solid-svg-icons";
+import AuthorInfo from "../AuthorInfo";
+import PostActions from "./PostActions";
 import axios from "axios";
 import { toast } from "react-toastify";
-import "./Post.css";
+import "../Post.css";
 
 const Post = ({ post, followingStatus, handleFollow, loggedInUserId, socket }) => {
   const [expanded, setExpanded] = useState(false);
@@ -18,15 +15,6 @@ const Post = ({ post, followingStatus, handleFollow, loggedInUserId, socket }) =
   const [userReaction, setUserReaction] = useState(null);
   const [showReactionPicker, setShowReactionPicker] = useState(false);
   const reactionTimeout = useRef(null);
-  const reactionTypes = [
-    { emoji: "❤️", label: "Heart" },
-    { emoji: "😂", label: "Laugh" },
-    { emoji: "😮", label: "Wow" },
-    { emoji: "😢", label: "Sad" },
-    { emoji: "👍", label: "Thumbs Up" },
-    { emoji: "🤬", label: "Angry" },
-    { emoji: "🙄", label: "Eye Roll" },
-  ];
 
   const maxLength = 100; // Defina o número máximo de caracteres
 
@@ -40,30 +28,6 @@ const Post = ({ post, followingStatus, handleFollow, loggedInUserId, socket }) =
       }
     });
     return totalChars;
-  };
-
-  const handleCreatePost = async (postContent) => {
-    try {
-      const token = localStorage.getItem("token");
-
-      // 1. Envia o post para a API REST
-      const response = await axios.post(
-        "/api/posts/",
-        { content: postContent },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      // 2. Envia o post via WebSocket
-      if (socket && socket.readyState === WebSocket.OPEN) {
-        socket.send(JSON.stringify({ 
-          message: response.data // Usando "message" para compatibilidade com o backend
-        }));
-      }
-
-      toast.success("Post criado com sucesso!");
-    } catch (err) {
-      toast.error("Erro ao criar post.");
-    }
   };
 
   useEffect(() => {
@@ -153,37 +117,17 @@ const Post = ({ post, followingStatus, handleFollow, loggedInUserId, socket }) =
     }
   };
 
-  const ReactionPicker = () => (
-    <div className="reaction-picker">
-      {reactionTypes.map(({ emoji, label }) => (
-        <button
-          key={emoji}
-          className="reaction-option"
-          onClick={() => handleReaction(emoji)}
-          aria-label={label}
-        >
-          {emoji}
-        </button>
-      ))}
-    </div>
-  );
-
   const handleMouseEnterReactionPicker = () => {
     if (reactionTimeout.current) {
       clearTimeout(reactionTimeout.current);
     }
   };
-  
+
   const handleMouseLeaveReactionPicker = () => {
     reactionTimeout.current = setTimeout(() => {
       setShowReactionPicker(false);
     }, 500);
   };
-
-  const totalReactions = Object.values(reactionCounts).reduce(
-    (acc, count) => acc + count,
-    0
-  );
 
   // Lazy loading: load image/video only when they come into view
   const imgRef = useRef(null);
@@ -266,33 +210,18 @@ const Post = ({ post, followingStatus, handleFollow, loggedInUserId, socket }) =
       )}
 
       <hr className="divider-post-tl" />
-      <div className="post-actions-tl">
-        <div
-          className="reaction-container"
-          onMouseEnter={handleMouseEnterReactionPicker}
-          onMouseLeave={handleMouseLeaveReactionPicker}
-        >
-          <button
-            className="action-button-tl reaction-button"
-            onClick={() => setShowReactionPicker(!showReactionPicker)}
-          >
-            <span className="reaction-preview">
-             {userReaction ? userReaction :  <FontAwesomeIcon icon={faHeart} />}
-            </span>
-            <span className="reaction-count">{totalReactions}</span>
-          </button>
-
-          {showReactionPicker && <ReactionPicker />}
-        </div>
-
-        <button className="action-button-tl">
-          <FontAwesomeIcon icon={faComment} /> Comente
-        </button>
-
-        <button className="action-button-tl">
-          <FontAwesomeIcon icon={faRetweet} /> Reposte
-        </button>
-      </div>
+      <PostActions
+        post={post}
+        loggedInUserId={loggedInUserId}
+        socket={socket}
+        reactionCounts={reactionCounts}
+        userReaction={userReaction}
+        showReactionPicker={showReactionPicker}
+        setShowReactionPicker={setShowReactionPicker}
+        handleReaction={handleReaction}
+        handleMouseEnterReactionPicker={handleMouseEnterReactionPicker}
+        handleMouseLeaveReactionPicker={handleMouseLeaveReactionPicker}
+      />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-// src/App.js
+// src/App.jsx
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { PostsProvider } from "./contexts/PostsContext"; // Importe o Provider
