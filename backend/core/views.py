@@ -16,17 +16,19 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import CustomTokenObtainPairSerializer, UserSearchSerializer
-from rest_framework import generics
+# from django.contrib.postgres.aggregates import ArrayAgg
+
+# from rest_framework import generics
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.exceptions import NotFound
 from django.db.models import Count
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.authentication import TokenAuthentication
+
+# from rest_framework.authentication import TokenAuthentication
 from django.contrib.auth.decorators import login_required
-from rest_framework.permissions import AllowAny
-from django.core.exceptions import ObjectDoesNotExist
 
-
+# from rest_framework.permissions import AllowAny
+# from django.core.exceptions import ObjectDoesNotExist
 
 # from rest_framework.parsers import MultiPartParser, FormParser
 
@@ -46,7 +48,7 @@ def get_current_user(request):
 
 @login_required
 def bulk_follow_status(request):
-    user_ids = request.GET.getlist('user_ids')
+    user_ids = request.GET.getlist("user_ids")
     follow_statuses = {
         user_id: request.user.followers.filter(id=user_id).exists()
         for user_id in user_ids
@@ -59,9 +61,9 @@ def get_user_by_id(user_id):
         return User.objects.get(id=user_id)
     except User.DoesNotExist:
         raise NotFound({"error": "User not found."})
-    
-    
-@api_view(['GET'])
+
+
+@api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_user_reaction(request, post_id):
     try:
@@ -72,52 +74,72 @@ def get_user_reaction(request, post_id):
         reaction = Reaction.objects.filter(post=post, user=request.user).first()
 
         # Retorna a reação do usuário, se existir
-        return Response({
-            'status': 'success',
-            'reaction_type': reaction.reaction_type if reaction else None
-        }, status=status.HTTP_200_OK)
+        return Response(
+            {
+                "status": "success",
+                "reaction_type": reaction.reaction_type if reaction else None,
+            },
+            status=status.HTTP_200_OK,
+        )
 
     except Exception as e:
-        return Response({
-            'status': 'error',
-            'message': str(e)
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-    
-@api_view(['GET'])
+        return Response(
+            {"status": "error", "message": str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+
+@api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_post_reactions(request, post_id):
     try:
+        # Verifica se o post existe
         post = get_object_or_404(Post, id=post_id)
-        reaction_counts = Reaction.objects.filter(post=post) \
-            .values('reaction_type') \
-            .annotate(count=Count('reaction_type')) \
-            .order_by('-count')
+
+        # Busca todas as reações do post, incluindo os usuários
+        reactions = Reaction.objects.filter(post=post).select_related("user")
+
+        # Inicializa reaction_data com arrays vazios para todos os tipos de reação
+        reaction_data = {emoji: [] for emoji, _ in Reaction.REACTION_TYPES}
+
+        # Popula reaction_data com as reações existentes
+        for reaction in reactions:
+            emoji = reaction.reaction_type
+            user_name = f"{reaction.user.first_name or ''} {reaction.user.last_name or ''}".strip()
+            reaction_data[emoji].append(user_name)
+
+        # Retorna a contagem de reações
+        reaction_counts = (
+            Reaction.objects.filter(post=post)
+            .values("reaction_type")
+            .annotate(count=Count("reaction_type"))
+            .order_by("-count")
+        )
 
         return Response({
-            'status': 'success',
-            'reactions': list(reaction_counts)
+            "status": "success",
+            "reactions": list(reaction_counts),
+            "reaction_users": reaction_data  # Retorna os usuários que reagiram
         }, status=status.HTTP_200_OK)
 
     except Exception as e:
-        return Response({
-            'status': 'error',
-            'message': str(e)
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-    
-    
-@api_view(['POST'])
+        return Response(
+            {"status": "error", "message": str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def add_reaction(request):
-    post_id = request.data.get('post_id')
-    reaction_type = request.data.get('reaction_type')
+    post_id = request.data.get("post_id")
+    reaction_type = request.data.get("reaction_type")
     user = request.user
 
     if not post_id or not reaction_type:
         return Response(
-            {'status': 'error', 'message': 'post_id and reaction_type are required'},
-            status=status.HTTP_400_BAD_REQUEST
+            {"status": "error", "message": "post_id and reaction_type are required"},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     try:
@@ -130,41 +152,45 @@ def add_reaction(request):
             if existing_reaction.reaction_type == reaction_type:
                 # Se a reação for a mesma, remove a reação (desfazer)
                 existing_reaction.delete()
-                message = 'Reaction removed successfully!'
+                message = "Reaction removed successfully!"
             else:
                 # Se a reação for diferente, troca a reação
                 existing_reaction.reaction_type = reaction_type
                 existing_reaction.save()
-                message = 'Reaction updated successfully!'
+                message = "Reaction updated successfully!"
         else:
             # Se não houver reação, adiciona uma nova
             Reaction.objects.create(post=post, user=user, reaction_type=reaction_type)
-            message = 'Reaction added successfully!'
+            message = "Reaction added successfully!"
 
         # Atualiza a contagem de reações corretamente
-        reaction_counts = Reaction.objects.filter(post=post) \
-            .values('reaction_type') \
-            .annotate(count=Count('id')) \
-            .order_by('-count')
+        reaction_counts = (
+            Reaction.objects.filter(post=post)
+            .values("reaction_type")
+            .annotate(count=Count("id"))
+            .order_by("-count")
+        )
 
-        return Response({
-            'status': 'success',
-            'message': message,
-            'reactions': list(reaction_counts)
-        }, status=status.HTTP_200_OK)
+        return Response(
+            {
+                "status": "success",
+                "message": message,
+                "reactions": list(reaction_counts),
+            },
+            status=status.HTTP_200_OK,
+        )
 
     except Exception as e:
         return Response(
-            {'status': 'error', 'message': str(e)},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            {"status": "error", "message": str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
 
-
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])  # Adicionando autenticação
 def add_like(request):
-    post_id = request.data.get('post_id')
+    post_id = request.data.get("post_id")
     user_id = request.user.id
 
     try:
@@ -175,21 +201,32 @@ def add_like(request):
         like, created = Like.objects.get_or_create(post=post, user=user)
         if not created:
             like.delete()  # Se já curtiu, desfaz o like
-            return Response({'status': 'success', 'message': 'Like removed'}, status=status.HTTP_200_OK)
+            return Response(
+                {"status": "success", "message": "Like removed"},
+                status=status.HTTP_200_OK,
+            )
 
-        return Response({'status': 'success', 'message': 'Post liked'}, status=status.HTTP_200_OK)
+        return Response(
+            {"status": "success", "message": "Post liked"}, status=status.HTTP_200_OK
+        )
 
     except Post.DoesNotExist:
-        return Response({'status': 'error', 'message': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {"status": "error", "message": "Post not found"},
+            status=status.HTTP_404_NOT_FOUND,
+        )
     except User.DoesNotExist:
-        return Response({'status': 'error', 'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-    
+        return Response(
+            {"status": "error", "message": "User not found"},
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
-@api_view(['POST'])
+
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])  # Adicionando autenticação
 def add_comment(request):
-    post_id = request.data.get('post_id')
-    text = request.data.get('text')
+    post_id = request.data.get("post_id")
+    text = request.data.get("text")
     user_id = request.user.id
 
     try:
@@ -197,32 +234,50 @@ def add_comment(request):
         user = User.objects.get(id=user_id)
 
         comment = Comment.objects.create(post=post, author=user, text=text)
-        return Response({'status': 'success', 'comment_id': comment.id, 'message': 'Comment added'}, status=status.HTTP_200_OK)
+        return Response(
+            {"status": "success", "comment_id": comment.id, "message": "Comment added"},
+            status=status.HTTP_200_OK,
+        )
 
     except Post.DoesNotExist:
-        return Response({'status': 'error', 'message': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {"status": "error", "message": "Post not found"},
+            status=status.HTTP_404_NOT_FOUND,
+        )
     except User.DoesNotExist:
-        return Response({'status': 'error', 'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {"status": "error", "message": "User not found"},
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])  # Adicionando autenticação
 def add_repost(request):
-    post_id = request.data.get('post_id')
-    text = request.data.get('text', '')  # Texto opcional para o repost
+    post_id = request.data.get("post_id")
+    text = request.data.get("text", "")  # Texto opcional para o repost
     user_id = request.user.id
 
     try:
         post = Post.objects.get(id=post_id)
         user = User.objects.get(id=user_id)
 
-        repost = Repost.objects.create(original_post=post, reposted_by=user, text=text)
-        return Response({'status': 'success', 'message': 'Post reposted'}, status=status.HTTP_200_OK)
+        # Criando o repost, mas não armazenando em uma variável
+        Repost.objects.create(original_post=post, reposted_by=user, text=text)
+        return Response(
+            {"status": "success", "message": "Post reposted"}, status=status.HTTP_200_OK
+        )
 
     except Post.DoesNotExist:
-        return Response({'status': 'error', 'message': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {"status": "error", "message": "Post not found"},
+            status=status.HTTP_404_NOT_FOUND,
+        )
     except User.DoesNotExist:
-        return Response({'status': 'error', 'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {"status": "error", "message": "User not found"},
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
 
 class CustomJWTAuthentication(JWTAuthentication):
@@ -232,14 +287,6 @@ class CustomJWTAuthentication(JWTAuthentication):
         except AuthenticationFailed as e:
             print("Erro de autenticação:", e)
             raise
-        
-
-class UserPostsView(generics.ListAPIView):
-    serializer_class = PostSerializer
-
-    def get_queryset(self):
-        user_id = self.kwargs['user_id']
-        return Post.objects.filter(author_id=user_id).select_related('author')
 
 
 class PostListCreateView(APIView):
@@ -338,16 +385,22 @@ class UserPostsView(APIView):
                     "author": {
                         "id": post.author.id,
                         "name": post.author.username,
-                        "profile_picture": post.author.profile_picture.url if post.author.profile_picture else None,
+                        "profile_picture": (
+                            post.author.profile_picture.url
+                            if post.author.profile_picture
+                            else None
+                        ),
                     },
                 }
                 for post in posts
             ]
             return Response(data, status=status.HTTP_200_OK)
         else:
-            return Response({"detail": "Nenhum post encontrado."}, status=status.HTTP_404_NOT_FOUND)
-        
-        
+            return Response(
+                {"detail": "Nenhum post encontrado."}, status=status.HTTP_404_NOT_FOUND
+            )
+
+
 class LikePostView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -498,10 +551,7 @@ class IsFollowingView(APIView):
 
     def get(self, request, user_id):
         if not request.user.is_authenticated:
-            return Response(
-                {"error": "Usuário não autenticado."}, 
-                status=401
-            )
+            return Response({"error": "Usuário não autenticado."}, status=401)
         try:
             user_to_check = User.objects.get(id=user_id)
             is_following = user_to_check.followers.filter(id=request.user.id).exists()
@@ -521,7 +571,9 @@ class TimelineView(APIView):
         posts = Post.objects.filter(
             models.Q(visibility="public")
             | models.Q(visibility="followers", author__in=following_users)
-        ).order_by("-created_at")  # Ordena por data de criação, mais recentes primeiro
+        ).order_by(
+            "-created_at"
+        )  # Ordena por data de criação, mais recentes primeiro
 
         # Paginar os posts
         paginator = PageNumberPagination()
@@ -529,7 +581,9 @@ class TimelineView(APIView):
         paginated_posts = paginator.paginate_queryset(posts, request)
 
         # Serializa os posts para enviar como resposta
-        serializer = PostSerializer(paginated_posts, many=True, context={"request": request})
+        serializer = PostSerializer(
+            paginated_posts, many=True, context={"request": request}
+        )
         return paginator.get_paginated_response(serializer.data)
 
 
@@ -558,21 +612,33 @@ class UserProfileView(APIView):
     def get(self, request):
         try:
             user = request.user
-            logger.info(f"Processing profile for user: {user.username if hasattr(user, 'username') else 'Anonymous'}")
+            logger.info(
+                f"Processing profile for user: {user.username if hasattr(user, 'username') else 'Anonymous'}"
+            )
 
             profile_data = {
                 "id": user.id,
                 "username": user.username,
                 "first_name": user.first_name or "",
                 "last_name": user.last_name or "",
-                "profile_picture": user.profile_picture.url if user.profile_picture else None,
+                "profile_picture": (
+                    user.profile_picture.url if user.profile_picture else None
+                ),
                 "cover_photo": user.cover_photo.url if user.cover_photo else None,
                 "bio": user.bio or "",
                 "location": user.location or "",
                 "birth_date": user.birth_date,
                 "date_joined": user.date_joined,
-                "followers_count": getattr(user, 'followers', []).count() if hasattr(user, 'followers') else 0,
-                "following_count": getattr(user, 'following', []).count() if hasattr(user, 'following') else 0,
+                "followers_count": (
+                    getattr(user, "followers", []).count()
+                    if hasattr(user, "followers")
+                    else 0
+                ),
+                "following_count": (
+                    getattr(user, "following", []).count()
+                    if hasattr(user, "following")
+                    else 0
+                ),
             }
 
             logger.info("Profile data generated successfully.")
@@ -580,7 +646,9 @@ class UserProfileView(APIView):
 
         except AttributeError as e:
             logger.error(f"Atributo ausente no usuário: {str(e)}")
-            return Response({"error": "Dados do perfil incompletos. Contate o suporte."}, status=400)
+            return Response(
+                {"error": "Dados do perfil incompletos. Contate o suporte."}, status=400
+            )
 
         except Exception as e:
             logger.error(f"Erro inesperado ao processar o perfil: {str(e)}")

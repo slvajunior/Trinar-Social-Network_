@@ -74,10 +74,10 @@ urlpatterns = [
     path("bulk-follow-status/", bulk_follow_status, name="bulk-follow-status"),
 
     path('posts/user/<int:user_id>/', UserPostsView.as_view(), name='user-posts'),
-    path('add_reaction/', views.add_reaction, name='add_reaction'),
     path('add_like/', views.add_like, name='add_like'),
     path('add_comment/', views.add_comment, name='add_comment'),
     path('add_repost/', views.add_repost, name='add_repost'),
     path('posts/<int:post_id>/reactions/', views.get_post_reactions, name='get_post_reactions'),
     path('posts/<int:post_id>/user_reaction/', views.get_user_reaction, name='get_user_reaction'),
+    path('add_reaction/', views.add_reaction, name='add_reaction'),
 ]

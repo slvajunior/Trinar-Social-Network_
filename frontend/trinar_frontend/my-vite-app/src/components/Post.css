@@ -95,7 +95,7 @@
     box-shadow: inset 0 1px 4px 0 rgba(0, 0, 0, 0.15);
     display: block;
     max-width: 100%;
-    margin: 0px 10px 2.5px;
+    margin: 0px 5px 2.5px;
     padding: 0.5px;
   }
   
@@ -170,19 +170,21 @@
   /* Estilo para as hashtags */
   .post-hashtags {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.3rem;
-    padding: 0 5px 5px;
-    font-family: 'Helvetica', sans-serif;
-    font-size: 15px;
+    flex-direction: row; /* Hashtags em linha */
+    flex-wrap: wrap; /* Permite que as hashtags quebrem para a nova linha */
+    gap: 6px; /* Espaço entre as hashtags */
+    margin-top: 0px;
     font-variant: small-caps;
-    line-height: 0.7; /* Pode ser uma unidade relativa ou um número */
-    cursor: pointer;
+    line-height: 0.7;
+    font-size: 13px;
+    padding: 0 10px;
+    margin-bottom: 5px;
   }
   
   .hashtag {
     color: #1da1f2;
-    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap; /* Impede que as hashtags quebrem em várias linhas */
   }
   
   .hashtag:hover {
@@ -264,10 +266,70 @@
   }
   
   .reaction-count {
-    margin-left: 4px;
     font-size: 0.9rem;
     vertical-align: middle;
+    margin-left: -10px;
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* src/components/Post/Post.css */
+
+.reaction-accumulator-container {
+  width: 100%; /* Ocupa a largura total */
+  margin-top: 10px; /* Espaço acima do acumulador */
+}
+
+
+
+.reaction-accumulator {
+  display: flex;
+  gap: -1px;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.reaction-icon {
+  position: relative;
+  cursor: pointer;
+
+}
+
+.reaction-tooltip {
+  position: absolute;
+  background-color: #333;
+  color: #fff;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 12px;
+  z-index: 1000;
+  white-space: nowrap;
+  top: -30px; /* Ajuste a posição conforme necessário */
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.reaction-icon:hover .reaction-tooltip {
+  opacity: 1;
+}
 
 
 

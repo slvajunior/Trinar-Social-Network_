@@ -1,5 +1,3 @@
-
-// src/components/Post/Post.jsx
 import React, { useState, useRef, useEffect } from "react";
 import AuthorInfo from "../AuthorInfo";
 import PostActions from "./PostActions";
@@ -7,13 +5,21 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import "../Post.css";
 
-const Post = ({ post, followingStatus, handleFollow, loggedInUserId, socket }) => {
+const Post = ({
+  post,
+  followingStatus,
+  handleFollow,
+  loggedInUserId,
+  socket,
+}) => {
   const [expanded, setExpanded] = useState(false);
   const [isTruncated, setIsTruncated] = useState(false);
   const textRef = useRef(null);
   const [reactionCounts, setReactionCounts] = useState({});
   const [userReaction, setUserReaction] = useState(null);
   const [showReactionPicker, setShowReactionPicker] = useState(false);
+  const [reactionUsers, setReactionUsers] = useState({});
+  const [hoveredEmoji, setHoveredEmoji] = useState(null); // Adicione esta linha
   const reactionTimeout = useRef(null);
 
   const maxLength = 100; // Defina o número máximo de caracteres
@@ -82,6 +88,9 @@ const Post = ({ post, followingStatus, handleFollow, loggedInUserId, socket }) =
 
         setReactionCounts(counts);
 
+        // Atualize reactionUsers com os dados da API
+        setReactionUsers(response.data.reaction_users);
+
         const userReactionResponse = await axios.get(
           `/api/posts/${post.id}/user_reaction/`,
           { headers: { Authorization: `Bearer ${token}` } }
@@ -137,7 +146,7 @@ const Post = ({ post, followingStatus, handleFollow, loggedInUserId, socket }) =
     const imgObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          entry.target.setAttribute('loading', 'lazy');
+          entry.target.setAttribute("loading", "lazy");
           imgObserver.disconnect(); // Desconecta o observer após carregar a imagem
         }
       });
@@ -146,7 +155,7 @@ const Post = ({ post, followingStatus, handleFollow, loggedInUserId, socket }) =
     const videoObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          entry.target.setAttribute('loading', 'lazy');
+          entry.target.setAttribute("loading", "lazy");
           videoObserver.disconnect();
         }
       });
@@ -189,11 +198,7 @@ const Post = ({ post, followingStatus, handleFollow, loggedInUserId, socket }) =
         />
       )}
       {post.video_url && (
-        <video
-          ref={videoRef}
-          className="video-post"
-          controls
-        >
+        <video ref={videoRef} className="video-post" controls>
           <source src={post.video_url} type="video/mp4" />
           Seu navegador não suporta vídeo.
         </video>
@@ -209,7 +214,29 @@ const Post = ({ post, followingStatus, handleFollow, loggedInUserId, socket }) =
         </div>
       )}
 
+      {/* Acumulador de Reações */}
+      <div className="reaction-accumulator">
+        {Object.keys(reactionCounts).map((emoji) => (
+          <div
+            key={emoji}
+            className="reaction-icon"
+            onMouseEnter={() => setHoveredEmoji(emoji)}
+            onMouseLeave={() => setHoveredEmoji(null)}
+          >
+            {emoji}
+            {hoveredEmoji === emoji &&
+              Array.isArray(reactionUsers[emoji]) &&
+              reactionUsers[emoji].length > 0 && (
+                <div className="reaction-tooltip">
+                  {reactionUsers[emoji].join(", ")}
+                </div>
+              )}
+          </div>
+        ))}
+      </div>
+
       <hr className="divider-post-tl" />
+
       <PostActions
         post={post}
         loggedInUserId={loggedInUserId}

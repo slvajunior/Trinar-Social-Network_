@@ -1,6 +1,4 @@
-
-// src/components/Post/Reaction.jsx
-import React from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 
@@ -14,6 +12,7 @@ const Reaction = ({
   handleReaction,
   handleMouseEnterReactionPicker,
   handleMouseLeaveReactionPicker,
+  reactionUsers = {}, // Valor padrão para evitar undefined
 }) => {
   const totalReactions = Object.values(reactionCounts).reduce(
     (acc, count) => acc + count,
@@ -22,7 +21,7 @@ const Reaction = ({
 
   const reactionTypes = [
     { emoji: "❤️", label: "Heart" },
-    { emoji: "😂", label: "Laugh" },
+    { emoji: "🤣", label: "Laugh" },
     { emoji: "😮", label: "Wow" },
     { emoji: "😢", label: "Sad" },
     { emoji: "👍", label: "Thumbs Up" },
@@ -45,6 +44,8 @@ const Reaction = ({
     </div>
   );
 
+  const [hoveredEmoji, setHoveredEmoji] = useState(null);
+
   return (
     <div
       className="reaction-container"
@@ -62,6 +63,26 @@ const Reaction = ({
       </button>
 
       {showReactionPicker && <ReactionPicker />}
+
+      <div className="reaction-accumulator">
+        {Object.keys(reactionCounts).map((emoji) => (
+          <div
+            key={emoji}
+            className="reaction-icon"
+            onMouseEnter={() => setHoveredEmoji(emoji)}
+            onMouseLeave={() => setHoveredEmoji(null)}
+          >
+            {emoji}
+            {hoveredEmoji === emoji &&
+              Array.isArray(reactionUsers[emoji]) && // Verifica se é um array
+              reactionUsers[emoji].length > 0 && (  // Verifica se o array não está vazio
+                <div className="reaction-tooltip">
+                  {reactionUsers[emoji].join(", ")}
+                </div>
+              )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
