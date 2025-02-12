@@ -325,7 +325,11 @@
   top: -30px; /* Ajuste a posição conforme necessário */
   left: 50%;
   transform: translateX(-50%);
+  display: flex;
+  flex-direction: column; /* Exibe os itens em coluna */
+  gap: 4px; /* Espaçamento entre os nomes */
 }
+
 
 .reaction-icon:hover .reaction-tooltip {
   opacity: 1;

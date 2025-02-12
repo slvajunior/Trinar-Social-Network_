@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion"; // Importe o Framer Motion
+import "./ReactionAccumulator.css";
 
 const ReactionAccumulator = ({ reactionCounts, reactionUsers }) => {
   const [hoveredEmoji, setHoveredEmoji] = useState(null);
@@ -19,9 +21,17 @@ const ReactionAccumulator = ({ reactionCounts, reactionUsers }) => {
           {hoveredEmoji === emoji &&
             Array.isArray(reactionUsers[emoji]) && // Verifica se é um array
             reactionUsers[emoji].length > 0 && (  // Verifica se o array não está vazio
-              <div className="reaction-tooltip">
-                {reactionUsers[emoji].join(", ")}
-              </div>
+              <motion.div
+                className="reaction-tooltip"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{ duration: 0.2 }}
+              >
+                {reactionUsers[emoji].map((user, index) => (
+                  <div key={index}>{user}</div>
+                ))}
+              </motion.div>
             )}
         </div>
       ))}
