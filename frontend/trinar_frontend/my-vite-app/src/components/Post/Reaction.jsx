@@ -77,7 +77,9 @@ const Reaction = ({
               Array.isArray(reactionUsers[emoji]) && // Verifica se é um array
               reactionUsers[emoji].length > 0 && (  // Verifica se o array não está vazio
                 <div className="reaction-tooltip">
-                  {reactionUsers[emoji].join(", ")}
+                  {reactionUsers[emoji].map((user, index) => (
+                    <div key={index}>{user}</div>
+                  ))}
                 </div>
               )}
           </div>

@@ -11,7 +11,7 @@ class User(AbstractUser):
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
     birth_date = models.DateField(null=True, blank=True)
-    followers = models.ManyToManyField("self", symmetrical=False, related_name="following")
+    followers = models.ManyToManyField("self", symmetrical=False, related_name="following", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     location = models.CharField(max_length=100, blank=True)  # Campo de localidade
 

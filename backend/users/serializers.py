@@ -57,8 +57,11 @@ class UserSerializer(serializers.ModelSerializer):
             first_name=validated_data.get("first_name", ""),
             last_name=validated_data.get("last_name", ""),
             birth_date=validated_data.get("birth_date", None),
-            location=validated_data.get("location", ""),  # Incluindo localidade no create
+            location=validated_data.get(
+                "location", ""
+            ),  # Incluindo localidade no create
         )
+
         return user
 
 

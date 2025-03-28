@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion"; // Importe o Framer Motion
-import "./ReactionAccumulator.css";
 
 const ReactionAccumulator = ({ reactionCounts, reactionUsers }) => {
   const [hoveredEmoji, setHoveredEmoji] = useState(null);

@@ -79,13 +79,13 @@ const Post = ({
     const fetchReactions = async () => {
       const cacheKey = `reactions_${post.id}`;
       const cachedReactions = localStorage.getItem(cacheKey);
-    
+
       if (cachedReactions) {
         const { counts, users, timestamp } = JSON.parse(cachedReactions);
-    
+
         // Verifica se o cache expirou (ex: 1 hora)
         const isCacheExpired = Date.now() - timestamp > 60 * 60 * 1000; // 1 hora
-    
+
         if (!isCacheExpired) {
           setReactionCounts(counts);
           setReactionUsers(users);
@@ -95,23 +95,23 @@ const Post = ({
           clearReactionsCache();
         }
       }
-    
+
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(`/api/posts/${post.id}/reactions/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-    
+
         const counts = response.data.reactions.reduce((acc, curr) => {
           acc[curr.reaction_type] = curr.count;
           return acc;
         }, {});
-    
+
         const users = response.data.reaction_users || {};
-    
+
         setReactionCounts(counts);
         setReactionUsers(users);
-    
+
         // Salva no cache
         const cacheData = {
           counts,
@@ -142,21 +142,21 @@ const Post = ({
         { post_id: post.id, reaction_type: emoji },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-  
+
       // Limpa o cache para forçar uma nova busca
       clearReactionsCache();
-  
+
       // Atualiza o estado com os novos dados
       const updatedCounts = response.data.reactions.reduce((acc, curr) => {
         acc[curr.reaction_type] = curr.count;
         return acc;
       }, {});
-  
+
       const updatedUsers = response.data.reaction_users || {};
-  
+
       setReactionCounts(updatedCounts);
       setReactionUsers(updatedUsers);
-  
+
       // Atualiza o cache com os novos dados
       const cacheKey = `reactions_${post.id}`;
       const cacheData = {
@@ -269,10 +269,12 @@ const Post = ({
           >
             {emoji}
             {hoveredEmoji === emoji &&
-              Array.isArray(reactionUsers[emoji]) &&
-              reactionUsers[emoji].length > 0 && (
+              Array.isArray(reactionUsers[emoji]) && // Verifica se é um array
+              reactionUsers[emoji].length > 0 && ( // Verifica se o array não está vazio
                 <div className="reaction-tooltip">
-                  {reactionUsers[emoji].join(", ")}
+                  {reactionUsers[emoji].map((user, index) => (
+                    <div key={index}>{user}</div>
+                  ))}
                 </div>
               )}
           </div>

@@ -91,26 +91,24 @@
 
 .profile-page-details {
   gap: 6px;
-  font-size: 10px;
   padding: 10px;
-
 }
 
 .profile-page-detail-joined {
-  font-family: 'Helvetica', Arial, sans-serif;
-  font-size: 12px;
+  font-family: 'Nimbus Sans';
+  font-size: 14px;
   color: #686869;
 }
 
 .profile-page-detail-birth {
-  font-family: 'Helvetica', Arial, sans-serif;
-  font-size: 12px;
+  font-family: 'Nimbus Sans';
+  font-size: 14px;
   color: #686869;
 }
 
 .profile-page-detail-location {
-  font-family: 'Helvetica', Arial, sans-serif;
-  font-size: 12px;
+  font-family: 'Nimbus Sans';
+  font-size: 14px;
   color: #686869;
 }
 
