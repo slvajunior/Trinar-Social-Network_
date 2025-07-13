@@ -1,289 +1,270 @@
 /* src/components/Post.css */
 
-  .post-tl {
-    width: 100%;
-    max-width: 675px; /* Largura máxima para telas grandes */
-    height: 100%;
-    margin: 17px auto 10px;
-    padding: 6px 0x 0px;
-    background-color: var(--color-secondary);
-    border-radius: 9px; box-shadow: 0 1px 2px rgba(0, 0, 1, 0.2);
-  }
+.post-tl {
+  width: 100%;
+  min-width: 675px;
+  height: 100%;
+  margin: 17px auto 10px;
+  padding: 6px 0x 0px;
+  background-color: var(--color-secondary);
+  border-radius: 9px;
+  box-shadow: 0 1px 2px rgba(0, 0, 1, 0.2);
+}
 
-  .text-post {
-    white-space: pre-wrap;
-    padding: 0 10px;
-    display: inline-block;
-    margin: 0 0 -8px;
-    text-justify: inter-word;
-    word-wrap: break-word;
-    font-family: 'Helvetica', sans-serif;
-    line-height: 1.4;
-  }
-  
-  .read-more {
-    display: inline-block;
-    color: #080809;
-    cursor: pointer;
-    font-weight: 700;
-    margin-left: 10px;
-    margin-bottom: 5px;
-    display: inline-block;
-    font-family: 'Helvetica', sans-serif;
-    font-variant: small-caps;
-    word-wrap: break-word;
-  }
-  
-  .user-photo-timeline {
-    background-color: var(--color-secondary);
-    color: #e6e6ec;
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
-    object-fit: cover;
-    padding: 0px 0px;
-    box-shadow: inset 0 2px 1px 0 rgba(250, 249, 249, 0.3);
-  }
-  
-  .post-actions-tl{
-    height: 40px;
-    display: flex;
-    justify-content: space-around;
-    margin-top: -10px 0px 15px;
-    padding: 0px 20px;
-    margin-bottom: 0px;
-    margin-top: 0px;
-    gap: 100px;
-    font-size: 13px;
-    text-align: center;
-  }
-  
-  .action-button-tl {
-    width: 100%;
-    max-width: 130px;
-    height: 19px;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    gap: 15px;
-    padding: 16px 16px;
-    background-color: var(--color-secondary);
-    color: #68696c;
-    border: none;
-    border-radius: 3px;
-    font-size: 15px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    font-family: "Helvetica", Arial, sans-serif;
-    font-weight: 600;
-    margin-top: 2.8px;
-    align-items: center;
-  }
+.text-post {
+  white-space: pre-wrap;
+  padding: 0 10px;
+  display: inline-block;
+  margin: 0 0 -8px;
+  text-justify: inter-word;
+  word-wrap: break-word;
+  font-family: "Helvetica", sans-serif;
+  line-height: 1.4;
+}
 
-  .action-button-tl:hover {
-    background-color: #f2f2f2;
-  }
-  
-  .error-message {
-    color: red;
-    text-align: center;
-  }
-  
-  .divider-post-tl {
-    border: 0;
-    background-color: var(--color-secondary);
-    box-shadow: inset 0 1px 4px 0 rgba(0, 0, 0, 0.15);
-    display: block;
-    max-width: 100%;
-    margin: 0px 5px 2.5px;
-    padding: 0.5px;
-  }
-  
-  p.post-time {
-    font-family: "Helvetica", sans-serif;
-    font-size: 12px;
-    cursor: pointer;
-    transition: text-decoration 0.2s ease;
-    color: #65686C;
-    font-weight: 700;
-  }
-  
-  /* Estilo para o container do tempo do post e ícone de visibilidade */
-  .post-time-container {
-    display: flex;
-    align-items: center;
-    gap: 0.3rem; /* Espaçamento entre o tempo e o ícone */
-  }
-  
-  /* Estilo para o ícone de visibilidade */
-  .visibility-icon {
-    font-size: 13px;
-    color: #65686c;
-  }
-  
-  .post-time:hover {
-    text-decoration: underline;
-  }
-  
-  /* Container para mídias (imagens e vídeos) */
-  .media-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    max-width: 675px;
-    height: 675px;
-    overflow: hidden;
-    margin: 10px auto;
-  }
-  
-  .img-post {
-    width: 100%;
-    height: 100%;
-    max-height: 675px !important;
-    object-fit: cover !important;
-    display: block;
-    margin: 0 0 5px;
-  }
-  
-  .video-post {
-    width: 100%;
-    height: 100%;
-    max-height: 675px;
-    object-fit: cover !important;
-    display: block;
-    color: #080809;
-    margin: 0px 0px 5px;
-  }
-  
-  /* Estilo para o rodapé do post */
-  .post-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 0;
-    padding: 0 0;
-    font-size: 0.9rem;
-    color: #666;
-  }
-  
-  /* Estilo para as hashtags */
-  .post-hashtags {
-    display: flex;
-    flex-direction: row; /* Hashtags em linha */
-    flex-wrap: wrap; /* Permite que as hashtags quebrem para a nova linha */
-    gap: 6px; /* Espaço entre as hashtags */
-    margin-top: 0px;
-    font-variant: small-caps;
-    line-height: 0.7;
-    font-size: 13px;
-    padding: 0 10px;
-    margin-bottom: 5px;
-  }
-  
-  .hashtag {
-    color: #1da1f2;
-    cursor: pointer;
-    white-space: nowrap; /* Impede que as hashtags quebrem em várias linhas */
-  }
-  
-  .hashtag:hover {
-    text-decoration: underline;
-    cursor: pointer;
-  }
+.read-more {
+  display: inline-block;
+  color: #080809;
+  cursor: pointer;
+  font-weight: 700;
+  margin-left: 10px;
+  margin-bottom: 5px;
+  display: inline-block;
+  font-family: "Helvetica", sans-serif;
+  font-variant: small-caps;
+  word-wrap: break-word;
+}
 
-  .reaction-container {
-    position: relative;
-    display: inline-block;
-    z-index: 1;
-  }
-  
-  .reaction-picker {
-    position: absolute;
-    bottom: 100%;
-    left: 0;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 24px;
-    padding: 4px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    gap: 4px;
-    transform: translateY(-5px);
-  }
-  
-  .reaction-button {
-    position: relative;
+.user-photo-timeline {
+  background-color: var(--color-secondary);
+  color: #e6e6ec;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  object-fit: cover;
+  padding: 0px 0px;
+  box-shadow: inset 0 2px 1px 0 rgba(250, 249, 249, 0.3);
+}
 
-    width: 100%;
-    max-width: 130px;
-    height: 19px;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    gap: 15px;
-    padding: 16px 16px;
-    background-color: var(--color-secondary);
-    color: #68696c;
-    border: none;
-    border-radius: 3px;
-    font-size: 18px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    font-family: "Helvetica", Arial, sans-serif;
-    font-weight: 600;
-    margin-top: 2.8px;
-  }
-  
-  .post-actions-tl {
-    display: flex;
-    gap: 15px;
-    position: relative;
-    z-index: 1;
-  }
-  
-  .reaction-option {
-    background: none;
-    border: none;
-    font-size: 1.9rem;
-    padding: 9px;
-    cursor: pointer;
-    transition: transform 0.3s;
-  }
-  
-  .reaction-option:hover {
-    transform: scale(1.3);
-  }
-  
-  .reaction-preview {
-    margin-right: 8px;
-  }
-  
-  .reaction-count {
-    font-size: 0.9rem;
-    vertical-align: middle;
-    margin-left: -10px;
-  }
+.post-actions-tl {
+  height: 40px;
+  display: flex;
+  justify-content: space-around;
+  margin-top: -10px 0px 15px;
+  padding: 0px 20px;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  gap: 100px;
+  font-size: 13px;
+  text-align: center;
+}
 
+.action-button-tl {
+  width: 100%;
+  max-width: 130px;
+  height: 19px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  gap: 15px;
+  padding: 16px 16px;
+  background-color: var(--color-secondary);
+  color: #68696c;
+  border: none;
+  border-radius: 3px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-family: "Helvetica", Arial, sans-serif;
+  font-weight: 600;
+  margin-top: 2.8px;
+  align-items: center;
+}
 
+.action-button-tl:hover {
+  background-color: #f2f2f2;
+}
 
+.error-message {
+  color: red;
+  text-align: center;
+}
 
+.divider-post-tl {
+  border: 0;
+  background-color: var(--color-secondary);
+  box-shadow: inset 0 1px 4px 0 rgba(0, 0, 0, 0.15);
+  display: block;
+  max-width: 100%;
+  margin: 0px 5px 2.5px;
+  padding: 0.5px;
+}
 
+p.post-time {
+  font-family: "Helvetica", sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  transition: text-decoration 0.2s ease;
+  color: #65686c;
+  font-weight: 700;
+}
 
+/* Estilo para o container do tempo do post e ícone de visibilidade */
+.post-time-container {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem; /* Espaçamento entre o tempo e o ícone */
+}
 
+/* Estilo para o ícone de visibilidade */
+.visibility-icon {
+  font-size: 13px;
+  color: #65686c;
+}
 
+.post-time:hover {
+  text-decoration: underline;
+}
 
+/* Container para mídias (imagens e vídeos) */
+.media-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 675px;
+  height: 675px;
+  overflow: hidden;
+  margin: 10px auto;
+}
 
+.img-post {
+  width: 100%;
+  height: 100%;
+  max-height: 675px !important;
+  object-fit: cover !important;
+  display: block;
+  margin: 0 0 5px;
+}
 
+.video-post {
+  width: 100%;
+  height: 100%;
+  max-height: 675px;
+  object-fit: cover !important;
+  display: block;
+  color: #080809;
+  margin: 0px 0px 5px;
+}
 
+/* Estilo para o rodapé do post */
+.post-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0;
+  padding: 0 0;
+  font-size: 0.9rem;
+  color: #666;
+}
 
+/* Estilo para as hashtags */
+.post-hashtags {
+  display: flex;
+  flex-direction: row; /* Hashtags em linha */
+  flex-wrap: wrap; /* Permite que as hashtags quebrem para a nova linha */
+  gap: 6px; /* Espaço entre as hashtags */
+  margin-top: 0px;
+  font-variant: small-caps;
+  line-height: 0.7;
+  font-size: 13px;
+  padding: 0 10px;
+  margin-bottom: 5px;
+}
 
+.hashtag {
+  color: #1da1f2;
+  cursor: pointer;
+  white-space: nowrap; /* Impede que as hashtags quebrem em várias linhas */
+}
 
+.hashtag:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
 
+.reaction-container {
+  position: relative;
+  display: inline-block;
+  z-index: 1;
+}
 
+.reaction-picker {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 24px;
+  padding: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: 4px;
+  transform: translateY(-5px);
+}
 
+.reaction-button {
+  position: relative;
 
+  width: 100%;
+  max-width: 130px;
+  height: 19px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  gap: 15px;
+  padding: 16px 16px;
+  background-color: var(--color-secondary);
+  color: #68696c;
+  border: none;
+  border-radius: 3px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-family: "Helvetica", Arial, sans-serif;
+  font-weight: 600;
+  margin-top: 2.8px;
+}
 
+.post-actions-tl {
+  display: flex;
+  gap: 15px;
+  position: relative;
+  z-index: 1;
+}
+
+.reaction-option {
+  background: none;
+  border: none;
+  font-size: 1.9rem;
+  padding: 9px;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.reaction-option:hover {
+  transform: scale(1.3);
+}
+
+.reaction-preview {
+  margin-right: 8px;
+}
+
+.reaction-count {
+  font-size: 0.9rem;
+  vertical-align: middle;
+  margin-left: -10px;
+}
 
 /* src/components/Post/Post.css */
 
@@ -291,8 +272,6 @@
   width: 100%; /* Ocupa a largura total */
   margin-top: 10px; /* Espaço acima do acumulador */
 }
-
-
 
 .reaction-accumulator {
   display: flex;
@@ -304,7 +283,6 @@
 .reaction-icon {
   position: relative;
   cursor: pointer;
-
 }
 
 .reaction-tooltip {
@@ -324,77 +302,55 @@
   gap: 4px; /* Espaçamento entre os nomes */
 }
 
-
 .reaction-icon:hover .reaction-tooltip {
   opacity: 1;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  /* Media Queries para Responsividade */
-  @media (max-width: 768px) {
-    .post {
-      max-width: 90%; /* Reduz a largura máxima para tablets */
-    }
-  
-    .media-container {
-      max-width: 100%;
-      height: auto;
-    }
-  
-    .img-post,
-    .video-post {
-      height: auto;
-    }
-  
-    .post-actions {
-      gap: 50px; /* Reduz o espaço entre os botões */
-    }
-  
-    .action-button {
-      font-size: 0.9rem; /* Reduz o tamanho da fonte dos botões */
-    }
+/* Media Queries para Responsividade */
+@media (max-width: 768px) {
+  .post {
+    max-width: 90%; /* Reduz a largura máxima para tablets */
   }
-  
-  @media (max-width: 565px) {
-    .post {
-      max-width: 100%; /* Ocupa toda a largura em celulares */
-      margin: 5px auto;
-    }
-  
-    .post-actions {
-      gap: 20px; /* Espaço mínimo entre os botões */
-    }
-  
-    .action-button {
-      font-size: 0.8rem; /* Fonte ainda menor para celulares */
-      padding: 10px 5px; /* Reduz o padding dos botões */
-    }
-  
-    .author-info strong {
-      font-size: 14px; /* Reduz o tamanho da fonte do nome do autor */
-    }
-  
-    .author-info p {
-      font-size: 12px; /* Reduz o tamanho da fonte da data */
-    }
+
+  .media-container {
+    max-width: 100%;
+    height: auto;
   }
+
+  .img-post,
+  .video-post {
+    height: auto;
+  }
+
+  .post-actions {
+    gap: 50px; /* Reduz o espaço entre os botões */
+  }
+
+  .action-button {
+    font-size: 0.9rem; /* Reduz o tamanho da fonte dos botões */
+  }
+}
+
+@media (max-width: 565px) {
+  .post {
+    max-width: 100%; /* Ocupa toda a largura em celulares */
+    margin: 5px auto;
+  }
+
+  .post-actions {
+    gap: 20px; /* Espaço mínimo entre os botões */
+  }
+
+  .action-button {
+    font-size: 0.8rem; /* Fonte ainda menor para celulares */
+    padding: 10px 5px; /* Reduz o padding dos botões */
+  }
+
+  .author-info strong {
+    font-size: 14px; /* Reduz o tamanho da fonte do nome do autor */
+  }
+
+  .author-info p {
+    font-size: 12px; /* Reduz o tamanho da fonte da data */
+  }
+}
